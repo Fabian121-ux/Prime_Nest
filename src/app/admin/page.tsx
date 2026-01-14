@@ -1,0 +1,143 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ShieldCheck, User, Building, Hammer } from "lucide-react";
+import DashboardHeader from "@/components/layout/dashboard-header";
+
+const mockUsers = [
+  { id: 'u1', email: 'tenant@example.com', role: 'tenant', status: 'Approved' },
+  { id: 'u2', email: 'landlord@example.com', role: 'landlord', status: 'Approved' },
+  { id: 'u3', email: 'artisan@example.com', role: 'artisan', status: 'Pending' },
+];
+
+const mockListings = [
+  { id: 'l1', title: 'Cozy 2-Bedroom Apartment', type: 'property', creator: 'landlord@example.com', status: 'Approved' },
+  { id: 'l2', title: 'Expert Plumbing Services', type: 'service', creator: 'artisan@example.com', status: 'Approved' },
+  { id: 'l3', title: 'Modern Studio with a View', type: 'property', creator: 'landlord@example.com', status: 'Pending' },
+];
+
+const mockEscrow = [
+  { id: 'e1', listing: 'Cozy 2-Bedroom Apartment', amount: 1200, status: 'held', tenant: 'tenant@example.com' },
+  { id: 'e2', listing: 'Expert Plumbing Services', amount: 50, status: 'released', tenant: 'client@example.com' },
+  { id: 'e3', listing: 'Modern Studio with a View', amount: 850, status: 'initiated', tenant: 'another-tenant@example.com' },
+];
+
+const RoleIcon = ({ role }: { role: string }) => {
+    switch (role) {
+        case 'tenant': return <User className="h-4 w-4 text-muted-foreground" />;
+        case 'landlord': return <Building className="h-4 w-4 text-muted-foreground" />;
+        case 'artisan': return <Hammer className="h-4 w-4 text-muted-foreground" />;
+        default: return null;
+    }
+}
+
+export default function AdminPage() {
+    // This page should be protected and only accessible to admins
+    return (
+      <div className="min-h-screen bg-background">
+        <DashboardHeader />
+        <main className="container py-8 space-y-8">
+            <div>
+                <h1 className="text-3xl font-bold font-headline">Admin Panel</h1>
+                <p className="text-muted-foreground">Manage users, listings, and payments.</p>
+            </div>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>User Management</CardTitle>
+                    <CardDescription>Approve new users to grant them access to the platform.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Role</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {mockUsers.map(user => (
+                                <TableRow key={user.id}>
+                                    <TableCell className="font-medium">{user.email}</TableCell>
+                                    <TableCell className="capitalize flex items-center gap-2"><RoleIcon role={user.role} /> {user.role}</TableCell>
+                                    <TableCell><Badge variant={user.status === 'Approved' ? 'secondary' : 'outline'}>{user.status}</Badge></TableCell>
+                                    <TableCell className="text-right">
+                                        {user.status === 'Pending' && <Button size="sm">Approve</Button>}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Listing Management</CardTitle>
+                    <CardDescription>Review and approve new property and service listings.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Title</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Creator</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {mockListings.map(listing => (
+                                <TableRow key={listing.id}>
+                                    <TableCell className="font-medium">{listing.title}</TableCell>
+                                    <TableCell className="capitalize">{listing.type}</TableCell>
+                                    <TableCell>{listing.creator}</TableCell>
+                                    <TableCell><Badge variant={listing.status === 'Approved' ? 'secondary' : 'outline'}>{listing.status}</Badge></TableCell>
+                                    <TableCell className="text-right">
+                                        {listing.status === 'Pending' && <Button size="sm">Approve</Button>}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Escrow Management</CardTitle>
+                    <CardDescription>Release funds for completed transactions.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Listing</TableHead>
+                                <TableHead>Amount</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {mockEscrow.map(tx => (
+                                <TableRow key={tx.id}>
+                                    <TableCell className="font-medium">{tx.listing}</TableCell>
+                                    <TableCell>${tx.amount}</TableCell>
+                                    <TableCell><Badge variant={tx.status === 'released' ? 'secondary' : (tx.status === 'held' ? 'default' : 'outline')} className="capitalize">{tx.status}</Badge></TableCell>
+                                    <TableCell className="text-right">
+                                        {tx.status === 'held' && <Button size="sm"><ShieldCheck className="mr-2 h-4 w-4"/>Release Payment</Button>}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </main>
+      </div>
+    );
+}

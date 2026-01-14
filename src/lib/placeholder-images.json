@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "African cityscape at dusk",
+      "imageUrl": "https://images.unsplash.com/photo-1741991109902-98bf764fb35d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YWZyaWNhbiUyMGNpdHlzY2FwZXxlbnwwfHx8fDE3Njg0MjAxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "african cityscape"
+    },
+    {
+      "id": "listing1",
+      "description": "Exterior of a modern apartment building",
+      "imageUrl": "https://images.unsplash.com/photo-1619542402915-dcaf30e4e2a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YXBhcnRtZW50JTIwYnVpbGRpbmd8ZW58MHx8fHwxNzY4MzUxNjEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "apartment building"
+    },
+    {
+      "id": "listing2",
+      "description": "Plumbing tools on a wooden background",
+      "imageUrl": "https://images.unsplash.com/photo-1581166397057-235af2b3c6dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0b29scyUyMHBsdW1iaW5nfGVufDB8fHx8MTc2ODQyMDEzMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tools plumbing"
+    },
+    {
+      "id": "listing3",
+      "description": "City skyline from a high-rise apartment window",
+      "imageUrl": "https://images.unsplash.com/photo-1507961455425-0caef37ef6fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaXR5JTIwc2t5bGluZXxlbnwwfHx8fDE3Njg0MDI5MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city skyline"
+    },
+    {
+      "id": "listing4",
+      "description": "Closeup of colorful electrical wires",
+      "imageUrl": "https://images.unsplash.com/photo-1518181835702-6eef8b4b2113?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlbGVjdHJpY2FsJTIwd2lyZXN8ZW58MHx8fHwxNzY4MzQzNDUzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "electrical wires"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Smiling man's portrait",
+      "imageUrl": "https://images.unsplash.com/photo-1621624666561-84d0107001dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBzbWlsaW5nfGVufDB8fHx8MTc2ODMyOTk1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "admin-avatar",
+      "description": "Portrait of a woman wearing glasses",
+      "imageUrl": "https://images.unsplash.com/photo-1550480082-dd9c35032f45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b21hbiUyMGdsYXNzZXN8ZW58MHx8fHwxNzY4NDAyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman glasses"
+    }
+  ]
 }
