@@ -21,7 +21,7 @@ import { useState } from "react";
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  role: z.enum(["tenant", "artisan", "landlord", "admin"], {
+  role: z.enum(["tenant", "artisan", "landlord"], {
     required_error: "You need to select a role.",
   }),
 });
@@ -61,7 +61,7 @@ export default function SignUpPage() {
         rolePrimary: values.role,
         roles: [values.role],
         trustTier: 0,
-        isVerified: values.role === 'admin', // Admins are auto-verified
+        isVerified: false,
         status: 'active',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -169,14 +169,6 @@ export default function SignUpPage() {
                           </FormControl>
                           <FormLabel className="font-normal">
                             Artisan - Offering professional services.
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0 rounded-md border p-4 has-[:checked]:bg-destructive/10">
-                          <FormControl>
-                            <RadioGroupItem value="admin" />
-                          </FormControl>
-                          <FormLabel className="font-normal text-destructive">
-                            Admin - Platform Administrator.
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
