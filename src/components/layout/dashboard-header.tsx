@@ -50,7 +50,7 @@ export default function DashboardHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-card shadow-sm">
       <div className="container flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-            <SidebarTrigger className="md:hidden"/>
+            <SidebarTrigger/>
             <Link href="/dashboard" className="hidden items-center gap-3 font-bold text-xl md:flex">
               <div className="p-2 bg-sidebar-background rounded-md">
                 <Home className="text-sidebar-foreground h-5 w-5" />

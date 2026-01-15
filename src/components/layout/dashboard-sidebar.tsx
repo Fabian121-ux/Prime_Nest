@@ -51,14 +51,18 @@ const menuItems = [
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { setOpenMobile } = useSidebar();
 
   const isActive = (href: string) => {
     // Special case for the main dashboard link
     if (href === '/dashboard') {
-        return pathname === '/dashboard' || pathname === '/';
+        return pathname === '/dashboard';
     }
     return pathname.startsWith(href);
+  }
+
+  const handleLinkClick = () => {
+    setOpenMobile(false);
   }
 
   return (
@@ -66,6 +70,7 @@ export default function DashboardSidebar() {
       <SidebarHeader className="p-4">
         <Link
           href="/dashboard"
+          onClick={handleLinkClick}
           className="flex items-center gap-3 font-bold text-xl"
         >
           <div className="p-2 bg-primary/10 text-primary rounded-md">
@@ -85,7 +90,7 @@ export default function DashboardSidebar() {
                 isActive={isActive(item.href)}
                 tooltip={{ children: item.label, side: "right", align: "center" }}
               >
-                <Link href={item.href}>
+                <Link href={item.href} onClick={handleLinkClick}>
                   <item.icon />
                   <span className="truncate">{item.label}</span>
                 </Link>
@@ -101,7 +106,7 @@ export default function DashboardSidebar() {
               asChild
               tooltip={{ children: "Support", side: "right", align: "center" }}
             >
-              <Link href="/support">
+              <Link href="/support" onClick={handleLinkClick}>
                 <LifeBuoy />
                 <span>Support</span>
               </Link>
