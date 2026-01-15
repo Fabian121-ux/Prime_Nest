@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const HeroAnimation = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -9,19 +9,6 @@ const HeroAnimation = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const particleVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: [0, 0.7, 0],
-      scale: [1, 1.2, 1],
-      transition: {
-        duration: 8,
-        repeat: Infinity,
-        repeatType: 'loop',
-      },
-    },
-  };
 
   if (!isMounted) {
     return <div className="absolute inset-0 bg-background -z-10" />;
