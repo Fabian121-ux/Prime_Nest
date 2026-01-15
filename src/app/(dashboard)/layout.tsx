@@ -16,6 +16,11 @@ function DashboardUI({ children }: { children: ReactNode }) {
     const firestore = useFirestore();
 
     const [showSupportPopup, setShowSupportPopup] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !user) return null;
@@ -32,8 +37,7 @@ function DashboardUI({ children }: { children: ReactNode }) {
             return false;
         }
 
-        // For now, every user is a demo user as requested.
-        const isDemoUser = true;
+        const isDemoUser = true; 
         if (!isDemoUser) {
             return false;
         }
@@ -43,12 +47,10 @@ function DashboardUI({ children }: { children: ReactNode }) {
         try {
             const docSnap = await getDoc(responseDocRef);
             if (!docSnap.exists()) {
-                setShowSupportPopup(true); // User has not responded, show popup.
+                setShowSupportPopup(true);
                 return true;
             }
         } catch (error) {
-            // This will catch permission errors if the rules are not set up correctly.
-            // We will proceed assuming the user has not responded, which is a safe failure case for this demo feature.
             console.error("Error checking for support response (might be a permissions issue, showing popup as fallback):", error);
             setShowSupportPopup(true);
             return true;
@@ -73,7 +75,7 @@ function DashboardUI({ children }: { children: ReactNode }) {
             <SidebarInset>
                 <HeroAnimation />
                 <div className="relative z-10 flex flex-col h-full">
-                    <DashboardHeader onSidebarTrigger={checkAndTriggerPopup} />
+                    {isClient && <DashboardHeader onSidebarTrigger={checkAndTriggerPopup} />}
                     <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-transparent overflow-y-auto">
                         <div className="max-w-7xl mx-auto w-full">
                             {children}

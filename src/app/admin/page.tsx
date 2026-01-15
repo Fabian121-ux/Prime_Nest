@@ -8,17 +8,18 @@ import { ShieldCheck, User, Building, Hammer } from "lucide-react";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import { Sidebar, SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/layout/dashboard-sidebar";
+import { useEffect, useState } from "react";
 
 const mockUsers = [
   { id: 'u1', email: 'tenant@example.com', role: 'tenant', status: 'Approved' },
-  { id: 'u2', email: 'landlord@example.com', role: 'landlord', status: 'Approved' },
-  { id: 'u3', email: 'artisan@example.com', role: 'artisan', status: 'Pending' },
+  { id: 'u2', email: 'landlord@example.com', role: 'landlord', status: 'Pending' },
+  { id: 'u3', email: 'artisan@example.com', role: 'artisan', status: 'Approved' },
 ];
 
 const mockListings = [
-  { id: 'l1', title: 'Cozy 2-Bedroom Apartment', type: 'property', creator: 'landlord@example.com', status: 'Approved' },
+  { id: 'l1', title: 'Cozy 2-Bedroom Apartment', type: 'property', creator: 'landlord@example.com', status: 'Pending' },
   { id: 'l2', title: 'Expert Plumbing Services', type: 'service', creator: 'artisan@example.com', status: 'Approved' },
-  { id: 'l3', title: 'Modern Studio with a View', type: 'property', creator: 'landlord@example.com', status: 'Pending' },
+  { id: 'l3', title: 'Modern Studio with a View', type: 'property', creator: 'anotherlandlord@example.com', status: 'Approved' },
 ];
 
 const mockEscrow = [
@@ -37,10 +38,14 @@ const RoleIcon = ({ role }: { role: string }) => {
 }
 
 export default function AdminPage() {
-    // This dummy function satisfies the prop requirement for DashboardHeader
-    // without triggering the popup logic for admins.
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const handleAdminSidebarTrigger = async () => {
-        return false; // Always return false so the sidebar toggles normally.
+        return false;
     };
 
     return (
@@ -49,8 +54,8 @@ export default function AdminPage() {
             <DashboardSidebar userRole="admin" />
         </Sidebar>
         <SidebarInset>
-            <DashboardHeader onSidebarTrigger={handleAdminSidebarTrigger} />
-            <main className="container py-8 space-y-8 overflow-y-auto">
+            {isClient && <DashboardHeader onSidebarTrigger={handleAdminSidebarTrigger} />}
+            <main className="container mx-auto py-8 space-y-8 overflow-y-auto">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Admin Panel</h1>
                     <p className="text-muted-foreground">Manage users, listings, and payments.</p>
