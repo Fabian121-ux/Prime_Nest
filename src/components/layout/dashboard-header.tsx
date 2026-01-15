@@ -59,7 +59,7 @@ export default function DashboardHeader() {
             </Link>
         </div>
         
-        <div className="flex flex-1 items-center justify-center px-4">
+        <div className="flex flex-1 items-center justify-center px-4 md:px-0">
             {/* Desktop Search Bar */}
             <div className="hidden md:block w-full max-w-md lg:max-w-lg">
                 <div className="relative">
@@ -76,7 +76,7 @@ export default function DashboardHeader() {
                     <span className="sr-only">Search</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80">
+                <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80">
                    <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                       <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
