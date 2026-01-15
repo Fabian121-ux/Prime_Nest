@@ -35,9 +35,10 @@ export default function Home() {
   const listing1 = PlaceHolderImages.find(p => p.id === 'listing1');
   const listing2 = PlaceHolderImages.find(p => p.id === 'listing2');
   const listing3 = PlaceHolderImages.find(p => p.id === 'listing3');
+  const listing4 = PlaceHolderImages.find(p => p.id === 'listing4');
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
       <main className="flex-1">
@@ -114,7 +115,7 @@ export default function Home() {
         </section>
         
         {/* Explore Listings Section */}
-        <section id="explore" className="py-16 md:py-24">
+        <section id="explore" className="py-16 md:py-24 bg-background">
           <div className="container">
              <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Explore Prime Nest</h2>
@@ -122,7 +123,7 @@ export default function Home() {
                 Discover properties, find skilled artisans, or offer your professional services.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                {/* Example Listing 1: Property */}
               <MotionCard
                 initial={{ opacity: 0, y: 40 }}
@@ -217,6 +218,39 @@ export default function Home() {
                     <p className="text-lg font-bold text-primary">₦850,000/yr</p>
                     <Button variant="outline" asChild>
                        <Link href="/listing/3">View</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </MotionCard>
+              
+              {/* Example Listing 4: Service */}
+              <MotionCard
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="group overflow-hidden"
+              >
+               {listing4 &&
+                <div className="relative h-56 w-full">
+                  <Image
+                    src={listing4.imageUrl}
+                    alt="Electrical wires"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                     data-ai-hint={listing4.imageHint}
+                  />
+                </div>}
+                <CardHeader>
+                  <CardTitle>Professional Electrical Works</CardTitle>
+                  <CardDescription>Certified & Insured</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-bold text-primary">Contact for Quote</p>
+                    <Button variant="outline" asChild>
+                       <Link href="/listing/4">View</Link>
                     </Button>
                   </div>
                 </CardContent>
