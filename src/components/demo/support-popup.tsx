@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
-import { doc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -40,7 +40,9 @@ export default function SupportPopup({ isOpen, onOpenChange }: SupportPopupProps
   const handleYes = useCallback(async () => {
     if (!firestore || !user) return;
     try {
-      addDoc(collection(firestore, 'support_demo_responses'), {
+      const responseDocRef = doc(firestore, 'support_demo_responses', user.uid);
+      await setDoc(responseDocRef, {
+        docId: user.uid,
         uid: user.uid,
         email: user.email,
         response: 'yes',
@@ -62,7 +64,9 @@ export default function SupportPopup({ isOpen, onOpenChange }: SupportPopupProps
   const handleNo = useCallback(async () => {
     if (!firestore || !user) return;
     try {
-      addDoc(collection(firestore, 'support_demo_responses'), {
+      const responseDocRef = doc(firestore, 'support_demo_responses', user.uid);
+      await setDoc(responseDocRef, {
+        docId: user.uid,
         uid: user.uid,
         email: user.email,
         response: 'no',
@@ -190,3 +194,5 @@ export default function SupportPopup({ isOpen, onOpenChange }: SupportPopupProps
         </Dialog>
   );
 }
+
+    

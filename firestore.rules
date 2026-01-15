@@ -117,10 +117,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /support_demo_responses/{responseId} {
-      allow get, list: if isAdmin(); // Only admins can read all responses.
-      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid; // Users can only create their own response.
-      allow update, delete: if false; // Responses are immutable.
+    match /support_demo_responses/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
+      allow update, delete: if false;
     }
   }
 }
+
+    

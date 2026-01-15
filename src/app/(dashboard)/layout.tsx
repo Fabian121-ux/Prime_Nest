@@ -1,7 +1,7 @@
 
 'use client';
 import { useAuth, useDoc, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { doc, getDocs, collection, query, where } from "firebase/firestore";
+import { doc, getDocs, collection, query, where, getDoc } from "firebase/firestore";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import { SidebarProvider, Sidebar, SidebarInset } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/layout/dashboard-sidebar";
@@ -38,17 +38,22 @@ function DashboardUI({ children }: { children: ReactNode }) {
             return false;
         }
 
-        const responsesRef = collection(firestore, 'support_demo_responses');
-        const q = query(responsesRef, where("uid", "==", user.uid));
+        const responseDocRef = doc(firestore, 'support_demo_responses', user.uid);
         
         try {
-            const querySnapshot = await getDocs(q);
-            if (querySnapshot.empty) {
+            const docSnap = await getDoc(responseDocRef);
+            if (!docSnap.exists()) {
                 setShowSupportPopup(true); // User has not responded, show popup.
                 return true;
             }
         } catch (error) {
-            console.error("Error checking for support response:", error);
+            // This will catch permission errors if the rules are not set up correctly,
+            // but we will proceed assuming the user has not responded.
+            // This might cause the popup to show again for a user who responded if rules are broken,
+            // which is a safe failure case for this demo feature.
+            console.error("Error checking for support response (might be a permissions issue):", error);
+            setShowSupportPopup(true);
+            return true;
         }
         return false;
     }, [user, isUserLoading, firestore]);
@@ -94,3 +99,5 @@ export default function DashboardLayout({
 }) {
     return <DashboardMainContent>{children}</DashboardMainContent>;
 }
+
+    
