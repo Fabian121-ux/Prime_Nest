@@ -54,8 +54,9 @@ export default function DashboardSidebar() {
   const { state } = useSidebar();
 
   const isActive = (href: string) => {
+    // Special case for the main dashboard link
     if (href === '/dashboard') {
-        return pathname === '/dashboard';
+        return pathname === '/dashboard' || pathname === '/';
     }
     return pathname.startsWith(href);
   }
