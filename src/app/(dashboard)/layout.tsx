@@ -8,6 +8,7 @@ import DashboardSidebar from "@/components/layout/dashboard-sidebar";
 import React, { type ReactNode, useState, useEffect, useCallback } from "react";
 import SupportPopup from "@/components/demo/support-popup";
 import { Skeleton } from "@/components/ui/skeleton";
+import HeroAnimation from "@/components/layout/hero-animation";
 
 
 function DashboardUI({ children }: { children: ReactNode }) {
@@ -70,12 +71,15 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 )}
             </Sidebar>
             <SidebarInset>
-                <DashboardHeader onSidebarTrigger={checkAndTriggerPopup} />
-                <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-muted/40 overflow-y-auto">
-                    <div className="max-w-7xl mx-auto w-full">
-                        {children}
-                    </div>
-                </main>
+                <HeroAnimation />
+                <div className="relative z-10 flex flex-col h-full">
+                    <DashboardHeader onSidebarTrigger={checkAndTriggerPopup} />
+                    <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-transparent overflow-y-auto">
+                        <div className="max-w-7xl mx-auto w-full">
+                            {children}
+                        </div>
+                    </main>
+                </div>
                  <SupportPopup isOpen={showSupportPopup} onOpenChange={setShowSupportPopup} />
             </SidebarInset>
         </>

@@ -14,6 +14,7 @@ import { Input } from '../ui/input';
 import { doc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemeToggle } from './theme-toggle';
 
 const getRoleName = (role: string) => {
     switch (role) {
@@ -66,7 +67,7 @@ export default function DashboardHeader({ onSidebarTrigger }: DashboardHeaderPro
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b bg-card/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 w-full border-b bg-card/50 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
             <SidebarTrigger onClick={handleSidebarTriggerClick} />
@@ -96,6 +97,8 @@ export default function DashboardHeader({ onSidebarTrigger }: DashboardHeaderPro
               </div>
             )}
           </div>
+          
+          <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
