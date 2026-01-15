@@ -12,13 +12,12 @@ import {
 } from '@/components/ui/sidebar';
 import {
   LayoutGrid,
-  BarChart3,
-  Users,
+  Building2,
+  MessageSquare,
+  Wallet,
+  User,
   LifeBuoy,
-  LogOut,
   Home,
-  Settings,
-  Star,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,23 +29,23 @@ const menuItems = [
   },
   {
     href: '/listings',
-    label: 'Analytics',
-    icon: BarChart3,
+    label: 'Listings',
+    icon: Building2,
   },
   {
     href: '/messages',
-    label: 'Users',
-    icon: Users,
+    label: 'Messages',
+    icon: MessageSquare,
   },
   {
     href: '/wallet',
-    label: 'Favorites',
-    icon: Star,
+    label: 'Wallet',
+    icon: Wallet,
   },
   {
     href: '/profile',
-    label: 'Settings',
-    icon: Settings,
+    label: 'Profile',
+    icon: User,
   },
 ];
 
@@ -63,7 +62,9 @@ export default function DashboardSidebar() {
   }
 
   const handleLinkClick = () => {
-    setOpenMobile(false);
+    if (window.innerWidth < 768) { // Only close on mobile
+      setOpenMobile(false);
+    }
   }
 
   return (
@@ -78,7 +79,7 @@ export default function DashboardSidebar() {
             <Home className="text-primary h-5 w-5" />
           </div>
           <span className="font-headline text-sidebar-accent-foreground transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
-            Prime
+            Prime Nest
           </span>
         </Link>
       </SidebarHeader>
@@ -110,17 +111,6 @@ export default function DashboardSidebar() {
               <Link href="/support" onClick={handleLinkClick}>
                 <LifeBuoy />
                 <span>Support</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip={{ children: "Logout", side: "right", align: "center" }}
-            >
-              <Link href="/" onClick={handleLinkClick}>
-                <LogOut />
-                <span>Logout</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

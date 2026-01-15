@@ -1,10 +1,9 @@
 "use client";
 
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Home, LogOut, User, Shield, Search, Bell } from 'lucide-react';
+import { LogOut, User, Shield, Search, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
@@ -13,6 +12,7 @@ import { SidebarTrigger } from '../ui/sidebar';
 import { Input } from '../ui/input';
 import { doc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const getRoleName = (role: string) => {
     switch (role) {
@@ -29,6 +29,7 @@ export default function DashboardHeader() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const isMobile = useIsMobile();
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -47,16 +48,40 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-sm">
-      <div className="container flex h-16 items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 w-full border-b bg-card/80 backdrop-blur-sm">
+      <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-            <SidebarTrigger className="md:hidden"/>
+            <SidebarTrigger/>
         </div>
         
         <div className="flex flex-1 items-center justify-end gap-2 text-muted-foreground">
+          <div className="w-full max-w-sm ml-auto">
+            {isMobile ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Search className="h-5 w-5" />
+                    <span className="sr-only">Search</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-screen max-w-[calc(100vw-2rem)] p-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Search..." className="pl-9" />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search..." className="pl-9 bg-muted/50 border-none" />
+              </div>
+            )}
+          </div>
+
           <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-card"></span>
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-background"></span>
               <span className="sr-only">Notifications</span>
           </Button>
 
@@ -66,7 +91,7 @@ export default function DashboardHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
+                  <Avatar className="h-9 w-9 border-2 border-transparent hover:border-primary">
                     {avatar && <AvatarImage src={avatar.imageUrl} alt={user.displayName || 'User'} data-ai-hint={avatar.imageHint} />}
                     <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
