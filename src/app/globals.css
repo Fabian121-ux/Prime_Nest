@@ -77,30 +77,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@layer components {
-    .bg-green-600 {
-        background-color: #38A169;
-    }
-    .hover\:bg-green-700:hover {
-        background-color: #2F855A;
-    }
-    .bg-orange-500 {
-        background-color: #ED8936;
-    }
-    .hover\:bg-orange-600:hover {
-        background-color: #DD6B20;
-    }
-    .bg-yellow-500 {
-        background-color: #F6AD55;
-    }
-    .hover\:bg-yellow-600:hover {
-        background-color: #EDB879;
-    }
-    .bg-red-600 {
-        background-color: #E53E3E;
-    }
-    .hover\:bg-red-700:hover {
-        background-color: #C53030;
-    }
-}
