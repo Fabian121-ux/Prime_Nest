@@ -14,8 +14,7 @@ import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc } from "firebase/firestore";
-import { doc, serverTimestamp } from "firebase/firestore";
+import { setDoc, getDocs, collection, serverTimestamp, doc } from "firebase/firestore";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -51,6 +50,13 @@ export default function SignUpPage() {
         return;
     }
     try {
+      // Check if any users exist
+      const usersCollectionRef = collection(firestore, "users");
+      const usersSnapshot = await getDocs(usersCollectionRef);
+      const isFirstUser = usersSnapshot.empty;
+      
+      const roleToAssign = isFirstUser ? 'admin' : values.role;
+
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
@@ -58,8 +64,8 @@ export default function SignUpPage() {
       const userData = {
         userId: user.uid,
         email: user.email,
-        rolePrimary: values.role,
-        roles: [values.role],
+        rolePrimary: roleToAssign,
+        roles: [roleToAssign],
         trustTier: 0,
         isVerified: false,
         status: 'active',
@@ -70,7 +76,7 @@ export default function SignUpPage() {
       await setDoc(userDocRef, userData);
       
       toast({
-        title: "Account Created Successfully",
+        title: isFirstUser ? "Admin Account Created" : "Account Created Successfully",
         description: "Please log in with your new credentials.",
       });
       router.push('/login');

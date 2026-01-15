@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
+  const firestore = useFirestore();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,21 +37,36 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!auth) {
+    if (!auth || !firestore) {
         toast({
             variant: "destructive",
             title: "Authentication Error",
-            description: "Firebase Auth is not available. Please try again later.",
+            description: "Firebase services are not available. Please try again later.",
         });
         return;
     }
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({
-        title: "Login Successful",
-        description: "Redirecting to your dashboard...",
-      });
-      router.push('/dashboard');
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      // Check user role
+      const userDocRef = doc(firestore, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists() && userDoc.data().rolePrimary === 'admin') {
+         toast({
+            title: "Admin Login Successful",
+            description: "Redirecting to admin panel...",
+         });
+         router.push('/admin');
+      } else {
+        toast({
+          title: "Login Successful",
+          description: "Redirecting to your dashboard...",
+        });
+        router.push('/dashboard');
+      }
+
     } catch (error: any) {
         const errorMessage =
           error.code === 'auth/invalid-credential'
@@ -74,7 +91,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="font-headline text-2xl">Log in to Prime Nest</CardTitle>
-          <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+          <CardDescription>Enter your credentials to access your account.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
