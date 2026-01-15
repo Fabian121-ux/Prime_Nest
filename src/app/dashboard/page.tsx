@@ -1,17 +1,14 @@
-"use client"; // Needs to be client to get user role for demo
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-// Mock user, to be replaced with auth context
-// Switch role to 'tenant', 'landlord', 'artisan', 'admin' to test views
-// const user = { role: 'landlord' }; 
+import { doc, DocumentData } from "firebase/firestore";
 
 const mockData = {
   listings: [
@@ -181,28 +178,30 @@ const EscrowStatusTracker = ({ status }: { status: 'initiated' | 'held' | 'relea
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
-  const [role, setRole] = useState<string | null>(null);
+  const firestore = useFirestore();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+  
+  const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   useEffect(() => {
-    if (!isUserLoading) {
-      if (!user) {
-        router.push('/login');
-      } else {
-        user.getIdTokenResult().then(idTokenResult => {
-          const userRole = idTokenResult.claims.role as string || 'tenant'; // Default to tenant
-          setRole(userRole);
-        });
-      }
+    if (!isUserLoading && !user) {
+      router.push('/login');
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !role) {
+  if (isUserLoading || isUserDocLoading || !userData) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
+
+  const role = (userData as any).rolePrimary;
 
   switch (role) {
     case 'tenant':
