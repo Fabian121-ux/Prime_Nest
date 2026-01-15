@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Home } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/firebase";
+import { useAuth } from "@/firebase/provider";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 const formSchema = z.object({
@@ -33,6 +33,14 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth) {
+        toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: "Firebase Auth is not available. Please try again later.",
+        });
+        return;
+    }
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({

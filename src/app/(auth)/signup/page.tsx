@@ -12,8 +12,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Home } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase/provider";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { doc, serverTimestamp } from "firebase/firestore";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -27,6 +29,7 @@ export default function SignUpPage() {
   const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,10 +40,32 @@ export default function SignUpPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth || !firestore) {
+       toast({
+            variant: "destructive",
+            title: "Service Error",
+            description: "Firebase services are not available. Please try again later.",
+        });
+        return;
+    }
     try {
-      // Note: We are not setting the custom claim here. That must be done in a secure backend environment.
-      // This function only creates the user in Firebase Auth.
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      const userDocRef = doc(firestore, "users", user.uid);
+      const userData = {
+        userId: user.uid,
+        email: user.email,
+        rolePrimary: values.role,
+        roles: [values.role],
+        trustTier: 0,
+        isVerified: false,
+        status: 'active',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      setDocumentNonBlocking(userDocRef, userData, { merge: false });
       
       toast({
         title: "Account Created Successfully",
