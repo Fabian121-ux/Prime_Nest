@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
-import { doc, getDoc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, getDocs, addDoc, serverTimestamp, collection, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, HeartCrack, PartyPopper } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { demoTeamEmails } from '@/lib/demo-config';
 
 type PopupState = 'initial' | 'confirm_yes' | 'confirm_no';
 
-export default function DashboardPage() {
+export default function SupportPopup() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const auth = useAuth();
@@ -21,31 +22,55 @@ export default function DashboardPage() {
   const [popupState, setPopupState] = useState<PopupState>('initial');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [countdown, setCountdown] = useState(10);
-  const [hasSeenPopup, setHasSeenPopup] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
-  // Check if user already responded to popup
   useEffect(() => {
-    if (!user || !firestore) return;
-    const checkPopup = async () => {
+    const checkAndShowPopup = async () => {
+      // Wait until user loading is false and we have a user and firestore instance
+      if (isUserLoading || !user || !firestore) {
+        if (!isUserLoading) setIsChecking(false); // If not loading and no user, stop checking
+        return;
+      }
+
+      setIsChecking(true);
+      
+      // Gating logic: only show for specified demo users
+      const isDemoUser = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || demoTeamEmails.includes(user.email || '');
+      if (!isDemoUser) {
+        setIsChecking(false);
+        setIsPopupOpen(false);
+        return;
+      }
+
+      // Check if user has already responded
+      const responsesRef = collection(firestore, 'support_demo_responses');
+      const q = query(responsesRef, where("uid", "==", user.uid));
+      
       try {
-        const querySnap = await getDoc(doc(firestore, 'support_demo_responses', user.uid));
-        if (!querySnap.exists()) {
-          setIsPopupOpen(true); // Show popup if not responded
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+          setIsPopupOpen(true); // User has not responded, show popup.
         } else {
-          setHasSeenPopup(true);
+          setIsPopupOpen(false); // User has responded, do not show.
         }
-      } catch (err) {
-        console.error('Error checking popup:', err);
+      } catch (error) {
+        console.error("Error checking for support response:", error);
+        setIsPopupOpen(false);
+      } finally {
+        setIsChecking(false);
       }
     };
-    checkPopup();
-  }, [user, firestore]);
+    
+    checkAndShowPopup();
+
+  }, [user, isUserLoading, firestore]);
+
 
   // Handle "Yes" click
   const handleYes = useCallback(async () => {
     if (!firestore || !user) return;
     try {
-      await addDoc(collection(firestore, 'support_demo_responses'), {
+      addDoc(collection(firestore, 'support_demo_responses'), {
         uid: user.uid,
         email: user.email,
         response: 'yes',
@@ -56,12 +81,10 @@ export default function DashboardPage() {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       setTimeout(() => {
         setIsPopupOpen(false);
-        setHasSeenPopup(true);
       }, 4000);
     } catch (err) {
       console.error('Error saving response:', err);
       setIsPopupOpen(false);
-      setHasSeenPopup(true);
     }
   }, [firestore, user]);
 
@@ -69,7 +92,7 @@ export default function DashboardPage() {
   const handleNo = useCallback(async () => {
     if (!firestore || !user) return;
     try {
-      await addDoc(collection(firestore, 'support_demo_responses'), {
+      addDoc(collection(firestore, 'support_demo_responses'), {
         uid: user.uid,
         email: user.email,
         response: 'no',
@@ -82,6 +105,13 @@ export default function DashboardPage() {
       setIsPopupOpen(false);
     }
   }, [firestore, user]);
+  
+  const handleLogout = useCallback(async () => {
+    if (!auth) return;
+    setIsPopupOpen(false);
+    await signOut(auth);
+    router.push('/login');
+  }, [auth, router]);
 
   // Countdown for "No" response
   useEffect(() => {
@@ -92,27 +122,24 @@ export default function DashboardPage() {
       handleLogout();
     }
     return () => clearTimeout(timer);
-  }, [popupState, countdown]);
+  }, [popupState, countdown, handleLogout]);
 
-  const handleLogout = useCallback(async () => {
-    if (!auth) return;
-    setIsPopupOpen(false);
-    setHasSeenPopup(true);
-    await signOut(auth);
-    router.push('/login');
-  }, [auth, router]);
-
-  if (isUserLoading) return <div>Loading...</div>;
+  if (isChecking || !isPopupOpen) {
+    return null; // Don't render anything while checking or if not supposed to be open
+  }
 
   return (
-    <div className="relative min-h-screen bg-background">
-      {/* Your dashboard content goes here */}
-      <h1 className="text-3xl font-bold p-6">Welcome to Prime Nest Dashboard</h1>
-
-      {/* Support Popup */}
-      {user && !hasSeenPopup && (
-        <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
-          <DialogContent className="sm:max-w-md">
+      <Dialog open={isPopupOpen} onOpenChange={(open) => {
+        // Prevent closing via normal means
+        if (!open) return;
+        setIsPopupOpen(open);
+      }}>
+          <DialogContent 
+            className="sm:max-w-md" 
+            hideCloseButton={true}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
             <AnimatePresence mode="wait">
               {popupState === 'initial' && (
                 <motion.div
@@ -191,7 +218,5 @@ export default function DashboardPage() {
             </AnimatePresence>
           </DialogContent>
         </Dialog>
-      )}
-    </div>
   );
 }
