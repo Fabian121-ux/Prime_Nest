@@ -79,13 +79,13 @@ export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 overflow-hidden bg-background">
+        <section className="relative py-20 md:py-32 overflow-hidden">
           <HeroAnimation />
           <motion.div 
-            className="container mx-auto px-6 text-center relative"
+            className="container mx-auto px-6 text-center relative z-10"
             variants={containerVariants}
             initial="hidden"
             animate="visible"

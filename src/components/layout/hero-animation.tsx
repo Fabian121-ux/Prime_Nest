@@ -3,20 +3,18 @@
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
-// ✅ Star type
 interface StarType {
   id: number;
-  x: number; // 0–100 (% of width)
-  y: number; // 0–100 (% of height)
+  x: number;
+  y: number;
   size: number;
   duration: number;
 }
 
-// ✅ Single Star component
 const Star: React.FC<StarType> = ({ x, y, size, duration }) => (
   <motion.circle
-    cx={`${x}%`}
-    cy={`${y}%`}
+    cx={x}
+    cy={y}
     r={size}
     fill="hsl(var(--primary) / 0.5)"
     initial={{ opacity: 0, scale: 0 }}
@@ -28,7 +26,7 @@ const Star: React.FC<StarType> = ({ x, y, size, duration }) => (
       duration: duration,
       ease: 'easeInOut',
       repeat: Infinity,
-      repeatDelay: Math.random() * 2, // random delay for natural twinkle
+      repeatDelay: Math.random() * 2,
     }}
   />
 );
@@ -36,13 +34,21 @@ const Star: React.FC<StarType> = ({ x, y, size, duration }) => (
 const HeroAnimation: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [stars, setStars] = useState<StarType[]>([]);
+  const [viewBox, setViewBox] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
+    // This effect runs only on the client
     setIsMounted(true);
+    
+    // We can safely access window dimensions here
+    const width = window.innerWidth;
+    const height = 500; // Approx height of hero section
+    setViewBox({ width, height });
+
     const generatedStars: StarType[] = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
+      x: Math.random() * width,
+      y: Math.random() * height,
       size: Math.random() * 1.5 + 0.5,
       duration: Math.random() * 5 + 5,
     }));
@@ -50,21 +56,29 @@ const HeroAnimation: React.FC = () => {
   }, []);
 
   if (!isMounted) {
-    return <div className="absolute inset-0 bg-background -z-10" />;
+    // Render nothing on the server to prevent hydration mismatch
+    return null;
   }
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-background -z-10">
-      {/* Layer 1: Radial Gradient */}
-      <svg width="100%" height="100%" className="absolute inset-0">
-        <defs>
-          <radialGradient id="grad1" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="hsl(var(--primary) / 0.1)" />
-            <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
-          </radialGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grad1)" />
-        {/* Layer 2: Stars */}
+    <div className="absolute inset-0 overflow-hidden -z-10">
+       <motion.div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at center, hsl(var(--primary) / 0.3), transparent 70%)',
+        }}
+        animate={{
+          scale: [1, 1.2, 1],
+          rotate: [0, 90, 0],
+        }}
+        transition={{
+          duration: 40,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      />
+      
+      <svg width="100%" height="100%" viewBox={`0 0 ${viewBox.width} ${viewBox.height}`} className="absolute inset-0">
         {stars.map(star => (
           <Star
             key={star.id}
@@ -75,8 +89,7 @@ const HeroAnimation: React.FC = () => {
           />
         ))}
       </svg>
-
-      {/* Layer 3: Faint Grid Overlay */}
+      
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
