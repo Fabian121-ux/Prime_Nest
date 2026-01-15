@@ -3,12 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck } from "lucide-react";
+import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Mock user, to be replaced with auth context
 // Switch role to 'tenant', 'landlord', 'artisan', 'admin' to test views
-const user = { role: 'landlord' }; 
+// const user = { role: 'landlord' }; 
 
 const mockData = {
   listings: [
@@ -108,6 +111,21 @@ const ArtisanDashboard = () => (
   </div>
 );
 
+const AdminDashboard = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-headline">Welcome, Administrator!</CardTitle>
+        <CardDescription>You can manage the platform from the admin panel.</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col items-start gap-4">
+        <p>You have administrative privileges.</p>
+        <Button asChild>
+            <Link href="/admin">Go to Admin Panel</Link>
+        </Button>
+      </CardContent>
+    </Card>
+)
+
 const EscrowSection = () => (
   <Card>
     <CardHeader>
@@ -161,32 +179,41 @@ const EscrowStatusTracker = ({ status }: { status: 'initiated' | 'held' | 'relea
 
 
 export default function DashboardPage() {
-  // This logic will come from an Auth Context in a real app
-  const { role } = user;
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
 
-  if (role === 'tenant') {
-    return <TenantDashboard />;
+  useEffect(() => {
+    if (!isUserLoading) {
+      if (!user) {
+        router.push('/login');
+      } else {
+        user.getIdTokenResult().then(idTokenResult => {
+          const userRole = idTokenResult.claims.role as string || 'tenant'; // Default to tenant
+          setRole(userRole);
+        });
+      }
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !role) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
-  if (role === 'landlord') {
-    return <LandlordDashboard />;
+
+  switch (role) {
+    case 'tenant':
+      return <TenantDashboard />;
+    case 'landlord':
+      return <LandlordDashboard />;
+    case 'artisan':
+      return <ArtisanDashboard />;
+    case 'admin':
+      return <AdminDashboard />;
+    default:
+      return <TenantDashboard />; // Fallback to the most common role
   }
-  if (role === 'artisan') {
-    return <ArtisanDashboard />;
-  }
-  
-  // Fallback for Admin or other roles
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline">Welcome, Administrator!</CardTitle>
-        <CardDescription>You can manage the platform from the admin panel.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-start gap-4">
-        <p>Your role is: {role}</p>
-        <Button asChild>
-            <Link href="/admin">Go to Admin Panel</Link>
-        </Button>
-      </CardContent>
-    </Card>
-  );
 }

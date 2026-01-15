@@ -7,14 +7,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Home, LogOut, User, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-// Mock user data for demo. In a real app, this would come from an auth context.
-const user = {
-  name: 'Admin User',
-  email: 'admin@primenest.app',
-  role: 'admin', // Switch to 'tenant', 'landlord', 'artisan' to test different views
-  avatarId: 'admin-avatar'
-};
+import { useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useAuth } from '@/firebase';
 
 const getRoleName = (role: string) => {
     switch (role) {
@@ -28,12 +23,28 @@ const getRoleName = (role: string) => {
 
 export default function DashboardHeader() {
   const router = useRouter();
-  const avatar = PlaceHolderImages.find(img => img.id === user.avatarId);
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
+  
+  // A mock role until custom claims are fully implemented
+  const mockRole = 'admin'; 
 
-  const handleLogout = () => {
-    // TODO: Implement Firebase logout
+  const avatar = PlaceHolderImages.find(img => img.id === 'admin-avatar');
+
+  const handleLogout = async () => {
+    await signOut(auth);
     router.push('/');
   };
+
+  if (isUserLoading) {
+    return (
+      <header className="sticky top-0 z-50 w-full border-b bg-card">
+        <div className="container flex h-16 items-center justify-between">
+            {/* Skeleton or loading state can go here */}
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card">
@@ -45,45 +56,49 @@ export default function DashboardHeader() {
           <span className="font-headline hidden sm:inline">Prime Nest</span>
         </Link>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground hidden md:block">
-            Role: <span className="font-semibold text-foreground">{getRoleName(user.role)}</span>
-          </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-9 w-9">
-                  {avatar && <AvatarImage src={avatar.imageUrl} alt={user.name} data-ai-hint={avatar.imageHint} />}
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
-                <User className="mr-2 h-4 w-4" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
-              {user.role === 'admin' && (
-                <DropdownMenuItem onClick={() => router.push('/admin')}>
-                    <Shield className="mr-2 h-4 w-4" />
-                    <span>Admin Panel</span>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {user && (
+            <>
+              <span className="text-sm text-muted-foreground hidden md:block">
+                Role: <span className="font-semibold text-foreground">{getRoleName(mockRole)}</span>
+              </span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      {avatar && <AvatarImage src={avatar.imageUrl} alt={user.displayName || 'User'} data-ai-hint={avatar.imageHint} />}
+                      <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.displayName || 'User'}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  {mockRole === 'admin' && (
+                    <DropdownMenuItem onClick={() => router.push('/admin')}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        <span>Admin Panel</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
         </div>
       </div>
     </header>
