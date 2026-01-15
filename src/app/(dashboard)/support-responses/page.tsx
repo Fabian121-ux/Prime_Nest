@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useCollection, useFirestore, useUser } from "@/firebase";
+import { useCollection, useFirestore, useUser, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy, Timestamp } from "firebase/firestore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -97,6 +97,7 @@ export default function SupportResponsesPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead>User ID</TableHead>
                                     <TableHead>Email</TableHead>
                                     <TableHead>Response</TableHead>
                                     <TableHead>Time</TableHead>
@@ -106,6 +107,7 @@ export default function SupportResponsesPage() {
                             <TableBody>
                                 {responses && responses.length > 0 ? responses.map(res => (
                                     <TableRow key={res.id}>
+                                        <TableCell className="font-mono text-xs">{res.uid}</TableCell>
                                         <TableCell className="font-medium">{res.email}</TableCell>
                                         <TableCell>
                                             <Badge variant={res.response === 'yes' ? 'secondary' : 'destructive'}>
@@ -121,7 +123,7 @@ export default function SupportResponsesPage() {
                                     </TableRow>
                                 )) : (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="text-center h-24">
+                                        <TableCell colSpan={5} className="text-center h-24">
                                             No responses yet.
                                         </TableCell>
                                     </TableRow>

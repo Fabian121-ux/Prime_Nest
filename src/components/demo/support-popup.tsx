@@ -45,12 +45,14 @@ export default function SupportPopup({ user, onClose }: SupportPopupProps) {
       });
       setTimeout(() => {
         setIsOpen(false);
+        onClose();
       }, 4000); // Close after 4 seconds
     } catch (error) {
       console.error("Error saving response:", error);
       setIsOpen(false);
+      onClose();
     }
-  }, [firestore, user.uid, user.email]);
+  }, [firestore, user.uid, user.email, onClose]);
 
   const handleNo = async () => {
      if (!firestore) return;
@@ -66,15 +68,17 @@ export default function SupportPopup({ user, onClose }: SupportPopupProps) {
     } catch (error) {
         console.error("Error saving response:", error);
         setIsOpen(false);
+        onClose();
     }
   };
 
   const handleLogout = useCallback(async () => {
     if (!auth) return;
+    setIsOpen(false);
+    onClose();
     await signOut(auth);
     router.push('/login');
-    setIsOpen(false);
-  }, [auth, router]);
+  }, [auth, router, onClose]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -87,13 +91,12 @@ export default function SupportPopup({ user, onClose }: SupportPopupProps) {
   }, [popupState, countdown, handleLogout]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-        if (!open) {
-            setIsOpen(false);
-            onClose();
-        }
-    }}>
-      <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+    <Dialog open={isOpen}>
+      <DialogContent 
+        className="sm:max-w-md" 
+        onInteractOutside={(e) => e.preventDefault()}
+        hideCloseButton={true}
+      >
         <AnimatePresence mode="wait">
           {popupState === 'initial' && (
             <motion.div
