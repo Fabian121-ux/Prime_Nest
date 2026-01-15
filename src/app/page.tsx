@@ -1,166 +1,231 @@
-
 'use client';
-import Image from 'next/image';
+
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, Building, Hammer, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Building, Hammer, MapPin, Search, ShieldCheck, UserPlus } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import HeroAnimation from '@/components/layout/hero-animation';
 import { motion } from 'framer-motion';
+import Footer from '@/components/layout/footer';
+import Header from '@/components/layout/header';
+import HeroAnimation from '@/components/layout/hero-animation';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
+const MotionCard = motion(Card);
 
-const mockListings = [
-  { id: '1', title: 'Cozy 2-Bedroom Apartment', description: 'A beautiful apartment in the heart of the city.', price: 1200000, type: 'property', location: 'Lagos, Nigeria', imageId: 'listing1' },
-  { id: '2', title: 'Expert Plumbing Services', description: 'Fast and reliable plumbing solutions for your home.', price: 5000, type: 'service', location: 'Accra, Ghana', imageId: 'listing2' },
-  { id: '3', title: 'Modern Studio with a View', description: 'Stunning views from this top-floor studio.', price: 850000, type: 'property', location: 'Nairobi, Kenya', imageId: 'listing3' },
-  { id: '4', title: 'Professional Electrical Wiring', description: 'Certified electrician for all your wiring needs.', price: 7500, type: 'service', location: 'Cape Town, South Africa', imageId: 'listing4' },
+const featureCards = [
+  {
+    icon: <ShieldCheck className="w-8 h-8 text-primary" />,
+    title: 'Secure Escrow System',
+    description: 'Payments are held securely until both parties are satisfied, ensuring trust and transparency in every transaction.',
+  },
+  {
+    icon: <Building className="w-8 h-8 text-primary" />,
+    title: 'Verified Listings',
+    description: 'Browse a curated selection of properties and services from verified users, reducing risk and uncertainty.',
+  },
+  {
+    icon: <Hammer className="w-8 h-8 text-primary" />,
+    title: 'Trusted Professionals',
+    description: 'Connect with skilled artisans and professionals whose identities and skills have been vetted by our platform.',
+  },
 ];
 
-function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
-  const Icon = listing.type === 'property' ? Building : Hammer;
-  const image = PlaceHolderImages.find(img => img.id === listing.imageId);
-
-  return (
-    <Card className="overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5">
-      <div className="relative">
-        {image && <Image src={image.imageUrl} alt={listing.title} width={600} height={400} className="w-full h-48 object-cover" data-ai-hint={image.imageHint} />}
-        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold shadow-md">₦{listing.price.toLocaleString()}{listing.type === 'property' ? '' : '/hr'}</div>
-      </div>
-      <CardHeader>
-        <CardTitle className="font-headline text-xl">{listing.title}</CardTitle>
-        <CardDescription className="flex items-center gap-2 pt-1">
-          <Icon className="w-4 h-4" />
-          <span>{listing.type === 'property' ? 'Property for Rent' : 'Service Available'}</span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-muted-foreground line-clamp-2">{listing.description}</p>
-      </CardContent>
-      <CardFooter className="flex justify-between items-center bg-secondary/30 pt-4">
-        <div className="text-sm text-muted-foreground flex items-center gap-1">
-          <MapPin className="w-4 h-4" /> {listing.location}
-        </div>
-        <Button asChild className="transition-transform hover:scale-105">
-          <Link href={`/listing/${listing.id}`}>View <ArrowRight className="ml-2 h-4 w-4" /></Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
-  },
-};
-
-
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
+  const listing1 = PlaceHolderImages.find(p => p.id === 'listing1');
+  const listing2 = PlaceHolderImages.find(p => p.id === 'listing2');
+  const listing3 = PlaceHolderImages.find(p => p.id === 'listing3');
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
+
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 overflow-hidden">
+        {/* Hero Section */}
+        <section className="relative text-center py-20 md:py-32 lg:py-40 overflow-hidden">
           <HeroAnimation />
-          <motion.div 
-            className="container mx-auto px-6 text-center relative z-10"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div className="container relative z-10">
             <motion.h1 
-              variants={itemVariants}
-              className="text-4xl md:text-6xl font-bold font-headline text-foreground"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground mb-4"
             >
-              <span className="block sm:inline">Find Your </span><span className="inline-block text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
+              Find Your <span className="text-primary-foreground bg-primary/80 px-2 py-1 rounded-lg">Prime Nest</span>
             </motion.h1>
             <motion.p 
-              variants={itemVariants}
-              className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+              className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8"
             >
               A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.
             </motion.p>
             <motion.div 
-              variants={itemVariants}
-              className="mt-8 flex flex-wrap justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
+              className="flex justify-center gap-4"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="lg" asChild>
-                  <Link href="/signup">Get Started <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                  <Link href="/signup">
+                    Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" variant="secondary" asChild>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" variant="outline" asChild>
                   <Link href="#explore">Explore Listings</Link>
                 </Button>
               </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </section>
 
-        <section id="explore" className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center font-headline">Explore Listings</h2>
-            <p className="mt-4 text-muted-foreground text-center max-w-2xl mx-auto">Discover apartments, homes, and professional services from our trusted community members.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-              {mockListings.map(listing => (
-                <ListingCard key={listing.id} listing={listing} />
+        {/* Features Section */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">A Foundation of Trust</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Our platform is built on principles that ensure security and reliability for everyone.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featureCards.map((feature, index) => (
+                <MotionCard
+                  key={index}
+                  className="p-8 text-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                >
+                  <div className="flex justify-center mb-6">
+                    {feature.icon}
+                  </div>
+                  <CardTitle className="text-xl font-headline mb-2">{feature.title}</CardTitle>
+                  <CardDescription>{feature.description}</CardDescription>
+                </MotionCard>
               ))}
             </div>
           </div>
         </section>
+        
+        {/* Explore Listings Section */}
+        <section id="explore" className="py-16 md:py-24">
+          <div className="container">
+             <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold font-headline">Explore Prime Nest</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Discover properties, find skilled artisans, or offer your professional services.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               {/* Example Listing 1: Property */}
+              <MotionCard
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="group overflow-hidden"
+              >
+                {listing1 &&
+                <div className="relative h-56 w-full">
+                   <Image
+                    src={listing1.imageUrl}
+                    alt="Modern apartment"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    data-ai-hint={listing1.imageHint}
+                  />
+                </div>}
+                <CardHeader>
+                  <CardTitle>Cozy 2-Bedroom Apartment</CardTitle>
+                  <CardDescription>Lekki, Lagos</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-bold text-primary">₦1,200,000/yr</p>
+                    <Button variant="outline" asChild>
+                      <Link href="/listing/1">View</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </MotionCard>
 
-        <section className="py-16 md:py-24 bg-card border-y">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center font-headline">How Prime Nest Works</h2>
-             <div className="grid md:grid-cols-3 gap-8 mt-12 text-center">
-              <div className="p-4 transition-transform hover:scale-105 duration-300">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
-                  <UserPlus className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold font-headline">1. Join & Verify</h3>
-                <p className="mt-2 text-muted-foreground">Create a single account and choose your role. All users are vetted for trust and safety.</p>
-              </div>
-              <div className="p-4 transition-transform hover:scale-105 duration-300">
-                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
-                  <Search className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold font-headline">2. Find or List</h3>
-                <p className="mt-2 text-muted-foreground">Browse property or service listings. Landlords and artisans can easily post their offerings.</p>
-              </div>
-              <div className="p-4 transition-transform hover:scale-105 duration-300">
-                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
-                  <ShieldCheck className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold font-headline">3. Transact Securely</h3>
-                <p className="mt-2 text-muted-foreground">Use our secure escrow system. Funds are held until both parties are satisfied.</p>
-              </div>
+              {/* Example Listing 2: Service */}
+              <MotionCard
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="group overflow-hidden"
+              >
+                {listing2 &&
+                <div className="relative h-56 w-full">
+                  <Image
+                    src={listing2.imageUrl}
+                    alt="Plumbing service"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                     data-ai-hint={listing2.imageHint}
+                  />
+                </div>}
+                <CardHeader>
+                  <CardTitle>Expert Plumbing Services</CardTitle>
+                  <CardDescription>Available Island-wide</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-bold text-primary">Contact for Quote</p>
+                    <Button variant="outline" asChild>
+                       <Link href="/listing/2">View</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </MotionCard>
+
+              {/* Example Listing 3: Property */}
+              <MotionCard
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true, amount: 0.5 }}
+                className="group overflow-hidden"
+              >
+               {listing3 &&
+                <div className="relative h-56 w-full">
+                  <Image
+                    src={listing3.imageUrl}
+                    alt="Studio apartment with city view"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                     data-ai-hint={listing3.imageHint}
+                  />
+                </div>}
+                <CardHeader>
+                  <CardTitle>Modern Studio with a View</CardTitle>
+                  <CardDescription>Ikoyi, Lagos</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-bold text-primary">₦850,000/yr</p>
+                    <Button variant="outline" asChild>
+                       <Link href="/listing/3">View</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </MotionCard>
             </div>
           </div>
         </section>
       </main>
+
       <Footer />
     </div>
   );
