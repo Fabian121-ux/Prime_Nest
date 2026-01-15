@@ -24,7 +24,7 @@ const mockListings = [
 const mockEscrow = [
   { id: 'e1', listing: 'Cozy 2-Bedroom Apartment', amount: 1200000, status: 'held', tenant: 'tenant@example.com' },
   { id: 'e2', listing: 'Expert Plumbing Services', amount: 50000, status: 'released', tenant: 'client@example.com' },
-  { id: 'e3', listing: 'Modern Studio with a View', amount: 850000, status: 'initiated', tenant: 'another-tenant@example.com' },
+  { id: 'e3', title: 'Modern Studio with a View', amount: 850000, status: 'initiated', tenant: 'another-tenant@example.com' },
 ];
 
 const RoleIcon = ({ role }: { role: string }) => {
@@ -37,9 +37,8 @@ const RoleIcon = ({ role }: { role: string }) => {
 }
 
 export default function AdminPage() {
-    // This page should be protected and only accessible to admins
     return (
-      <SidebarProvider defaultOpen={false}>
+      <SidebarProvider>
         <Sidebar>
             <DashboardSidebar />
         </Sidebar>
@@ -57,6 +56,7 @@ export default function AdminPage() {
                         <CardDescription>Approve new users to grant them access to the platform.</CardDescription>
                     </CardHeader>
                     <CardContent>
+                       <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -69,8 +69,8 @@ export default function AdminPage() {
                             <TableBody>
                                 {mockUsers.map(user => (
                                     <TableRow key={user.id}>
-                                        <TableCell className="font-medium">{user.email}</TableCell>
-                                        <TableCell className="capitalize flex items-center gap-2"><RoleIcon role={user.role} /> {user.role}</TableCell>
+                                        <TableCell className="font-medium whitespace-nowrap">{user.email}</TableCell>
+                                        <TableCell className="capitalize flex items-center gap-2 whitespace-nowrap"><RoleIcon role={user.role} /> {user.role}</TableCell>
                                         <TableCell><Badge variant={user.status === 'Approved' ? 'secondary' : 'outline'}>{user.status}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             {user.status === 'Pending' && <Button size="sm">Approve</Button>}
@@ -79,6 +79,7 @@ export default function AdminPage() {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -88,6 +89,7 @@ export default function AdminPage() {
                         <CardDescription>Review and approve new property and service listings.</CardDescription>
                     </CardHeader>
                     <CardContent>
+                         <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -101,9 +103,9 @@ export default function AdminPage() {
                             <TableBody>
                                 {mockListings.map(listing => (
                                     <TableRow key={listing.id}>
-                                        <TableCell className="font-medium">{listing.title}</TableCell>
-                                        <TableCell className="capitalize">{listing.type}</TableCell>
-                                        <TableCell>{listing.creator}</TableCell>
+                                        <TableCell className="font-medium whitespace-nowrap">{listing.title}</TableCell>
+                                        <TableCell className="capitalize whitespace-nowrap">{listing.type}</TableCell>
+                                        <TableCell className="whitespace-nowrap">{listing.creator}</TableCell>
                                         <TableCell><Badge variant={listing.status === 'Approved' ? 'secondary' : 'outline'}>{listing.status}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             {listing.status === 'Pending' && <Button size="sm">Approve</Button>}
@@ -112,6 +114,7 @@ export default function AdminPage() {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -121,6 +124,7 @@ export default function AdminPage() {
                         <CardDescription>Release funds for completed transactions.</CardDescription>
                     </CardHeader>
                     <CardContent>
+                        <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -133,8 +137,8 @@ export default function AdminPage() {
                             <TableBody>
                                 {mockEscrow.map(tx => (
                                     <TableRow key={tx.id}>
-                                        <TableCell className="font-medium">{tx.listing}</TableCell>
-                                        <TableCell>₦{tx.amount.toLocaleString()}</TableCell>
+                                        <TableCell className="font-medium whitespace-nowrap">{tx.listing}</TableCell>
+                                        <TableCell className="whitespace-nowrap">₦{tx.amount.toLocaleString()}</TableCell>
                                         <TableCell><Badge variant={tx.status === 'released' ? 'secondary' : (tx.status === 'held' ? 'default' : 'outline')} className="capitalize">{tx.status}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             {tx.status === 'held' && <Button size="sm"><ShieldCheck className="mr-2 h-4 w-4"/>Release Payment</Button>}
@@ -143,6 +147,7 @@ export default function AdminPage() {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
             </main>

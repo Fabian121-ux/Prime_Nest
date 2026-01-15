@@ -81,7 +81,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-6">
       <Link href="/" className="mb-6 flex items-center gap-3">
         <div className="p-2 bg-primary rounded-md">
             <Home className="text-primary-foreground h-6 w-6" />

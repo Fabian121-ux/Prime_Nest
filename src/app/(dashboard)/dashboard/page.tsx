@@ -31,7 +31,7 @@ const pieChartData = [
 
 export default function DashboardPage() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-4 md:p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {/* Stat Cards */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -78,7 +78,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Main Chart */}
-      <Card className="md:col-span-2 lg:col-span-2">
+      <Card className="sm:col-span-2 lg:col-span-2">
         <CardHeader>
           <CardTitle>User Activity</CardTitle>
         </CardHeader>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Calendar */}
-      <Card className="lg:col-span-2">
+      <Card className="sm:col-span-2 lg:col-span-2">
           <CardContent className="p-0 flex items-center justify-center">
             <Calendar
                 mode="single"
@@ -117,7 +117,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Bar Chart */}
-      <Card>
+      <Card className="sm:col-span-1">
         <CardHeader>
           <CardTitle>Listings by Category</CardTitle>
         </CardHeader>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
       </Card>
       
       {/* Donut Chart */}
-      <Card>
+      <Card className="sm:col-span-1">
         <CardHeader>
             <CardTitle>Role Distribution</CardTitle>
         </CardHeader>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
       </Card>
 
        {/* Progress Card */}
-       <Card className="lg:col-span-2">
+       <Card className="sm:col-span-2 lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Profile Completion</CardTitle>
           <Button variant="ghost" size="icon" className="h-8 w-8">

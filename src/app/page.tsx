@@ -52,7 +52,7 @@ export default function Home() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground mb-4"
             >
-              Find Your <span className="text-primary-foreground bg-primary/80 px-2 py-1 rounded-lg">Prime Nest</span>
+              Find Your <span className="text-primary-foreground bg-primary/80 px-2 md:px-4 py-1 rounded-lg">Prime Nest</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -66,17 +66,17 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-              className="flex justify-center gap-4"
+              className="flex flex-col sm:flex-row justify-center items-center gap-4"
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" asChild>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+                <Button size="lg" asChild className="w-full sm:w-auto">
                   <Link href="/signup">
                     Get Started <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
               </motion.div>
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" variant="outline" asChild>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
                   <Link href="#explore">Explore Listings</Link>
                 </Button>
               </motion.div>
@@ -123,7 +123,7 @@ export default function Home() {
                 Discover properties, find skilled artisans, or offer your professional services.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                {/* Example Listing 1: Property */}
               <MotionCard
                 initial={{ opacity: 0, y: 40 }}
@@ -138,7 +138,7 @@ export default function Home() {
                     src={listing1.imageUrl}
                     alt="Modern apartment"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     data-ai-hint={listing1.imageHint}
                   />
@@ -171,7 +171,7 @@ export default function Home() {
                     src={listing2.imageUrl}
                     alt="Plumbing service"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                      data-ai-hint={listing2.imageHint}
                   />
@@ -204,7 +204,7 @@ export default function Home() {
                     src={listing3.imageUrl}
                     alt="Studio apartment with city view"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                      data-ai-hint={listing3.imageHint}
                   />
@@ -237,7 +237,7 @@ export default function Home() {
                     src={listing4.imageUrl}
                     alt="Electrical wires"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                      data-ai-hint={listing4.imageHint}
                   />
