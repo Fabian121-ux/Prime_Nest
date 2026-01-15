@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { usePathname } from 'next/navigation';
 import {
@@ -8,8 +8,8 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarHeader,
-  useSidebar
-} from "@/components/ui/sidebar";
+  useSidebar,
+} from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
   Building2,
@@ -17,8 +17,8 @@ import {
   Wallet,
   User,
   LifeBuoy,
-  Home
-} from "lucide-react";
+  Home,
+} from 'lucide-react';
 import Link from 'next/link';
 
 const menuItems = [
@@ -53,22 +53,32 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
 
-  const isActive = (href: string) => pathname.startsWith(href) && (href !== '/dashboard' || pathname === '/dashboard');
+  const isActive = (href: string) => {
+    if (href === '/dashboard') {
+        return pathname === '/dashboard';
+    }
+    return pathname.startsWith(href);
+  }
 
   return (
     <>
       <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="flex items-center gap-3 font-bold text-xl">
-            <div className="p-2 bg-primary/10 text-primary rounded-md">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 font-bold text-xl"
+        >
+          <div className="p-2 bg-primary/10 text-primary rounded-md">
             <Home className="text-sidebar-accent-foreground h-5 w-5" />
-            </div>
-            <span className="font-headline text-sidebar-foreground group-data-[collapsed=true]:hidden">Prime Nest</span>
+          </div>
+          <span className="font-headline text-sidebar-foreground transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
+            Prime Nest
+          </span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
           {menuItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
+            <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 isActive={isActive(item.href)}
@@ -76,26 +86,26 @@ export default function DashboardSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="p-2">
+      <SidebarFooter className="p-2 mt-auto">
         <SidebarMenu>
-           <SidebarMenuItem>
-                <SidebarMenuButton 
-                    asChild
-                    tooltip={{ children: "Support", side: "right", align: "center" }}
-                >
-                    <Link href="/support">
-                        <LifeBuoy />
-                        <span>Support</span>
-                    </Link>
-                </SidebarMenuButton>
-           </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip={{ children: "Support", side: "right", align: "center" }}
+            >
+              <Link href="/support">
+                <LifeBuoy />
+                <span>Support</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </>
