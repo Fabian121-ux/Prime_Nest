@@ -46,7 +46,7 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-card">
+    <header className="sticky top-0 z-40 w-full border-b bg-card shadow-sm">
       <div className="container flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden"/>
@@ -54,29 +54,32 @@ export default function DashboardHeader() {
               <div className="p-2 bg-sidebar-background rounded-md">
                 <Home className="text-sidebar-foreground h-5 w-5" />
               </div>
-              <span className="font-headline">Prime Nest</span>
+              <span className="font-headline text-foreground">Prime Nest</span>
             </Link>
         </div>
         
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center justify-center px-4">
             <div className="w-full max-w-md lg:max-w-lg">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
-                    <Input placeholder="Search..." className="pl-10 bg-secondary"/>
+                    <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
                 </div>
             </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
           <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-card"></span>
               <span className="sr-only">Notifications</span>
           </Button>
-          <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-              <Wallet className="h-5 w-5" />
-              <span className="sr-only">Escrow Status</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
+                <Wallet className="h-5 w-5" />
+                <span className="sr-only">Escrow Status</span>
+            </Button>
+            <span className="text-sm font-semibold hidden lg:inline">Escrow: $1,250</span>
+          </div>
           {isUserLoading ? (
             <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
           ) : user && (

@@ -3,101 +3,93 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2, ArrowRight, Briefcase, FileText, Wrench } from "lucide-react";
+import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2, ArrowRight, Briefcase, FileText, Wrench, Home, BarChart } from "lucide-react";
 import Link from "next/link";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { doc, DocumentData } from "firebase/firestore";
 
-const mockData = {
-  listings: [
-    { id: '1', title: 'Cozy 2-Bedroom Apartment', status: 'Approved' },
-    { id: '3', title: 'Modern Studio with a View', status: 'Pending' },
-  ],
-  services: [
-    { id: '2', title: 'Expert Plumbing Services', status: 'Approved' },
-  ],
-  transactions: [
-    { id: 't1', listingTitle: 'Cozy 2-Bedroom Apartment', with: 'Jane Smith', status: 'held', amount: 1200000 },
-    { id: 't2', listingTitle: 'Expert Plumbing Services', with: 'Mark Johnson', status: 'released', amount: 5000 },
-  ],
-};
-
 const TenantDashboard = () => (
-    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1 shadow-md">
         <CardHeader className="bg-green-600 text-primary-foreground rounded-t-lg">
-            <CardTitle className="font-headline flex items-center gap-2"><UserIcon/> Tenant Dashboard</CardTitle>
+            <CardTitle className="font-headline flex items-center gap-3"><Home className="h-5 w-5"/> Tenant Dashboard</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-           <ul className="space-y-3 text-sm">
-                <li className="flex items-center gap-2"><Building className="h-4 w-4 text-muted-foreground"/> Browse Rentals</li>
-                <li className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground"/> My Leases</li>
-                <li className="flex items-center gap-2"><Wrench className="h-4 w-4 text-muted-foreground"/> Maintenance Requests</li>
+           <ul className="space-y-3 text-sm text-muted-foreground">
+                <li className="flex items-center gap-3"><Building className="h-4 w-4"/> Browse Rentals</li>
+                <li className="flex items-center gap-3"><FileText className="h-4 w-4"/> My Leases</li>
+                <li className="flex items-center gap-3"><Wrench className="h-4 w-4"/> Maintenance Requests</li>
            </ul>
+           <div className="pt-2">
             <Button className="w-full bg-green-600 hover:bg-green-700 text-primary-foreground">
-                View Properties <ArrowRight className="ml-2 h-4 w-4" />
+                View Properties
             </Button>
-            <p className="text-xs text-muted-foreground text-center pt-2">For Tenants</p>
+            <p className="text-xs text-muted-foreground/80 text-center pt-3">For Tenants</p>
+           </div>
         </CardContent>
     </Card>
 );
 
 const LandlordDashboard = () => (
-    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1 shadow-md">
         <CardHeader className="bg-orange-500 text-primary-foreground rounded-t-lg">
-            <CardTitle className="font-headline flex items-center gap-2"><Building/> Landlord Dashboard</CardTitle>
+            <CardTitle className="font-headline flex items-center gap-3"><Building className="h-5 w-5"/> Landlord Dashboard</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-            <ul className="space-y-3 text-sm">
-                <li className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground"/> My Properties</li>
-                <li className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/> Tenant Requests</li>
-                <li className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Income Overview</li>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+                <li className="flex items-center gap-3"><FileText className="h-4 w-4"/> My Properties</li>
+                <li className="flex items-center gap-3"><UserIcon className="h-4 w-4"/> Tenant Requests</li>
+                <li className="flex items-center gap-3"><BarChart className="h-4 w-4"/> Income Overview</li>
            </ul>
+           <div className="pt-2">
             <Button className="w-full bg-orange-500 hover:bg-orange-600 text-primary-foreground">
                 Manage Listings <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <p className="text-xs text-muted-foreground text-center pt-2">For Landlords</p>
+            <p className="text-xs text-muted-foreground/80 text-center pt-3">For Landlords</p>
+           </div>
         </CardContent>
     </Card>
 );
 
 
 const ArtisanDashboard = () => (
-    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1 shadow-md">
         <CardHeader className="bg-yellow-500 text-primary-foreground rounded-t-lg">
-            <CardTitle className="font-headline flex items-center gap-2"><Hammer/> Artisan Dashboard</CardTitle>
+            <CardTitle className="font-headline flex items-center gap-3"><Wrench className="h-5 w-5"/> Artisan Dashboard</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-            <ul className="space-y-3 text-sm">
-                    <li className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Available Jobs</li>
-                    <li className="flex items-center gap-2"><span className="font-bold text-muted-foreground text-lg">$</span> Earnings: $540</li>
-                    <li className="flex items-center gap-2"><Wrench className="h-4 w-4 text-muted-foreground"/> My Services</li>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-3"><Briefcase className="h-4 w-4"/> Available Jobs</li>
+                    <li className="flex items-center gap-3"><span className="font-bold text-muted-foreground text-lg mr-1">$</span> Earnings: $540</li>
+                    <li className="flex items-center gap-3"><Hammer className="h-4 w-4"/> My Services</li>
             </ul>
-            <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-primary-foreground">
-                Find Jobs <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <p className="text-xs text-muted-foreground text-center pt-2">For Artisans</p>
+            <div className="pt-2">
+                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-primary-foreground">
+                    Find Jobs <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="text-xs text-muted-foreground/80 text-center pt-3">For Artisans</p>
+            </div>
         </CardContent>
     </Card>
 );
 
 const AdminDashboard = () => (
-    <Card className="bg-card border-none col-span-1 md:col-span-3">
+    <Card className="bg-card border-none col-span-1 md:col-span-3 shadow-md">
         <CardHeader className="bg-red-600 text-primary-foreground rounded-t-lg">
-            <CardTitle className="font-headline flex items-center gap-2"><ShieldCheck/> Admin Panel</CardTitle>
+            <CardTitle className="font-headline flex items-center gap-3"><UserIcon className="h-5 w-5"/> Admin Panel</CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/> User Approvals</div>
-                <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-muted-foreground"/> Escrow Controls</div>
-                <div className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Site Analytics</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center text-center md:text-left text-sm text-muted-foreground">
+                <div className="flex items-center justify-center md:justify-start gap-3"><ShieldCheck className="h-4 w-4 text-green-500"/> User Approvals</div>
+                <div className="flex items-center justify-center md:justify-start gap-3"><Wallet className="h-4 w-4"/> Escrow Controls</div>
+                <div className="flex items-center justify-center md:justify-start gap-3"><BarChart className="h-4 w-4"/> Site Analytics</div>
             </div>
             <div className="mt-6 text-center">
                  <Button asChild className="bg-red-600 hover:bg-red-700 text-primary-foreground">
-                    <Link href="/admin">Go to Admin</Link>
+                    <Link href="/admin">Go to Admin <ArrowRight className="ml-2 h-4 w-4"/></Link>
                 </Button>
-                <p className="text-xs text-muted-foreground text-center pt-2">For Admins Only</p>
+                <p className="text-xs text-muted-foreground/80 text-center pt-3">For Admins Only</p>
             </div>
         </CardContent>
     </Card>
@@ -108,7 +100,7 @@ const DashboardCards = ({ role }: { role: string }) => {
         return null;
     }
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {role === 'tenant' && <TenantDashboard />}
             {role === 'landlord' && <LandlordDashboard />}
             {role === 'artisan' && <ArtisanDashboard />}
@@ -154,7 +146,7 @@ export default function DashboardPage() {
   const role = userData ? (userData as any).rolePrimary : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
         <DashboardCards role={role} />
         {role === 'admin' && <AdminDashboard />}
     </div>

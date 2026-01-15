@@ -16,6 +16,7 @@ import {
   Wallet,
   User,
   LifeBuoy,
+  Home
 } from "lucide-react";
 import Link from 'next/link';
 
@@ -50,12 +51,19 @@ const menuItems = [
 export default function DashboardSidebar() {
   const pathname = usePathname();
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => pathname.startsWith(href) && (href !== '/dashboard' || pathname === '/dashboard');
 
   return (
     <>
-      <SidebarHeader />
-      <SidebarContent>
+      <SidebarHeader className="p-4">
+        <Link href="/dashboard" className="flex items-center gap-3 font-bold text-xl">
+            <div className="p-2 bg-primary/10 text-primary rounded-md">
+            <Home className="text-sidebar-primary h-5 w-5" />
+            </div>
+            <span className="font-headline text-sidebar-foreground group-data-[collapsed=icon]:hidden">Prime Nest</span>
+        </Link>
+      </SidebarHeader>
+      <SidebarContent className="p-2">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.label}>
@@ -73,7 +81,7 @@ export default function DashboardSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-2">
         <SidebarMenu>
            <SidebarMenuItem>
                 <SidebarMenuButton 
