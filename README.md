@@ -1,5 +1,26 @@
-# Firebase Studio
+# Prime Nest
 
-This is a NextJS starter in Firebase Studio.
+Prime Nest is a trust-driven platform designed to connect tenants, landlords, and skilled artisans across Africa. Our mission is to build a secure and reliable ecosystem for housing and professional services, facilitated by modern technology and a foundation of trust.
 
-To get started, take a look at src/app/page.tsx.
+## Key Features
+
+- **Secure Escrow System**: Payments for services and rent are held securely in escrow, ensuring funds are only released when all parties are satisfied with the transaction.
+- **Verified Users & Listings**: A verification process for users and listings helps to build a safe and reliable community, reducing risk for everyone involved.
+- **Role-Based Dashboards**: The application provides tailored dashboard experiences for Tenants, Landlords, and Artisans to manage their properties, services, and transactions effectively.
+- **Integrated Messaging**: A built-in chat feature allows for seamless communication between users regarding listings and services.
+- **Comprehensive Admin Panel**: Administrators have a dedicated interface to manage users, approve listings, and oversee platform integrity.
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router) with [React](https://react.dev/)
+- **UI Components**: [ShadCN UI](https://ui.shadcn.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **Backend & Database**: [Firebase](https://firebase.google.com/) (including Firestore, Authentication)
+- **Generative AI**: [Genkit](https://firebase.google.com/docs/genkit)
+
+## Getting Started
+
+This project is set up to run in a development environment like Firebase Studio, where the necessary Firebase connections and backend services are managed.
+
+To explore the code, begin with the main landing page at `src/app/page.tsx` and navigate through the various role-based dashboards in `src/app/dashboard/page.tsx`.
