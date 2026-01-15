@@ -195,7 +195,7 @@ export default function DashboardPage() {
 
   if (isUserLoading || isUserDocLoading || !userData) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
