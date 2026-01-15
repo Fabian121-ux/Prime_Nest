@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Home } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -24,6 +26,7 @@ const formSchema = z.object({
 export default function SignUpPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const auth = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,14 +36,24 @@ export default function SignUpPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement Firebase signup server action
-    console.log(values);
-    toast({
-      title: "Account Created (Demo)",
-      description: "Your account is pending approval by an administrator.",
-    });
-    router.push('/login');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      // Note: We are not setting the custom claim here. That must be done in a secure backend environment.
+      // This function only creates the user in Firebase Auth.
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      
+      toast({
+        title: "Account Created Successfully",
+        description: "Please log in with your new credentials.",
+      });
+      router.push('/login');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign Up Failed",
+        description: error.message || "An unknown error occurred.",
+      });
+    }
   }
 
   return (
@@ -90,7 +103,7 @@ export default function SignUpPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Choose your role</FormLabel>
+                    <FormLabel>Choose your primary role</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -127,7 +140,9 @@ export default function SignUpPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">Create Account</Button>
+              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
+              </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
