@@ -3,11 +3,42 @@
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
+const Star = ({ x, y, size, duration }: { x: number; y: number; size: number; duration: number }) => (
+  <motion.circle
+    cx={x}
+    cy={y}
+    r={size}
+    fill="hsl(var(--primary) / 0.5)"
+    initial={{ opacity: 0, scale: 0 }}
+    animate={{
+      opacity: [0, 1, 1, 0],
+      scale: [0, 1, 1, 0],
+    }}
+    transition={{
+      duration: duration,
+      ease: 'easeInOut',
+      repeat: Infinity,
+      repeatDelay: 5, // Add a delay before repeating
+    }}
+  />
+);
+
+
 const HeroAnimation = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const [stars, setStars] = useState<any[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
+    // Generate stars on mount
+    const newStars = Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 1.5 + 0.5,
+      duration: Math.random() * 5 + 5,
+    }));
+    setStars(newStars);
   }, []);
 
   if (!isMounted) {
@@ -16,43 +47,18 @@ const HeroAnimation = () => {
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-background -z-10">
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0.6 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
-      >
-        {/* Layer 1: Core Glow */}
-        <motion.div
-          className="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.4, 0.3],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            repeatType: 'mirror',
-            ease: 'easeInOut',
-          }}
-        />
-
-        {/* Layer 2: Rotating Outer Gradient */}
-        <motion.div
-          className="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
-          style={{
-            background:
-              'radial-gradient(circle, transparent 50%, hsl(var(--primary) / 0.1) 70%, transparent 90%)',
-          }}
-          animate={{
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 60,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
+      <svg width="100%" height="100%" className="absolute inset-0">
+        <defs>
+          <radialGradient id="grad1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="hsl(var(--primary) / 0.1)" />
+            <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
+          </radialGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grad1)" />
+         {stars.map(star => (
+          <Star key={star.id} x={`${star.x}%`} y={`${star.y}%`} size={star.size} duration={star.duration} />
+        ))}
+      </svg>
         
         {/* Layer 3: Faint Grid */}
         <div
@@ -67,8 +73,6 @@ const HeroAnimation = () => {
             opacity: 0.8,
           }}
         ></div>
-
-      </motion.div>
     </div>
   );
 };

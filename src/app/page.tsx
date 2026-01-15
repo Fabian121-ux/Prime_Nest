@@ -94,7 +94,7 @@ export default function Home() {
               variants={itemVariants}
               className="text-4xl md:text-6xl font-bold font-headline text-foreground"
             >
-              Find Your <span className="text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
+              <span>Find Your </span><span className="inline-block text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
             </motion.h1>
             <motion.p 
               variants={itemVariants}
