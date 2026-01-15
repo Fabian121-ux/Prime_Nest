@@ -43,7 +43,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative text-center py-20 md:py-32 lg:py-40 overflow-hidden">
+        <section className="relative text-center py-20 md:py-32 overflow-hidden">
           <HeroAnimation />
           <div className="container relative z-10">
             <motion.h1
