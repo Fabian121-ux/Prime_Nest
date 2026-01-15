@@ -18,6 +18,7 @@ import {
   User,
   LifeBuoy,
   Home,
+  HeartHandshake
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -49,7 +50,15 @@ const menuItems = [
   },
 ];
 
-export default function DashboardSidebar() {
+const adminMenuItems = [
+    {
+        href: '/support-responses',
+        label: 'Support Responses',
+        icon: HeartHandshake,
+    }
+]
+
+export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 'tenant' | 'landlord' | 'artisan' }) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -65,6 +74,10 @@ export default function DashboardSidebar() {
     if (window.innerWidth < 768) { // Only close on mobile
       setOpenMobile(false);
     }
+  }
+
+  if (!userRole) {
+      return <div>Loading user data...</div>
   }
 
   return (
@@ -94,7 +107,21 @@ export default function DashboardSidebar() {
               >
                 <Link href={item.href} onClick={handleLinkClick}>
                   <item.icon />
-                  <span className="truncate">{item.label}</span>
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+          {userRole === 'admin' && adminMenuItems.map((item) => (
+             <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(item.href)}
+                tooltip={{ children: item.label, side: "right", align: "center" }}
+              >
+                <Link href={item.href} onClick={handleLinkClick}>
+                  <item.icon />
+                  <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -106,6 +133,7 @@ export default function DashboardSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
+              isActive={pathname.startsWith('/support')}
               tooltip={{ children: "Support", side: "right", align: "center" }}
             >
               <Link href="/support" onClick={handleLinkClick}>
