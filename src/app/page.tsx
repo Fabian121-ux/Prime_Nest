@@ -32,13 +32,13 @@ const featureCards = [
 ];
 
 export default function Home() {
-  const listing1 = PlaceHolderImages.find(p => p.id === 'listing1');
-  const listing2 = PlaceHolderImages.find(p => p.id === 'listing2');
-  const listing3 = PlaceHolderImages.find(p => p.id === 'listing3');
-  const listing4 = PlaceHolderImages.find(p => p.id === 'listing4');
+  const listing1 = PlaceHolderImages.find((p) => p.id === 'listing1');
+  const listing2 = PlaceHolderImages.find((p) => p.id === 'listing2');
+  const listing3 = PlaceHolderImages.find((p) => p.id === 'listing3');
+  const listing4 = PlaceHolderImages.find((p) => p.id === 'listing4');
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden">
       <Header />
 
       <main className="flex-1">
@@ -46,15 +46,18 @@ export default function Home() {
         <section className="relative text-center py-20 md:py-32 lg:py-40 overflow-hidden">
           <HeroAnimation />
           <div className="container relative z-10">
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground mb-4"
             >
-              Find Your <span className="inline-block text-primary-foreground bg-primary/80 px-2 md:px-4 py-1 rounded-lg">Prime Nest</span>
+              Find Your{' '}
+              <span className="inline-block text-primary-foreground bg-primary/80 px-2 py-1 rounded-lg">
+                Prime Nest
+              </span>
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
@@ -62,7 +65,7 @@ export default function Home() {
             >
               A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.
             </motion.p>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
@@ -75,7 +78,7 @@ export default function Home() {
                   </Link>
                 </Button>
               </motion.div>
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
                   <Link href="#explore">Explore Listings</Link>
                 </Button>
@@ -103,9 +106,7 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true, amount: 0.5 }}
                 >
-                  <div className="flex justify-center mb-6">
-                    {feature.icon}
-                  </div>
+                  <div className="flex justify-center mb-6">{feature.icon}</div>
                   <CardTitle className="text-xl font-headline mb-2">{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
                 </MotionCard>
@@ -113,148 +114,52 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+
         {/* Explore Listings Section */}
         <section id="explore" className="py-16 md:py-24 bg-background">
           <div className="container">
-             <div className="text-center mb-12">
+            <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Explore Prime Nest</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                 Discover properties, find skilled artisans, or offer your professional services.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-               {/* Example Listing 1: Property */}
-              <MotionCard
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true, amount: 0.5 }}
-                className="group overflow-hidden"
-              >
-                {listing1 &&
-                <div className="relative h-56 w-full">
-                   <Image
-                    src={listing1.imageUrl}
-                    alt="Modern apartment"
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    data-ai-hint={listing1.imageHint}
-                  />
-                </div>}
-                <CardHeader>
-                  <CardTitle>Cozy 2-Bedroom Apartment</CardTitle>
-                  <CardDescription>Lekki, Lagos</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <p className="text-lg font-bold text-primary">₦1,200,000/yr</p>
-                    <Button variant="outline" asChild>
-                      <Link href="/listing/1">View</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </MotionCard>
-
-              {/* Example Listing 2: Service */}
-              <MotionCard
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true, amount: 0.5 }}
-                className="group overflow-hidden"
-              >
-                {listing2 &&
-                <div className="relative h-56 w-full">
-                  <Image
-                    src={listing2.imageUrl}
-                    alt="Plumbing service"
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                     data-ai-hint={listing2.imageHint}
-                  />
-                </div>}
-                <CardHeader>
-                  <CardTitle>Expert Plumbing Services</CardTitle>
-                  <CardDescription>Available Island-wide</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <p className="text-lg font-bold text-primary">Contact for Quote</p>
-                    <Button variant="outline" asChild>
-                       <Link href="/listing/2">View</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </MotionCard>
-
-              {/* Example Listing 3: Property */}
-              <MotionCard
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true, amount: 0.5 }}
-                className="group overflow-hidden"
-              >
-               {listing3 &&
-                <div className="relative h-56 w-full">
-                  <Image
-                    src={listing3.imageUrl}
-                    alt="Studio apartment with city view"
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                     data-ai-hint={listing3.imageHint}
-                  />
-                </div>}
-                <CardHeader>
-                  <CardTitle>Modern Studio with a View</CardTitle>
-                  <CardDescription>Ikoyi, Lagos</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <p className="text-lg font-bold text-primary">₦850,000/yr</p>
-                    <Button variant="outline" asChild>
-                       <Link href="/listing/3">View</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </MotionCard>
-              
-              {/* Example Listing 4: Service */}
-              <MotionCard
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true, amount: 0.5 }}
-                className="group overflow-hidden"
-              >
-               {listing4 &&
-                <div className="relative h-56 w-full">
-                  <Image
-                    src={listing4.imageUrl}
-                    alt="Electrical wires"
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                     data-ai-hint={listing4.imageHint}
-                  />
-                </div>}
-                <CardHeader>
-                  <CardTitle>Professional Electrical Works</CardTitle>
-                  <CardDescription>Certified & Insured</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <p className="text-lg font-bold text-primary">Contact for Quote</p>
-                    <Button variant="outline" asChild>
-                       <Link href="/listing/4">View</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </MotionCard>
+              {[listing1, listing2, listing3, listing4].map((listing, i) =>
+                listing ? (
+                  <MotionCard
+                    key={i}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 * (i + 1) }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    className="group overflow-hidden"
+                  >
+                    <div className="relative h-56 w-full">
+                      <Image
+                        src={listing.imageUrl}
+                        alt={listing.description}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint={listing.imageHint}
+                      />
+                    </div>
+                    <CardHeader>
+                      <CardTitle>{listing.title || listing.description}</CardTitle>
+                      <CardDescription>{listing.location}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-center">
+                        <p className="text-lg font-bold text-primary">{listing.price}</p>
+                        <Button variant="outline" asChild>
+                          <Link href={`/listing/${i + 1}`}>View</Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </MotionCard>
+                ) : null
+              )}
             </div>
           </div>
         </section>
