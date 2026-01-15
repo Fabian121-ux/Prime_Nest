@@ -7,6 +7,7 @@ import { Home, Menu } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from 'react';
@@ -43,6 +44,7 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[240px]">
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col gap-4 py-8">
                    <Link href="/" className="flex items-center gap-3 font-bold text-lg text-foreground mb-4" onClick={() => setIsSheetOpen(false)}>
                       <div className="p-2 bg-primary rounded-md">
