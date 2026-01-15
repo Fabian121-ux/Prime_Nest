@@ -1,4 +1,5 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
@@ -12,8 +13,10 @@ interface StarType {
 
 const HeroAnimation = () => {
   const [stars, setStars] = useState<StarType[]>([]);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     const newStars = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100, // 0-100 for viewBox coordinates
@@ -40,28 +43,31 @@ const HeroAnimation = () => {
         }}
       />
 
-      {/* Stars layer */}
-      <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
-        {stars.map(star => (
-          <motion.circle
-            key={star.id}
-            cx={star.x}
-            cy={star.y}
-            r={star.size}
-            fill="hsl(var(--primary) / 0.7)"
-            animate={{
-              opacity: [0, 1, 1, 0],
-              scale: [0, 1, 1, 0],
-            }}
-            transition={{
-              duration: star.duration,
-              repeat: Infinity,
-              repeatDelay: Math.random() * 2,
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-      </svg>
+      {/* Stars layer - Only render on the client */}
+      {hasMounted && (
+        <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
+          {stars.map(star => (
+            <motion.circle
+              key={star.id}
+              cx={star.x}
+              cy={star.y}
+              r={star.size}
+              fill="hsl(var(--primary) / 0.7)"
+              animate={{
+                opacity: [0, 1, 1, 0],
+                scale: [0, 1, 1, 0],
+              }}
+              transition={{
+                duration: star.duration,
+                repeat: Infinity,
+                repeatDelay: Math.random() * 2,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+        </svg>
+      )}
+
 
       {/* Optional faint grid for depth */}
       <div
