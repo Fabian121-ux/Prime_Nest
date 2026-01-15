@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Home, LogOut, User, Shield, Search, Bell, Wallet } from 'lucide-react';
+import { Home, LogOut, User, Shield, Search, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
@@ -47,58 +47,19 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-card shadow-sm">
+    <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-            <SidebarTrigger/>
-            <Link href="/dashboard" className="hidden items-center gap-3 font-bold text-xl md:flex">
-              <div className="p-2 bg-sidebar-background rounded-md">
-                <Home className="text-sidebar-foreground h-5 w-5" />
-              </div>
-              <span className="font-headline text-foreground group-data-[collapsed=true]:hidden">Prime Nest</span>
-            </Link>
+            <SidebarTrigger className="md:hidden"/>
         </div>
         
-        <div className="flex flex-1 items-center justify-center px-4 md:px-0">
-            {/* Desktop Search Bar */}
-            <div className="hidden md:block w-full max-w-md lg:max-w-lg">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
-                    <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
-                </div>
-            </div>
-             {/* Mobile Search Popover */}
-            <div className="md:hidden">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Search className="h-5 w-5 text-muted-foreground" />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80">
-                   <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
-                      <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-        </div>
-
-        <div className="flex items-center gap-1 sm:gap-2 text-muted-foreground">
+        <div className="flex flex-1 items-center justify-end gap-2 text-muted-foreground">
           <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-card"></span>
               <span className="sr-only">Notifications</span>
           </Button>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-                <Wallet className="h-5 w-5" />
-                <span className="sr-only">Escrow Status</span>
-            </Button>
-            <span className="text-sm font-semibold hidden lg:inline">Escrow: ₦1,250,000</span>
-          </div>
+
           {isUserLoading ? (
             <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
           ) : user && (

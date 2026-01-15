@@ -1,155 +1,188 @@
 'use client'
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ArrowRight,
-  BarChart,
-  Briefcase,
-  Building,
-  FileText,
-  Hammer,
-  Home,
-  Loader2,
-  ShieldCheck,
-  User as UserIcon,
-  Wallet,
-  Wrench
-} from "lucide-react";
-import Link from "next/link";
-import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { doc } from "firebase/firestore";
+import { AreaChart, BarChart, DonutChart, Legend, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, Pie, PieChart, Cell } from "recharts";
+import { ArrowUp, Users, Building2, Hammer, MoreHorizontal, Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Calendar } from "@/components/ui/calendar";
 
-const TenantDashboard = () => (
-  <Card className="bg-card border-none shadow-md">
-    <CardHeader className="bg-green-600 text-primary-foreground rounded-t-lg">
-      <CardTitle className="flex items-center gap-3 font-headline"><Home className="h-5 w-5"/> Tenant Dashboard</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4 pt-6">
-      <ul className="space-y-2 text-sm text-muted-foreground">
-        <li className="flex items-center gap-2"><Building className="h-4 w-4"/> Browse Rentals</li>
-        <li className="flex items-center gap-2"><FileText className="h-4 w-4"/> My Leases</li>
-        <li className="flex items-center gap-2"><Wrench className="h-4 w-4"/> Maintenance Requests</li>
-      </ul>
-      <Button className="w-full bg-green-600 hover:bg-green-700 text-primary-foreground mt-2">View Properties</Button>
-    </CardContent>
-  </Card>
-);
+const lineChartData = [
+  { name: 'Jan', users: 400 },
+  { name: 'Feb', users: 300 },
+  { name: 'Mar', users: 500 },
+  { name: 'Apr', users: 450 },
+  { name: 'May', users: 600 },
+  { name: 'Jun', users: 800 },
+];
 
-const LandlordDashboard = () => (
-  <Card className="bg-card border-none shadow-md">
-    <CardHeader className="bg-orange-500 text-primary-foreground rounded-t-lg">
-      <CardTitle className="flex items-center gap-3 font-headline"><Building className="h-5 w-5"/> Landlord Dashboard</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4 pt-6">
-      <ul className="space-y-2 text-sm text-muted-foreground">
-        <li className="flex items-center gap-2"><FileText className="h-4 w-4"/> My Properties</li>
-        <li className="flex items-center gap-2"><UserIcon className="h-4 w-4"/> Tenant Requests</li>
-        <li className="flex items-center gap-2"><BarChart className="h-4 w-4"/> Income Overview</li>
-      </ul>
-      <Button className="w-full bg-orange-500 hover:bg-orange-600 text-primary-foreground mt-2 flex items-center justify-center gap-1">
-        Manage Listings <ArrowRight className="h-4 w-4"/>
-      </Button>
-    </CardContent>
-  </Card>
-);
+const barChartData = [
+    { name: 'Rentals', count: 120 },
+    { name: 'Jobs', count: 80 },
+    { name: 'Services', count: 150 },
+];
 
-const ArtisanDashboard = () => (
-  <Card className="bg-card border-none shadow-md">
-    <CardHeader className="bg-yellow-500 text-primary-foreground rounded-t-lg">
-      <CardTitle className="flex items-center gap-3 font-headline"><Wrench className="h-5 w-5"/> Artisan Dashboard</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4 pt-6">
-      <ul className="space-y-2 text-sm text-muted-foreground">
-        <li className="flex items-center gap-2"><Briefcase className="h-4 w-4"/> Available Jobs</li>
-        <li className="flex items-center gap-2"><Wallet className="h-4 w-4"/> Earnings: ₦540,000</li>
-        <li className="flex items-center gap-2"><Hammer className="h-4 w-4"/> My Services</li>
-      </ul>
-      <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-primary-foreground mt-2 flex items-center justify-center gap-1">
-        Find Jobs <ArrowRight className="h-4 w-4"/>
-      </Button>
-    </CardContent>
-  </Card>
-);
+const pieChartData = [
+  { name: 'Tenants', value: 400, color: 'hsl(var(--chart-1))' },
+  { name: 'Landlords', value: 150, color: 'hsl(var(--chart-2))' },
+  { name: 'Artisans', value: 250, color: 'hsl(var(--chart-4))' },
+];
 
-const AdminDashboard = () => (
-  <Card className="bg-card border-none shadow-md col-span-full">
-    <CardHeader className="bg-red-600 text-primary-foreground rounded-t-lg">
-      <CardTitle className="flex items-center gap-3 font-headline"><UserIcon className="h-5 w-5"/> Admin Panel</CardTitle>
-    </CardHeader>
-    <CardContent className="pt-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-green-500"/> User Approvals</div>
-        <div className="flex items-center gap-2"><Wallet className="h-4 w-4"/> Escrow Controls</div>
-        <div className="flex items-center gap-2"><BarChart className="h-4 w-4"/> Site Analytics</div>
-      </div>
-      <div className="mt-6 text-center">
-        <Button asChild className="bg-red-600 hover:bg-red-700 text-primary-foreground">
-          <Link href="/admin" className="flex items-center justify-center gap-1">
-            Go to Admin <ArrowRight className="h-4 w-4"/>
-          </Link>
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const DashboardCards = ({ role }: { role: string | null }) => {
-  if (!role) return null;
-
-  const gridClasses = role === "admin" 
-    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
-
-  return (
-    <div className={gridClasses}>
-      {role === 'tenant' && <TenantDashboard />}
-      {role === 'landlord' && <LandlordDashboard />}
-      {role === 'artisan' && <ArtisanDashboard />}
-      {role === 'admin' && (
-        <>
-          <TenantDashboard />
-          <LandlordDashboard />
-          <ArtisanDashboard />
-          <AdminDashboard />
-        </>
-      )}
-    </div>
-  );
-}
 
 export default function DashboardPage() {
-  const { user, isUserLoading } = useUser();
-  const router = useRouter();
-  const firestore = useFirestore();
-
-  const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
-
-  const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
-
-  useEffect(() => {
-    if (!isUserLoading && !user) router.push('/login');
-  }, [user, isUserLoading, router]);
-
-  if (isUserLoading || isUserDocLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading dashboard...</p>
-      </div>
-    );
-  }
-
-  const role = userData ? (userData as any).rolePrimary : null;
-
   return (
-    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      <DashboardCards role={role} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-4 md:p-6">
+      {/* Stat Cards */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">1,974</div>
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <ArrowUp className="h-3 w-3 text-green-500" />
+            +287 this month
+          </p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+          <Building2 className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">350</div>
+           <p className="text-xs text-muted-foreground">+32 this week</p>
+        </CardContent>
+      </Card>
+       <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">Artisan Services</CardTitle>
+          <Hammer className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">150</div>
+          <p className="text-xs text-muted-foreground">+12 new services</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">Escrow Transactions</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">89</div>
+          <p className="text-xs text-muted-foreground">₦12.5M in escrow</p>
+        </CardContent>
+      </Card>
+
+      {/* Main Chart */}
+      <Card className="md:col-span-2 lg:col-span-2">
+        <CardHeader>
+          <CardTitle>User Activity</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2">
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={lineChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.5)" />
+              <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--background))',
+                  borderColor: 'hsl(var(--border))',
+                }}
+              />
+              <Area type="monotone" dataKey="users" stroke="hsl(var(--primary))" fill="hsl(var(--primary)/0.2)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Calendar */}
+      <Card className="lg:col-span-2">
+          <CardContent className="p-0 flex items-center justify-center">
+            <Calendar
+                mode="single"
+                className="p-0"
+                classNames={{
+                    root: 'w-full border-0',
+                    caption: 'px-4 pt-3',
+                    head_cell: 'w-full',
+                    table: 'w-full p-3 border-t-0',
+                }}
+            />
+          </CardContent>
+      </Card>
+
+      {/* Bar Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Listings by Category</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={barChartData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
+              <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip
+                cursor={{fill: 'hsl(var(--muted))'}}
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--background))',
+                  borderColor: 'hsl(var(--border))',
+                }}
+              />
+              <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+      
+      {/* Donut Chart */}
+      <Card>
+        <CardHeader>
+            <CardTitle>Role Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                    <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                        {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                    </Pie>
+                    <Tooltip
+                        contentStyle={{
+                            backgroundColor: 'hsl(var(--background))',
+                            borderColor: 'hsl(var(--border))',
+                        }}
+                    />
+                    <Legend iconType="circle" iconSize={10} />
+                </PieChart>
+            </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+       {/* Progress Card */}
+       <Card className="lg:col-span-2">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Profile Completion</CardTitle>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div className="text-center">
+                <div className="relative inline-block">
+                    <Progress value={75} className="w-32 h-32 rounded-full [&>div]:bg-primary" style={{ clipPath: 'circle(50% at 50% 50%)' }}/>
+                    <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold">75%</span>
+                </div>
+            </div>
+          <p className="text-center text-sm text-muted-foreground">Complete your profile to increase your Trust Tier.</p>
+          <Button className="w-full">Complete Profile</Button>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }

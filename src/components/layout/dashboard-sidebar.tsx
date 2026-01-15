@@ -11,13 +11,14 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import {
-  LayoutDashboard,
-  Building2,
-  MessageSquare,
-  Wallet,
-  User,
+  LayoutGrid,
+  BarChart3,
+  Users,
   LifeBuoy,
+  LogOut,
   Home,
+  Settings,
+  Star,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -25,27 +26,27 @@ const menuItems = [
   {
     href: '/dashboard',
     label: 'Dashboard',
-    icon: LayoutDashboard,
+    icon: LayoutGrid,
   },
   {
     href: '/listings',
-    label: 'Listings / Jobs',
-    icon: Building2,
+    label: 'Analytics',
+    icon: BarChart3,
   },
   {
     href: '/messages',
-    label: 'Messages',
-    icon: MessageSquare,
+    label: 'Users',
+    icon: Users,
   },
   {
     href: '/wallet',
-    label: 'Escrow Wallet',
-    icon: Wallet,
+    label: 'Favorites',
+    icon: Star,
   },
   {
     href: '/profile',
-    label: 'Profile',
-    icon: User,
+    label: 'Settings',
+    icon: Settings,
   },
 ];
 
@@ -71,13 +72,13 @@ export default function DashboardSidebar() {
         <Link
           href="/dashboard"
           onClick={handleLinkClick}
-          className="flex items-center gap-3 font-bold text-xl"
+          className="flex items-center justify-center gap-3 font-bold text-xl group-data-[state=expanded]:justify-start"
         >
-          <div className="p-2 bg-primary/10 text-primary rounded-md">
-            <Home className="text-sidebar-accent-foreground h-5 w-5" />
+          <div className="p-2 bg-primary/20 text-primary rounded-lg">
+            <Home className="text-primary h-5 w-5" />
           </div>
-          <span className="font-headline text-sidebar-foreground transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
-            Prime Nest
+          <span className="font-headline text-sidebar-accent-foreground transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
+            Prime
           </span>
         </Link>
       </SidebarHeader>
@@ -109,6 +110,17 @@ export default function DashboardSidebar() {
               <Link href="/support" onClick={handleLinkClick}>
                 <LifeBuoy />
                 <span>Support</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+           <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip={{ children: "Logout", side: "right", align: "center" }}
+            >
+              <Link href="/" onClick={handleLinkClick}>
+                <LogOut />
+                <span>Logout</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
