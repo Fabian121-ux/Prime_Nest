@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2 } from "lucide-react";
+import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2, ArrowRight, Briefcase, FileText, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -25,155 +25,100 @@ const mockData = {
 };
 
 const TenantDashboard = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle className="font-headline">Welcome, Tenant!</CardTitle>
-      <CardDescription>Find your next home here. Browse available listings.</CardDescription>
-    </CardHeader>
-    <CardContent className="text-center py-12">
-      <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-      <p className="text-muted-foreground mb-4">You're all set to find a place to stay.</p>
-      <Button asChild>
-        <Link href="/#explore">
-          Explore Properties
-        </Link>
-      </Button>
-    </CardContent>
-  </Card>
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+        <CardHeader className="bg-green-600 text-primary-foreground rounded-t-lg">
+            <CardTitle className="font-headline flex items-center gap-2"><UserIcon/> Tenant Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-6">
+           <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2"><Building className="h-4 w-4 text-muted-foreground"/> Browse Rentals</li>
+                <li className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground"/> My Leases</li>
+                <li className="flex items-center gap-2"><Wrench className="h-4 w-4 text-muted-foreground"/> Maintenance Requests</li>
+           </ul>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-primary-foreground">
+                View Properties <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <p className="text-xs text-muted-foreground text-center pt-2">For Tenants</p>
+        </CardContent>
+    </Card>
 );
 
 const LandlordDashboard = () => (
-  <div className="space-y-8">
-    <div className="flex justify-between items-start">
-      <div>
-        <h1 className="text-3xl font-bold font-headline">Landlord Dashboard</h1>
-        <p className="text-muted-foreground">Manage your properties and tenant interactions.</p>
-      </div>
-      <Button>
-        <PlusCircle className="mr-2 h-4 w-4" />
-        Add New Property
-      </Button>
-    </div>
-
-    <Card>
-      <CardHeader>
-        <CardTitle>My Properties</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-4">
-          {mockData.listings.map(item => (
-            <li key={item.id} className="flex justify-between items-center p-3 rounded-md border">
-              <span className="font-medium">{item.title}</span>
-              <Badge variant={item.status === 'Approved' ? 'secondary' : 'outline'}>{item.status}</Badge>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+        <CardHeader className="bg-orange-500 text-primary-foreground rounded-t-lg">
+            <CardTitle className="font-headline flex items-center gap-2"><Building/> Landlord Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-6">
+            <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground"/> My Properties</li>
+                <li className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/> Tenant Requests</li>
+                <li className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Income Overview</li>
+           </ul>
+            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-primary-foreground">
+                Manage Listings <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <p className="text-xs text-muted-foreground text-center pt-2">For Landlords</p>
+        </CardContent>
     </Card>
-
-    <EscrowSection />
-  </div>
 );
 
+
 const ArtisanDashboard = () => (
-    <div className="space-y-8">
-    <div className="flex justify-between items-start">
-      <div>
-        <h1 className="text-3xl font-bold font-headline">Artisan Dashboard</h1>
-        <p className="text-muted-foreground">Manage your services and client interactions.</p>
-      </div>
-      <Button>
-        <PlusCircle className="mr-2 h-4 w-4" />
-        Add New Service
-      </Button>
-    </div>
-
-    <Card>
-      <CardHeader>
-        <CardTitle>My Services</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-4">
-          {mockData.services.map(item => (
-            <li key={item.id} className="flex justify-between items-center p-3 rounded-md border">
-              <span className="font-medium">{item.title}</span>
-              <Badge variant={item.status === 'Approved' ? 'secondary' : 'outline'}>{item.status}</Badge>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
+    <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1">
+        <CardHeader className="bg-yellow-500 text-primary-foreground rounded-t-lg">
+            <CardTitle className="font-headline flex items-center gap-2"><Hammer/> Artisan Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-6">
+            <ul className="space-y-3 text-sm">
+                    <li className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Available Jobs</li>
+                    <li className="flex items-center gap-2"><span className="font-bold text-muted-foreground text-lg">$</span> Earnings: $540</li>
+                    <li className="flex items-center gap-2"><Wrench className="h-4 w-4 text-muted-foreground"/> My Services</li>
+            </ul>
+            <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-primary-foreground">
+                Find Jobs <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <p className="text-xs text-muted-foreground text-center pt-2">For Artisans</p>
+        </CardContent>
     </Card>
-
-    <EscrowSection />
-  </div>
 );
 
 const AdminDashboard = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline">Welcome, Administrator!</CardTitle>
-        <CardDescription>You can manage the platform from the admin panel.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-start gap-4">
-        <p>You have administrative privileges.</p>
-        <Button asChild>
-            <Link href="/admin">Go to Admin Panel</Link>
-        </Button>
-      </CardContent>
+    <Card className="bg-card border-none col-span-1 md:col-span-3">
+        <CardHeader className="bg-red-600 text-primary-foreground rounded-t-lg">
+            <CardTitle className="font-headline flex items-center gap-2"><ShieldCheck/> Admin Panel</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/> User Approvals</div>
+                <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-muted-foreground"/> Escrow Controls</div>
+                <div className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground"/> Site Analytics</div>
+            </div>
+            <div className="mt-6 text-center">
+                 <Button asChild className="bg-red-600 hover:bg-red-700 text-primary-foreground">
+                    <Link href="/admin">Go to Admin</Link>
+                </Button>
+                <p className="text-xs text-muted-foreground text-center pt-2">For Admins Only</p>
+            </div>
+        </CardContent>
     </Card>
 )
 
-const EscrowSection = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Active Transactions</CardTitle>
-      <CardDescription>Monitor your escrow payments.</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <ul className="space-y-4">
-        {mockData.transactions.map(tx => (
-          <li key={tx.id} className="flex flex-col sm:flex-row justify-between sm:items-center p-4 rounded-md border gap-4">
-            <div className="flex-1">
-              <p className="font-semibold">{tx.listingTitle}</p>
-              <p className="text-sm text-muted-foreground">With: {tx.with}</p>
-            </div>
-            <div className="flex items-center gap-4">
-               <p className="font-semibold text-lg">₦{tx.amount.toLocaleString()}</p>
-               <EscrowStatusTracker status={tx.status as any} />
-               <Button variant="outline" size="icon">
-                <MessageSquare className="h-4 w-4"/>
-                <span className="sr-only">Chat</span>
-               </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </CardContent>
-  </Card>
-);
-
-const EscrowStatusTracker = ({ status }: { status: 'initiated' | 'held' | 'released' }) => {
-    const statuses = [
-        { name: 'Initiated', key: 'initiated' },
-        { name: 'Held', key: 'held' },
-        { name: 'Released', key: 'released' },
-    ];
-    const currentIndex = statuses.findIndex(s => s.key === status);
-
+const DashboardCards = ({ role }: { role: string }) => {
     return (
-        <div className="flex items-center space-x-2" title={`Status: ${status}`}>
-            {statuses.map((s, index) => (
-                <div key={s.key} className="flex items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${index <= currentIndex ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                        <ShieldCheck className="h-4 w-4" />
-                    </div>
-                    {index < statuses.length - 1 && <div className={`h-0.5 w-8 transition-colors ${index < currentIndex ? 'bg-primary' : 'bg-border'}`} />}
-                </div>
-            ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {role === 'tenant' && <TenantDashboard />}
+            {role === 'landlord' && <LandlordDashboard />}
+            {role === 'artisan' && <ArtisanDashboard />}
+            {role === 'admin' ? (
+                <>
+                    <TenantDashboard />
+                    <ArtisanDashboard />
+                    <LandlordDashboard />
+                </>
+            ) : null}
         </div>
-    );
-};
-
+    )
+}
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -188,12 +133,13 @@ export default function DashboardPage() {
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   useEffect(() => {
+    // Only redirect if loading is complete and there's no user.
     if (!isUserLoading && !user) {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || isUserDocLoading || !userData) {
+  if (isUserLoading || isUserDocLoading || !user) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-200px)]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -201,18 +147,22 @@ export default function DashboardPage() {
     );
   }
 
+  // User is logged in, but their document might still be loading.
+  if (!userData) {
+     return (
+      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-4">Loading user profile...</p>
+      </div>
+    );
+  }
+
   const role = (userData as any).rolePrimary;
 
-  switch (role) {
-    case 'tenant':
-      return <TenantDashboard />;
-    case 'landlord':
-      return <LandlordDashboard />;
-    case 'artisan':
-      return <ArtisanDashboard />;
-    case 'admin':
-      return <AdminDashboard />;
-    default:
-      return <TenantDashboard />; // Fallback to the most common role
-  }
+  return (
+    <div className="space-y-8">
+        <DashboardCards role={role} />
+        {role === 'admin' && <AdminDashboard />}
+    </div>
+  );
 }
