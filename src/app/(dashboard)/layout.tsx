@@ -16,7 +16,6 @@ function DashboardUI({ children }: { children: ReactNode }) {
     const firestore = useFirestore();
 
     const [showSupportPopup, setShowSupportPopup] = useState(false);
-    const [shouldCheckPopup, setShouldCheckPopup] = useState(false);
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !user) return null;
@@ -33,7 +32,8 @@ function DashboardUI({ children }: { children: ReactNode }) {
             return false;
         }
 
-        const isDemoUser = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || demoTeamEmails.includes(user.email || '');
+        // For now, every user is a demo user as requested.
+        const isDemoUser = true;
         if (!isDemoUser) {
             return false;
         }
