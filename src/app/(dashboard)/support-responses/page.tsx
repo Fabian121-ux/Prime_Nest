@@ -43,9 +43,9 @@ export default function SupportResponsesPage() {
 
     const responsesQuery = useMemoFirebase(() => {
         // Only create the query if we have a firestore instance AND we know the user is an admin.
-        if (!firestore || !user || !isUserAdmin) return null;
+        if (!firestore || !isUserAdmin) return null;
         return query(collection(firestore, 'support_demo_responses'), orderBy('createdAt', 'desc'));
-    }, [firestore, user, isUserAdmin]);
+    }, [firestore, isUserAdmin]);
 
     const { data: responses, isLoading, error } = useCollection<SupportResponse>(responsesQuery);
 

@@ -50,7 +50,7 @@ export default function AdminPage() {
         </Sidebar>
         <SidebarInset>
             <DashboardHeader onSidebarTrigger={handleAdminSidebarTrigger} />
-            <main className="container py-8 space-y-8">
+            <main className="container py-8 space-y-8 overflow-y-auto">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Admin Panel</h1>
                     <p className="text-muted-foreground">Manage users, listings, and payments.</p>
