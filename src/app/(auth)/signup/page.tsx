@@ -14,7 +14,7 @@ import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { setDoc } from "firebase/firestore";
 import { doc, serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 
@@ -67,7 +67,7 @@ export default function SignUpPage() {
         updatedAt: serverTimestamp(),
       };
 
-      setDocumentNonBlocking(userDocRef, userData, { merge: false });
+      await setDoc(userDocRef, userData);
       
       toast({
         title: "Account Created Successfully",

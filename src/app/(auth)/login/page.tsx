@@ -51,10 +51,14 @@ export default function LoginPage() {
       });
       router.push('/dashboard');
     } catch (error: any) {
+        const errorMessage =
+          error.code === 'auth/invalid-credential'
+            ? 'Invalid email or password. Please try again.'
+            : error.message || 'An unknown error occurred.';
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message || "An unknown error occurred.",
+        description: errorMessage,
       });
     }
   }

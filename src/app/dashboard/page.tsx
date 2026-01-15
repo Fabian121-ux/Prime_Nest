@@ -7,7 +7,7 @@ import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserI
 import Link from "next/link";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { doc, DocumentData } from "firebase/firestore";
 
 const mockData = {
