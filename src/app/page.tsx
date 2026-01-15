@@ -6,6 +6,7 @@ import Footer from '@/components/layout/footer';
 import Link from 'next/link';
 import { ArrowRight, Building, Hammer, MapPin, Search, ShieldCheck, UserPlus } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import HeroAnimation from '@/components/layout/hero-animation';
 
 const mockListings = [
   { id: '1', title: 'Cozy 2-Bedroom Apartment', description: 'A beautiful apartment in the heart of the city.', price: 1200000, type: 'property', location: 'Lagos, Nigeria', imageId: 'listing1' },
@@ -53,7 +54,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 overflow-hidden animated-gradient">
+        <section className="relative py-20 md:py-32 overflow-hidden">
+          <HeroAnimation />
           <div className="container mx-auto px-6 text-center relative">
             <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/80 px-4 py-2 rounded-lg shadow-lg">Prime Nest</span></h1>
             <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.</p>
