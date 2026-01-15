@@ -1,18 +1,27 @@
+'use client'
 
-"use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ArrowRight,
+  BarChart,
+  Briefcase,
+  Building,
+  FileText,
+  Hammer,
+  Home,
+  Loader2,
+  ShieldCheck,
+  User as UserIcon,
+  Wallet,
+  Wrench
+} from "lucide-react";
+import Link from "next/link";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { doc } from "firebase/firestore";
 
-import { useEffect, useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { User as UserIcon, Briefcase, FileText, Wrench, Building, Shield, ArrowRight, Loader2, Home, BarChart, Wallet, Hammer } from "lucide-react";
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-
-// Tenant Dashboard
 const TenantDashboard = () => (
   <Card className="bg-card border-none shadow-md">
     <CardHeader className="bg-green-600 text-primary-foreground rounded-t-lg">
@@ -29,7 +38,6 @@ const TenantDashboard = () => (
   </Card>
 );
 
-// Landlord Dashboard
 const LandlordDashboard = () => (
   <Card className="bg-card border-none shadow-md">
     <CardHeader className="bg-orange-500 text-primary-foreground rounded-t-lg">
@@ -48,7 +56,6 @@ const LandlordDashboard = () => (
   </Card>
 );
 
-// Artisan Dashboard
 const ArtisanDashboard = () => (
   <Card className="bg-card border-none shadow-md">
     <CardHeader className="bg-yellow-500 text-primary-foreground rounded-t-lg">
@@ -57,7 +64,7 @@ const ArtisanDashboard = () => (
     <CardContent className="space-y-4 pt-6">
       <ul className="space-y-2 text-sm text-muted-foreground">
         <li className="flex items-center gap-2"><Briefcase className="h-4 w-4"/> Available Jobs</li>
-        <li className="flex items-center gap-2"><Wallet className="h-4 w-4"/> Earnings: ₦250,000</li>
+        <li className="flex items-center gap-2"><Wallet className="h-4 w-4"/> Earnings: ₦540,000</li>
         <li className="flex items-center gap-2"><Hammer className="h-4 w-4"/> My Services</li>
       </ul>
       <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-primary-foreground mt-2 flex items-center justify-center gap-1">
@@ -67,7 +74,6 @@ const ArtisanDashboard = () => (
   </Card>
 );
 
-// Admin Dashboard
 const AdminDashboard = () => (
   <Card className="bg-card border-none shadow-md col-span-full">
     <CardHeader className="bg-red-600 text-primary-foreground rounded-t-lg">
@@ -75,7 +81,7 @@ const AdminDashboard = () => (
     </CardHeader>
     <CardContent className="pt-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2"><Shield className="h-4 w-4 text-green-500"/> User Approvals</div>
+        <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-green-500"/> User Approvals</div>
         <div className="flex items-center gap-2"><Wallet className="h-4 w-4"/> Escrow Controls</div>
         <div className="flex items-center gap-2"><BarChart className="h-4 w-4"/> Site Analytics</div>
       </div>
@@ -114,7 +120,6 @@ const DashboardCards = ({ role }: { role: string | null }) => {
   );
 }
 
-
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
@@ -128,18 +133,10 @@ export default function DashboardPage() {
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   useEffect(() => {
-    // Wait until the initial user loading is complete
-    if (!isUserLoading && !user) {
-      // If loading is done and there's no user, redirect to login
-      router.push('/login');
-    }
+    if (!isUserLoading && !user) router.push('/login');
   }, [user, isUserLoading, router]);
 
-
-  const isLoading = isUserLoading || isUserDocLoading;
-  const userRole = userData?.rolePrimary;
-
-  if (isLoading) {
+  if (isUserLoading || isUserDocLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -148,30 +145,11 @@ export default function DashboardPage() {
     );
   }
 
+  const role = userData ? (userData as any).rolePrimary : null;
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {user?.displayName || user?.email || 'User'}!</p>
-      </div>
-      <div className="space-y-6">
-          <DashboardCards role={userRole} />
-      </div>
-      
-      {userRole === 'admin' && (
-        <div className="mt-8 pt-8 border-t">
-          <h2 className="text-2xl font-bold font-headline mb-4 flex items-center gap-3"><Shield /> Admin Panel</h2>
-          <Card>
-              <CardHeader>
-                  <CardTitle>Platform Overview</CardTitle>
-                  <CardDescription>High-level statistics and management tools.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                  <p>Admin-specific components for user management, listings approval, and more will be displayed here.</p>
-              </CardContent>
-          </Card>
-        </div>
-      )}
+    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <DashboardCards role={role} />
     </div>
   );
 }
