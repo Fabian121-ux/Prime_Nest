@@ -5,12 +5,13 @@ import { doc, collection, query, where, getDocs } from "firebase/firestore";
 import DashboardHeader from "@/components/layout/dashboard-header";
 import { SidebarProvider, Sidebar, SidebarInset, useSidebar } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/layout/dashboard-sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import SupportPopup from "@/components/demo/support-popup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { demoTeamEmails } from "@/lib/demo-config";
 
-function DashboardMainContent({ children }: { children: React.ReactNode }) {
+
+function DashboardUI({ children }: { children: ReactNode }) {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [showSupportPopup, setShowSupportPopup] = useState(false);
@@ -23,7 +24,6 @@ function DashboardMainContent({ children }: { children: React.ReactNode }) {
 
     const { data: userData, isLoading: isUserDataLoading } = useDoc(userDocRef);
     const userRole = (userData as any)?.rolePrimary;
-    const { setOpenMobile } = useSidebar();
     
     useEffect(() => {
         const checkResponse = async () => {
@@ -57,7 +57,7 @@ function DashboardMainContent({ children }: { children: React.ReactNode }) {
     const isLoading = isUserLoading || isUserDataLoading || hasResponded === null;
 
     return (
-        <SidebarProvider defaultOpen={false}>
+        <>
             <Sidebar>
                  {isLoading ? (
                     <div className="p-4 space-y-2">
@@ -79,6 +79,14 @@ function DashboardMainContent({ children }: { children: React.ReactNode }) {
                     <SupportPopup user={user} onClose={handleClosePopup} />
                 )}
             </SidebarInset>
+        </>
+    );
+}
+
+function DashboardMainContent({ children }: { children: React.ReactNode }) {
+    return (
+        <SidebarProvider defaultOpen={false}>
+            <DashboardUI>{children}</DashboardUI>
         </SidebarProvider>
     );
 }
