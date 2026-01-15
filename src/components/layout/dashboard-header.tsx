@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
-import { SidebarTrigger } from '../ui/sidebar';
+import { SidebarTrigger, useSidebar } from '../ui/sidebar';
 import { Input } from '../ui/input';
 import { doc } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -25,12 +25,19 @@ const getRoleName = (role: string) => {
     }
 }
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+  onSidebarTrigger: () => Promise<boolean>;
+}
+
+
+export default function DashboardHeader({ onSidebarTrigger }: DashboardHeaderProps) {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const isMobile = useIsMobile();
+  const { toggleSidebar } = useSidebar();
+
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -48,11 +55,21 @@ export default function DashboardHeader() {
     router.push('/');
   };
 
+  const handleSidebarTriggerClick = async () => {
+    // onSidebarTrigger checks if the popup should be shown.
+    // If it returns true, it means the popup was triggered, so we don't toggle the sidebar.
+    // If it returns false, we toggle the sidebar as usual.
+    const popupWasTriggered = await onSidebarTrigger();
+    if (!popupWasTriggered) {
+      toggleSidebar();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-card/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-            <SidebarTrigger/>
+            <SidebarTrigger onClick={handleSidebarTriggerClick} />
         </div>
         
         <div className="flex flex-1 items-center justify-end gap-2 text-muted-foreground">

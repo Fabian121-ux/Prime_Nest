@@ -1,7 +1,8 @@
+
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useUser, useFirestore, useAuth } from '@/firebase';
-import { doc, getDocs, addDoc, serverTimestamp, collection, query, where } from 'firebase/firestore';
+import { doc, addDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -9,61 +10,30 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, HeartCrack, PartyPopper } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { demoTeamEmails } from '@/lib/demo-config';
 
 type PopupState = 'initial' | 'confirm_yes' | 'confirm_no';
 
-export default function SupportPopup() {
+interface SupportPopupProps {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+
+export default function SupportPopup({ isOpen, onOpenChange }: SupportPopupProps) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const auth = useAuth();
   const router = useRouter();
 
   const [popupState, setPopupState] = useState<PopupState>('initial');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [countdown, setCountdown] = useState(10);
-  const [isChecking, setIsChecking] = useState(true);
-
+  
+  // Reset state when the popup is closed from the outside
   useEffect(() => {
-    const checkAndShowPopup = async () => {
-      // Wait until user loading is false and we have a user and firestore instance
-      if (isUserLoading || !user || !firestore) {
-        if (!isUserLoading) setIsChecking(false); // If not loading and no user, stop checking
-        return;
-      }
-
-      setIsChecking(true);
-      
-      // Gating logic: only show for specified demo users
-      const isDemoUser = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || demoTeamEmails.includes(user.email || '');
-      if (!isDemoUser) {
-        setIsChecking(false);
-        setIsPopupOpen(false);
-        return;
-      }
-
-      // Check if user has already responded
-      const responsesRef = collection(firestore, 'support_demo_responses');
-      const q = query(responsesRef, where("uid", "==", user.uid));
-      
-      try {
-        const querySnapshot = await getDocs(q);
-        if (querySnapshot.empty) {
-          setIsPopupOpen(true); // User has not responded, show popup.
-        } else {
-          setIsPopupOpen(false); // User has responded, do not show.
-        }
-      } catch (error) {
-        console.error("Error checking for support response:", error);
-        setIsPopupOpen(false);
-      } finally {
-        setIsChecking(false);
-      }
-    };
-    
-    checkAndShowPopup();
-
-  }, [user, isUserLoading, firestore]);
+    if (!isOpen) {
+      setPopupState('initial');
+      setCountdown(10);
+    }
+  }, [isOpen]);
 
 
   // Handle "Yes" click
@@ -80,13 +50,13 @@ export default function SupportPopup() {
       setPopupState('confirm_yes');
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       setTimeout(() => {
-        setIsPopupOpen(false);
+        onOpenChange(false);
       }, 4000);
     } catch (err) {
       console.error('Error saving response:', err);
-      setIsPopupOpen(false);
+      onOpenChange(false);
     }
-  }, [firestore, user]);
+  }, [firestore, user, onOpenChange]);
 
   // Handle "No" click
   const handleNo = useCallback(async () => {
@@ -102,16 +72,16 @@ export default function SupportPopup() {
       setPopupState('confirm_no');
     } catch (err) {
       console.error('Error saving response:', err);
-      setIsPopupOpen(false);
+      onOpenChange(false);
     }
-  }, [firestore, user]);
+  }, [firestore, user, onOpenChange]);
   
   const handleLogout = useCallback(async () => {
     if (!auth) return;
-    setIsPopupOpen(false);
+    onOpenChange(false);
     await signOut(auth);
     router.push('/login');
-  }, [auth, router]);
+  }, [auth, router, onOpenChange]);
 
   // Countdown for "No" response
   useEffect(() => {
@@ -124,21 +94,21 @@ export default function SupportPopup() {
     return () => clearTimeout(timer);
   }, [popupState, countdown, handleLogout]);
 
-  if (isChecking || !isPopupOpen) {
-    return null; // Don't render anything while checking or if not supposed to be open
-  }
-
   return (
-      <Dialog open={isPopupOpen} onOpenChange={(open) => {
-        // Prevent closing via normal means
-        if (!open) return;
-        setIsPopupOpen(open);
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        // Prevent closing via normal means unless it's one of the final states
+        if (popupState === 'initial') return;
+        onOpenChange(open);
       }}>
           <DialogContent 
             className="sm:max-w-md" 
-            hideCloseButton={true}
-            onEscapeKeyDown={(e) => e.preventDefault()}
-            onPointerDownOutside={(e) => e.preventDefault()}
+            hideCloseButton={popupState === 'initial'}
+            onEscapeKeyDown={(e) => {
+              if (popupState === 'initial') e.preventDefault();
+            }}
+            onPointerDownOutside={(e) => {
+              if (popupState === 'initial') e.preventDefault();
+            }}
           >
             <AnimatePresence mode="wait">
               {popupState === 'initial' && (
