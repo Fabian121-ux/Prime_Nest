@@ -104,6 +104,9 @@ const AdminDashboard = () => (
 )
 
 const DashboardCards = ({ role }: { role: string }) => {
+    if (!role) {
+        return null;
+    }
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {role === 'tenant' && <TenantDashboard />}
@@ -139,25 +142,16 @@ export default function DashboardPage() {
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || isUserDocLoading || !user) {
+  if (isUserLoading || isUserDocLoading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-200px)]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-4 text-muted-foreground">Loading dashboard...</p>
       </div>
     );
   }
-
-  // User is logged in, but their document might still be loading.
-  if (!userData) {
-     return (
-      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-4">Loading user profile...</p>
-      </div>
-    );
-  }
-
-  const role = (userData as any).rolePrimary;
+  
+  const role = userData ? (userData as any).rolePrimary : null;
 
   return (
     <div className="space-y-8">
