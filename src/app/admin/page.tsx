@@ -37,13 +37,19 @@ const RoleIcon = ({ role }: { role: string }) => {
 }
 
 export default function AdminPage() {
+    // This dummy function satisfies the prop requirement for DashboardHeader
+    // without triggering the popup logic for admins.
+    const handleAdminSidebarTrigger = async () => {
+        return false; // Always return false so the sidebar toggles normally.
+    };
+
     return (
       <SidebarProvider>
         <Sidebar>
-            <DashboardSidebar />
+            <DashboardSidebar userRole="admin" />
         </Sidebar>
         <SidebarInset>
-            <DashboardHeader />
+            <DashboardHeader onSidebarTrigger={handleAdminSidebarTrigger} />
             <main className="container py-8 space-y-8">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Admin Panel</h1>
