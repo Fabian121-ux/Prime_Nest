@@ -1,3 +1,5 @@
+
+'use client';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +9,8 @@ import Link from 'next/link';
 import { ArrowRight, Building, Hammer, MapPin, Search, ShieldCheck, UserPlus } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import HeroAnimation from '@/components/layout/hero-animation';
+import { motion } from 'framer-motion';
+
 
 const mockListings = [
   { id: '1', title: 'Cozy 2-Bedroom Apartment', description: 'A beautiful apartment in the heart of the city.', price: 1200000, type: 'property', location: 'Lagos, Nigeria', imageId: 'listing1' },
@@ -47,6 +51,30 @@ function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
   );
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
+
+
 export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
 
@@ -56,18 +84,40 @@ export default function Home() {
       <main className="flex-1">
         <section className="relative py-20 md:py-32 overflow-hidden">
           <HeroAnimation />
-          <div className="container mx-auto px-6 text-center relative">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span></h1>
-            <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.</p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Button size="lg" asChild className="transition-transform hover:scale-105">
-                <Link href="/signup">Get Started <ArrowRight className="ml-2 h-5 w-5" /></Link>
-              </Button>
-              <Button size="lg" variant="secondary" asChild className="transition-transform hover:scale-105">
-                <Link href="#explore">Explore Listings</Link>
-              </Button>
-            </div>
-          </div>
+          <motion.div 
+            className="container mx-auto px-6 text-center relative"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.h1 
+              variants={itemVariants}
+              className="text-4xl md:text-6xl font-bold font-headline text-foreground"
+            >
+              Find Your <span className="text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
+            </motion.h1>
+            <motion.p 
+              variants={itemVariants}
+              className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+            >
+              A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.
+            </motion.p>
+            <motion.div 
+              variants={itemVariants}
+              className="mt-8 flex flex-wrap justify-center gap-4"
+            >
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" asChild>
+                  <Link href="/signup">Get Started <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" variant="secondary" asChild>
+                  <Link href="#explore">Explore Listings</Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </section>
 
         <section id="explore" className="py-16 md:py-24 bg-background">
@@ -115,3 +165,4 @@ export default function Home() {
     </div>
   );
 }
+
