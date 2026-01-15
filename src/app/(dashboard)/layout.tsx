@@ -8,7 +8,6 @@ import DashboardSidebar from "@/components/layout/dashboard-sidebar";
 import React, { type ReactNode, useState, useEffect, useCallback } from "react";
 import SupportPopup from "@/components/demo/support-popup";
 import { Skeleton } from "@/components/ui/skeleton";
-import { demoTeamEmails } from "@/lib/demo-config";
 
 
 function DashboardUI({ children }: { children: ReactNode }) {
@@ -47,11 +46,9 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 return true;
             }
         } catch (error) {
-            // This will catch permission errors if the rules are not set up correctly,
-            // but we will proceed assuming the user has not responded.
-            // This might cause the popup to show again for a user who responded if rules are broken,
-            // which is a safe failure case for this demo feature.
-            console.error("Error checking for support response (might be a permissions issue):", error);
+            // This will catch permission errors if the rules are not set up correctly.
+            // We will proceed assuming the user has not responded, which is a safe failure case for this demo feature.
+            console.error("Error checking for support response (might be a permissions issue, showing popup as fallback):", error);
             setShowSupportPopup(true);
             return true;
         }
@@ -75,7 +72,9 @@ function DashboardUI({ children }: { children: ReactNode }) {
             <SidebarInset>
                 <DashboardHeader onSidebarTrigger={checkAndTriggerPopup} />
                 <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-muted/40">
-                    {children}
+                    <div className="max-w-7xl mx-auto">
+                        {children}
+                    </div>
                 </main>
                  <SupportPopup isOpen={showSupportPopup} onOpenChange={setShowSupportPopup} />
             </SidebarInset>
@@ -99,5 +98,3 @@ export default function DashboardLayout({
 }) {
     return <DashboardMainContent>{children}</DashboardMainContent>;
 }
-
-    
