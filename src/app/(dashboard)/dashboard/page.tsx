@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -147,7 +148,7 @@ export default function DashboardPage() {
         <CardContent>
             <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                    <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                    <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={{ fill: "hsl(var(--foreground))", fontSize: 12 }}>
                         {pieChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
@@ -158,7 +159,7 @@ export default function DashboardPage() {
                             borderColor: 'hsl(var(--border))',
                         }}
                     />
-                    <Legend iconType="circle" iconSize={10} />
+                    <Legend iconType="circle" iconSize={10} wrapperStyle={{ color: "hsl(var(--foreground))" }} />
                 </PieChart>
             </ResponsiveContainer>
         </CardContent>
