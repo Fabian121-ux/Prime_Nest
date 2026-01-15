@@ -57,7 +57,7 @@ export default function Home() {
         <section className="relative py-20 md:py-32 overflow-hidden">
           <HeroAnimation />
           <div className="container mx-auto px-6 text-center relative">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/80 px-4 py-2 rounded-lg shadow-lg">Prime Nest</span></h1>
+            <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span></h1>
             <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.</p>
             <div className="mt-8 flex justify-center gap-4">
               <Button size="lg" asChild className="transition-transform hover:scale-105">
