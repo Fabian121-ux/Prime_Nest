@@ -79,10 +79,10 @@ export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 overflow-hidden">
+        <section className="relative py-20 md:py-32 overflow-hidden bg-background">
           <HeroAnimation />
           <motion.div 
             className="container mx-auto px-6 text-center relative"
@@ -94,7 +94,7 @@ export default function Home() {
               variants={itemVariants}
               className="text-4xl md:text-6xl font-bold font-headline text-foreground"
             >
-              <span>Find Your </span><span className="inline-block text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
+              <span className="block sm:inline">Find Your </span><span className="inline-block text-primary-foreground bg-primary/90 px-4 py-2 rounded-lg shadow-lg shadow-primary/20">Prime Nest</span>
             </motion.h1>
             <motion.p 
               variants={itemVariants}
@@ -165,4 +165,3 @@ export default function Home() {
     </div>
   );
 }
-
