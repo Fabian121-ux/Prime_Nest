@@ -9,9 +9,10 @@ import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
-import { useSidebar, SidebarTrigger } from '../ui/sidebar';
+import { SidebarTrigger } from '../ui/sidebar';
 import { Input } from '../ui/input';
 import { doc } from 'firebase/firestore';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 const getRoleName = (role: string) => {
     switch (role) {
@@ -59,11 +60,29 @@ export default function DashboardHeader() {
         </div>
         
         <div className="flex flex-1 items-center justify-center px-4">
-            <div className="w-full max-w-md lg:max-w-lg">
+            {/* Desktop Search Bar */}
+            <div className="hidden md:block w-full max-w-md lg:max-w-lg">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                     <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
                 </div>
+            </div>
+             {/* Mobile Search Popover */}
+            <div className="md:hidden">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Search className="h-5 w-5 text-muted-foreground" />
+                    <span className="sr-only">Search</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                   <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
+                      <Input placeholder="Search..." className="pl-10 bg-muted border-none focus-visible:ring-primary"/>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
         </div>
 
@@ -102,7 +121,7 @@ export default function DashboardHeader() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                <DropdownMenuItem onClick={() => router.push('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
