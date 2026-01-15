@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -65,14 +66,14 @@ export default function DashboardHeader() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-screen max-w-[calc(100vw-2rem)] p-2">
-                  <div className="relative">
+                  <div className="relative flex items-center">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input placeholder="Search..." className="pl-9" />
                   </div>
                 </PopoverContent>
               </Popover>
             ) : (
-              <div className="relative">
+              <div className="relative flex items-center">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input placeholder="Search..." className="pl-9 bg-muted/50 border-none" />
               </div>

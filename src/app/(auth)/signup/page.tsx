@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -14,13 +15,13 @@ import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, getDocs, collection, serverTimestamp, doc } from "firebase/firestore";
+import { setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  role: z.enum(["tenant", "artisan", "landlord"], {
+  role: z.enum(["tenant", "artisan", "landlord", "admin"], {
     required_error: "You need to select a role.",
   }),
 });
@@ -50,13 +51,6 @@ export default function SignUpPage() {
         return;
     }
     try {
-      // Check if any users exist
-      const usersCollectionRef = collection(firestore, "users");
-      const usersSnapshot = await getDocs(usersCollectionRef);
-      const isFirstUser = usersSnapshot.empty;
-      
-      const roleToAssign = isFirstUser ? 'admin' : values.role;
-
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
@@ -64,10 +58,10 @@ export default function SignUpPage() {
       const userData = {
         userId: user.uid,
         email: user.email,
-        rolePrimary: roleToAssign,
-        roles: [roleToAssign],
+        rolePrimary: values.role,
+        roles: [values.role],
         trustTier: 0,
-        isVerified: false,
+        isVerified: values.role === 'admin', // Admins are auto-verified
         status: 'active',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -76,7 +70,7 @@ export default function SignUpPage() {
       await setDoc(userDocRef, userData);
       
       toast({
-        title: isFirstUser ? "Admin Account Created" : "Account Created Successfully",
+        title: "Account Created Successfully",
         description: "Please log in with your new credentials.",
       });
       router.push('/login');
@@ -175,6 +169,14 @@ export default function SignUpPage() {
                           </FormControl>
                           <FormLabel className="font-normal">
                             Artisan - Offering professional services.
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0 rounded-md border p-4 has-[:checked]:bg-destructive/10">
+                          <FormControl>
+                            <RadioGroupItem value="admin" />
+                          </FormControl>
+                          <FormLabel className="font-normal text-destructive">
+                            Admin - Platform Administrator.
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
