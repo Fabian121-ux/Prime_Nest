@@ -52,7 +52,7 @@ export default function Home() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground mb-4"
             >
-              Find Your <span className="text-primary-foreground bg-primary/80 px-2 md:px-4 py-1 rounded-lg">Prime Nest</span>
+              Find Your <span className="inline-block text-primary-foreground bg-primary/80 px-2 md:px-4 py-1 rounded-lg">Prime Nest</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
