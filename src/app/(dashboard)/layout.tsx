@@ -15,7 +15,6 @@ function DashboardUI({ children }: { children: ReactNode }) {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [showSupportPopup, setShowSupportPopup] = useState(false);
-    const [hasResponded, setHasResponded] = useState(false);
     const [isCheckingResponse, setIsCheckingResponse] = useState(true);
 
 
@@ -35,7 +34,6 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 const isDemoUser = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || demoTeamEmails.includes(user.email || '');
 
                 if (!isDemoUser) {
-                    setHasResponded(true); // Don't show popup for non-demo users
                     setShowSupportPopup(false);
                     setIsCheckingResponse(false);
                     return;
@@ -47,10 +45,8 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 const querySnapshot = await getDocs(q);
                 
                 if (querySnapshot.empty) {
-                    setHasResponded(false);
                     setShowSupportPopup(true);
                 } else {
-                    setHasResponded(true);
                     setShowSupportPopup(false);
                 }
                 setIsCheckingResponse(false);
@@ -65,7 +61,6 @@ function DashboardUI({ children }: { children: ReactNode }) {
 
     const handleClosePopup = () => {
         setShowSupportPopup(false);
-        setHasResponded(true);
     };
 
     const isLoading = isUserLoading || isUserDataLoading || isCheckingResponse;
@@ -89,7 +84,7 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-muted/40">
                     {children}
                 </main>
-                 {user && showSupportPopup && !hasResponded && (
+                 {user && showSupportPopup && (
                     <SupportPopup user={user} onClose={handleClosePopup} />
                 )}
             </SidebarInset>

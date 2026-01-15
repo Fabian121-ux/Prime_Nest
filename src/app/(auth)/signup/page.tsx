@@ -71,9 +71,9 @@ export default function SignUpPage() {
       
       toast({
         title: "Account Created Successfully",
-        description: "Please log in with your new credentials.",
+        description: "Redirecting you to the dashboard...",
       });
-      router.push('/login');
+      router.push('/dashboard');
     } catch (error: any) {
       toast({
         variant: "destructive",

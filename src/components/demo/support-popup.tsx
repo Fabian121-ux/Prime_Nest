@@ -91,7 +91,7 @@ export default function SupportPopup({ user, onClose }: SupportPopupProps) {
   }, [popupState, countdown, handleLogout]);
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) return; setIsOpen(true);}}>
       <DialogContent 
         className="sm:max-w-md" 
         onInteractOutside={(e) => e.preventDefault()}
