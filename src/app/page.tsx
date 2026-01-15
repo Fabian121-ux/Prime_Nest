@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -39,14 +38,19 @@ export default function Home() {
   const listing4 = PlaceHolderImages.find((p) => p.id === 'listing4');
 
   return (
-    <div className="flex flex-col min-h-screen overflow-x-hidden">
+    <div className="flex flex-col min-h-screen overflow-x-hidden relative">
       <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative text-center py-20 md:py-32 overflow-hidden">
-          <HeroAnimation />
-          <div className="container relative z-10">
+          {/* Hero background animation */}
+          <div className="absolute inset-0">
+            <HeroAnimation />
+          </div>
+
+          {/* Hero content */}
+          <div className="relative z-10 container mx-auto px-4">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -90,7 +94,7 @@ export default function Home() {
 
         {/* Features Section */}
         <section className="py-16 md:py-24 bg-card">
-          <div className="container">
+          <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">A Foundation of Trust</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -118,7 +122,7 @@ export default function Home() {
 
         {/* Explore Listings Section */}
         <section id="explore" className="py-16 md:py-24 bg-background">
-          <div className="container">
+          <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Explore Prime Nest</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
