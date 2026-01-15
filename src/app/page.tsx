@@ -8,10 +8,10 @@ import { ArrowRight, Building, Hammer, MapPin, Search, ShieldCheck, UserPlus } f
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const mockListings = [
-  { id: '1', title: 'Cozy 2-Bedroom Apartment', description: 'A beautiful apartment in the heart of the city.', price: 1200, type: 'property', location: 'Lagos, Nigeria', imageId: 'listing1' },
-  { id: '2', title: 'Expert Plumbing Services', description: 'Fast and reliable plumbing solutions for your home.', price: 50, type: 'service', location: 'Accra, Ghana', imageId: 'listing2' },
-  { id: '3', title: 'Modern Studio with a View', description: 'Stunning views from this top-floor studio.', price: 850, type: 'property', location: 'Nairobi, Kenya', imageId: 'listing3' },
-  { id: '4', title: 'Professional Electrical Wiring', description: 'Certified electrician for all your wiring needs.', price: 75, type: 'service', location: 'Cape Town, South Africa', imageId: 'listing4' },
+  { id: '1', title: 'Cozy 2-Bedroom Apartment', description: 'A beautiful apartment in the heart of the city.', price: 1200000, type: 'property', location: 'Lagos, Nigeria', imageId: 'listing1' },
+  { id: '2', title: 'Expert Plumbing Services', description: 'Fast and reliable plumbing solutions for your home.', price: 5000, type: 'service', location: 'Accra, Ghana', imageId: 'listing2' },
+  { id: '3', title: 'Modern Studio with a View', description: 'Stunning views from this top-floor studio.', price: 850000, type: 'property', location: 'Nairobi, Kenya', imageId: 'listing3' },
+  { id: '4', title: 'Professional Electrical Wiring', description: 'Certified electrician for all your wiring needs.', price: 7500, type: 'service', location: 'Cape Town, South Africa', imageId: 'listing4' },
 ];
 
 function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
@@ -22,7 +22,7 @@ function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
     <Card className="overflow-hidden flex flex-col transition-all hover:shadow-lg hover:-translate-y-1">
       <div className="relative">
         {image && <Image src={image.imageUrl} alt={listing.title} width={600} height={400} className="w-full h-48 object-cover" data-ai-hint={image.imageHint} />}
-        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">${listing.price}{listing.type === 'property' ? '/mo' : '/hr'}</div>
+        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">₦{listing.price.toLocaleString()}{listing.type === 'property' ? '/mo' : '/hr'}</div>
       </div>
       <CardHeader>
         <CardTitle className="font-headline text-xl">{listing.title}</CardTitle>
@@ -53,13 +53,16 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32">
-          {heroImage && 
-            <div className="absolute inset-0">
-              <Image src={heroImage.imageUrl} alt={heroImage.description} fill style={{objectFit: 'cover'}} className="opacity-10" data-ai-hint={heroImage.imageHint} />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-            </div>
-          }
+        <section className="relative py-20 md:py-32 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 animate-gradient-x"></div>
+              {heroImage && 
+                <>
+                  <Image src={heroImage.imageUrl} alt={heroImage.description} fill style={{objectFit: 'cover'}} className="opacity-10" data-ai-hint={heroImage.imageHint} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+                </>
+              }
+          </div>
           <div className="container mx-auto px-6 text-center relative">
             <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/80 px-4 py-2 rounded-lg">Prime Nest</span></h1>
             <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.</p>

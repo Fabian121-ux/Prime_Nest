@@ -18,9 +18,9 @@ const mockListings = [
 ];
 
 const mockEscrow = [
-  { id: 'e1', listing: 'Cozy 2-Bedroom Apartment', amount: 1200, status: 'held', tenant: 'tenant@example.com' },
-  { id: 'e2', listing: 'Expert Plumbing Services', amount: 50, status: 'released', tenant: 'client@example.com' },
-  { id: 'e3', listing: 'Modern Studio with a View', amount: 850, status: 'initiated', tenant: 'another-tenant@example.com' },
+  { id: 'e1', listing: 'Cozy 2-Bedroom Apartment', amount: 1200000, status: 'held', tenant: 'tenant@example.com' },
+  { id: 'e2', listing: 'Expert Plumbing Services', amount: 5000, status: 'released', tenant: 'client@example.com' },
+  { id: 'e3', listing: 'Modern Studio with a View', amount: 850000, status: 'initiated', tenant: 'another-tenant@example.com' },
 ];
 
 const RoleIcon = ({ role }: { role: string }) => {
@@ -126,7 +126,7 @@ export default function AdminPage() {
                             {mockEscrow.map(tx => (
                                 <TableRow key={tx.id}>
                                     <TableCell className="font-medium">{tx.listing}</TableCell>
-                                    <TableCell>${tx.amount}</TableCell>
+                                    <TableCell>₦{tx.amount.toLocaleString()}</TableCell>
                                     <TableCell><Badge variant={tx.status === 'released' ? 'secondary' : (tx.status === 'held' ? 'default' : 'outline')} className="capitalize">{tx.status}</Badge></TableCell>
                                     <TableCell className="text-right">
                                         {tx.status === 'held' && <Button size="sm"><ShieldCheck className="mr-2 h-4 w-4"/>Release Payment</Button>}

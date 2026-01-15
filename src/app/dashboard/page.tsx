@@ -19,8 +19,8 @@ const mockData = {
     { id: '2', title: 'Expert Plumbing Services', status: 'Approved' },
   ],
   transactions: [
-    { id: 't1', listingTitle: 'Cozy 2-Bedroom Apartment', with: 'Jane Smith', status: 'held', amount: 1200 },
-    { id: 't2', listingTitle: 'Expert Plumbing Services', with: 'Mark Johnson', status: 'released', amount: 50 },
+    { id: 't1', listingTitle: 'Cozy 2-Bedroom Apartment', with: 'Jane Smith', status: 'held', amount: 1200000 },
+    { id: 't2', listingTitle: 'Expert Plumbing Services', with: 'Mark Johnson', status: 'released', amount: 5000 },
   ],
 };
 
@@ -123,7 +123,7 @@ const EscrowSection = () => (
               <p className="text-sm text-muted-foreground">With: {tx.with}</p>
             </div>
             <div className="flex items-center gap-4">
-               <p className="font-semibold text-lg">${tx.amount}</p>
+               <p className="font-semibold text-lg">₦{tx.amount.toLocaleString()}</p>
                <EscrowStatusTracker status={tx.status as any} />
                <Button variant="outline" size="icon">
                 <MessageSquare className="h-4 w-4"/>
