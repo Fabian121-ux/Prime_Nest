@@ -44,11 +44,7 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative text-center py-20 md:py-32 overflow-hidden">
-          {/* Hero background animation */}
-          <div className="absolute inset-0">
-            <HeroAnimation />
-          </div>
-
+          <HeroAnimation />
           {/* Hero content */}
           <div className="relative z-10 container mx-auto px-4">
             <motion.h1
@@ -151,7 +147,7 @@ export default function Home() {
                       />
                     </div>
                     <CardHeader>
-                      <CardTitle>{listing.title || listing.description}</CardTitle>
+                      <CardTitle>{listing.title}</CardTitle>
                       <CardDescription>{listing.location}</CardDescription>
                     </CardHeader>
                     <CardContent>
