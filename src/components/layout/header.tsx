@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="py-4 px-6 md:px-8 border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-3 font-bold text-xl text-foreground">
+        <Link href="/" className="flex items-center gap-3 font-bold text-xl text-foreground transition-transform hover:scale-105">
           <div className="p-2 bg-primary rounded-md">
             <Home className="text-primary-foreground h-6 w-6" />
           </div>
@@ -19,7 +19,7 @@ export default function Header() {
           <Button variant="ghost" asChild>
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="transition-transform hover:scale-105">
             <Link href="/signup">Sign Up</Link>
           </Button>
         </nav>

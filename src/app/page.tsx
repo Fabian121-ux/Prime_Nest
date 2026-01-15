@@ -19,10 +19,10 @@ function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
   const image = PlaceHolderImages.find(img => img.id === listing.imageId);
 
   return (
-    <Card className="overflow-hidden flex flex-col transition-all hover:shadow-lg hover:-translate-y-1">
+    <Card className="overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5">
       <div className="relative">
         {image && <Image src={image.imageUrl} alt={listing.title} width={600} height={400} className="w-full h-48 object-cover" data-ai-hint={image.imageHint} />}
-        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">₦{listing.price.toLocaleString()}{listing.type === 'property' ? '/mo' : '/hr'}</div>
+        <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold shadow-md">₦{listing.price.toLocaleString()}{listing.type === 'property' ? '' : '/hr'}</div>
       </div>
       <CardHeader>
         <CardTitle className="font-headline text-xl">{listing.title}</CardTitle>
@@ -38,7 +38,7 @@ function ListingCard({ listing }: { listing: typeof mockListings[0] }) {
         <div className="text-sm text-muted-foreground flex items-center gap-1">
           <MapPin className="w-4 h-4" /> {listing.location}
         </div>
-        <Button asChild>
+        <Button asChild className="transition-transform hover:scale-105">
           <Link href={`/listing/${listing.id}`}>View <ArrowRight className="ml-2 h-4 w-4" /></Link>
         </Button>
       </CardFooter>
@@ -53,35 +53,26 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 z-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 animate-gradient-x"></div>
-              {heroImage && 
-                <>
-                  <Image src={heroImage.imageUrl} alt={heroImage.description} fill style={{objectFit: 'cover'}} className="opacity-10" data-ai-hint={heroImage.imageHint} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-                </>
-              }
-          </div>
+        <section className="relative py-20 md:py-32 overflow-hidden animated-gradient">
           <div className="container mx-auto px-6 text-center relative">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/80 px-4 py-2 rounded-lg">Prime Nest</span></h1>
+            <h1 className="text-4xl md:text-6xl font-bold font-headline text-foreground">Find Your <span className="text-primary-foreground bg-primary/80 px-4 py-2 rounded-lg shadow-lg">Prime Nest</span></h1>
             <p className="mt-4 md:mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A trust-driven platform for housing and skilled work across Africa. Secure, simple, and built for you.</p>
             <div className="mt-8 flex justify-center gap-4">
-              <Button size="lg" asChild>
+              <Button size="lg" asChild className="transition-transform hover:scale-105">
                 <Link href="/signup">Get Started <ArrowRight className="ml-2 h-5 w-5" /></Link>
               </Button>
-              <Button size="lg" variant="secondary" asChild>
+              <Button size="lg" variant="secondary" asChild className="transition-transform hover:scale-105">
                 <Link href="#explore">Explore Listings</Link>
               </Button>
             </div>
           </div>
         </section>
 
-        <section id="explore" className="py-16 md:py-24">
+        <section id="explore" className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-center font-headline">Explore Listings</h2>
             <p className="mt-4 text-muted-foreground text-center max-w-2xl mx-auto">Discover apartments, homes, and professional services from our trusted community members.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
               {mockListings.map(listing => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
@@ -89,26 +80,26 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 md:py-24 bg-card">
+        <section className="py-16 md:py-24 bg-card border-y">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold text-center font-headline">How Prime Nest Works</h2>
              <div className="grid md:grid-cols-3 gap-8 mt-12 text-center">
-              <div className="p-4">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4">
+              <div className="p-4 transition-transform hover:scale-105 duration-300">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
                   <UserPlus className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold font-headline">1. Join & Verify</h3>
                 <p className="mt-2 text-muted-foreground">Create a single account and choose your role. All users are vetted for trust and safety.</p>
               </div>
-              <div className="p-4">
-                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4">
+              <div className="p-4 transition-transform hover:scale-105 duration-300">
+                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
                   <Search className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold font-headline">2. Find or List</h3>
                 <p className="mt-2 text-muted-foreground">Browse property or service listings. Landlords and artisans can easily post their offerings.</p>
               </div>
-              <div className="p-4">
-                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4">
+              <div className="p-4 transition-transform hover:scale-105 duration-300">
+                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/20 mx-auto mb-4 ring-4 ring-primary/10">
                   <ShieldCheck className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold font-headline">3. Transact Securely</h3>
