@@ -1,0 +1,266 @@
+/**
+ * This ruleset enforces a user-centric security model for the Prime Nest application,
+ * designed with a flat, SQL-like data structure for future portability.
+ *
+ * Core Philosophy:
+ * The security model is built on user ownership and explicit participation. Users have
+ * full control over their own documents (profiles, listings). Access to shared resources
+ * like conversations and escrows is strictly limited to the declared participants.
+ * A global 'admin' role exists for administrative oversight.
+ *
+ * Data Structure:
+ * The Firestore structure is intentionally flat, with a top-level collection for each
+ * data entity (e.g., /users, /listings, /conversations). This avoids complex nested
+ * rules and improves query performance, mirroring a traditional relational database schema.
+ * Relationships are managed via stored foreign key-style UIDs.
+ *
+ * Key Security Decisions:
+ * - User Data: User and profile information is publicly readable to facilitate search
+ *   and discovery within the app, but only the owner can modify their own data.
+ * - Public Listings & Reviews: Listings and reviews are public to all users, including
+ *   those not signed in. However, write operations are restricted to the document owner.
+ * - Private Data: Sensitive collections like /conversations, /messages, and /escrows
+ *   explicitly disallow 'list' operations to prevent data leakage. Access is granted
+ *   on a per-document basis by checking for the user's UID in a participants field.
+ * - Backend-Only Operations: All state changes to financial documents (/escrows) are
+ *   prohibited from the client side. These mutations must be handled by trusted
+ *   backend Cloud Functions to ensure security and integrity.
+ * - Admin Privileges: Users with the 'admin' role have special read/write access to
+ *   governance collections like /admin_actions.
+ *
+ * Denormalization for Authorization:
+ * To ensure fast and secure authorization checks, necessary data is denormalized. For example,
+ * /conversations documents contain a `participants` array, and /listings contain an
+ * `ownerId`. This avoids costly and slow `get()` calls in most rules, making the system
+ * more performant and secure.
+ *
+ * Structural Segregation:
+ * User-specific profile data is segregated into distinct top-level collections
+ * (/tenant_profiles, /landlord_profiles, /artisan_profiles) rather than being nested.
+ * This simplifies rules and aligns with the flat data model.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --------------------------------
+    // Helper Functions
+    // --------------------------------
+
+    /**
+     * Returns true if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Returns true if the authenticated user's UID matches the provided userId.
+     * Use for ownership checks on new or existing documents.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Returns true if the document exists and the user is the owner.
+     * Use for secure update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Checks if the current user has the 'admin' role.
+     * This requires a read to the user's own document.
+     */
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rolePrimary == 'admin';
+    }
+
+    /**
+     * Validates that an immutable field has not changed during an update.
+     */
+    function isImmutable(fieldName) {
+      return request.resource.data[fieldName] == resource.data[fieldName];
+    }
+
+    /**
+     * Checks if the current user is a participant in a given conversation document.
+     */
+    function isConversationParticipant(conversationId) {
+      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+    }
+
+    /**
+     * Checks if the current user is a party (payer or payee) in an escrow document.
+     */
+    function isEscrowParty(escrowDoc) {
+      return isSignedIn() && (request.auth.uid == escrowDoc.payerId || request.auth.uid == escrowDoc.payeeId);
+    }
+
+
+    // --------------------------------
+    // Collection Rules
+    // --------------------------------
+
+    /**
+     * @description Users can create their own account, update their own data, and read other users' public data.
+     * @path /users/{userId}
+     * @allow (create) a new user creating their own user document with a matching UID.
+     * @deny (update) a user trying to change another user's profile information.
+     * @principle Enforces self-management of user data and allows public reads for discoverability.
+     */
+    match /users/{userId} {
+      allow get, list: if isSignedIn();
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && isImmutable('userId') && isImmutable('createdAt');
+      allow delete: if false; // Users should not be able to delete their accounts directly.
+    }
+
+    /**
+     * @description A user can manage their own tenant profile. Profiles are publicly readable.
+     * @path /tenant_profiles/{userId}
+     * @allow (create) a user creating their own tenant profile with a matching UID.
+     * @deny (update) a user trying to modify another user's profile.
+     * @principle Restricts writes to the data owner, ensuring data integrity.
+     */
+    match /tenant_profiles/{userId} {
+      allow get, list: if isSignedIn();
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && isImmutable('userId');
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description A user can manage their own landlord profile. Profiles are publicly readable.
+     * @path /landlord_profiles/{userId}
+     * @allow (create) a user creating their own landlord profile with a matching UID.
+     * @deny (update) a user trying to modify another user's profile.
+     * @principle Restricts writes to the data owner, ensuring data integrity.
+     */
+    match /landlord_profiles/{userId} {
+      allow get, list: if isSignedIn();
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && isImmutable('userId');
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description A user can manage their own artisan profile. Profiles are publicly readable.
+     * @path /artisan_profiles/{userId}
+     * @allow (create) a user creating their own artisan profile with a matching UID.
+     * @deny (update) a user trying to modify another user's profile.
+     * @principle Restricts writes to the data owner, ensuring data integrity.
+     */
+    match /artisan_profiles/{userId} {
+      allow get, list: if isSignedIn();
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && isImmutable('userId');
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Listings are publicly readable by anyone. Only the owner can create, update, or delete them.
+     * @path /listings/{listingId}
+     * @allow (create) an authenticated user creating a listing and setting themselves as the owner.
+     * @deny (update) a user attempting to change the `ownerId` of an existing listing.
+     * @principle Implements a "Public Read with Owner-Only Writes" pattern.
+     */
+    match /listings/{listingId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.ownerId) && isImmutable('ownerId') && isImmutable('createdAt');
+      allow delete: if isExistingOwner(resource.data.ownerId);
+    }
+
+    /**
+     * @description Conversations can only be accessed by their participants. Listing all conversations is denied.
+     * @path /conversations/{conversationId}
+     * @allow (get) a user who is listed in the `participants` array reading the conversation.
+     * @deny (list) any user attempting to list all conversations in the collection.
+     * @principle Enforces strict access control for private, shared data based on a denormalized participant list.
+     */
+    match /conversations/{conversationId} {
+      allow get: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow list: if false; // Must query; listing all conversations is a security risk.
+      allow create: if isSignedIn() && request.auth.uid in request.resource.data.participants;
+      allow update: if isSignedIn() && request.auth.uid in resource.data.participants && resource != null;
+      allow delete: if false; // Conversations are generally not deletable by users.
+    }
+
+    /**
+     * @description Messages can only be read by participants of the parent conversation and created by the sender.
+     * @path /messages/{messageId}
+     * @allow (create) a user sending a message in a conversation they are a part of.
+     * @deny (get) a user trying to read a message in a conversation they do not belong to.
+     * @principle Secures a sub-object by checking permissions on its parent document using `get()`.
+     */
+    match /messages/{messageId} {
+      allow get: if isConversationParticipant(resource.data.conversationId);
+      allow list: if false; // Must query; listing all messages is a security risk.
+      allow create: if isConversationParticipant(request.resource.data.conversationId) && request.resource.data.senderId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.senderId) && isImmutable('senderId') && isImmutable('conversationId');
+      allow delete: if isExistingOwner(resource.data.senderId);
+    }
+
+    /**
+     * @description Escrow documents can be created by the payer, read by participants, but NOT modified by clients.
+     * @path /escrows/{escrowId}
+     * @allow (create) the user designated as the `payerId` initiating an escrow.
+     * @deny (update) any user, including participants, trying to change the escrow status. This must be done by a Cloud Function.
+     * @principle Isolates critical financial logic to a trusted backend environment, preventing client-side tampering.
+     */
+    match /escrows/{escrowId} {
+      allow get: if isEscrowParty(resource.data);
+      allow list: if false; // Must query; listing all escrows is a security risk.
+      allow create: if isOwner(request.resource.data.payerId);
+      allow update: if false; // CRITICAL: Must be handled by Cloud Functions.
+      allow delete: if false; // CRITICAL: Must be handled by Cloud Functions.
+    }
+
+    /**
+     * @description Escrow events are an immutable audit log. They can be created but never changed or deleted.
+     * @path /escrow_events/{eventId}
+     * @allow (get) a participant of the parent escrow document reading an event log.
+     * @deny (update) any user attempting to alter a historical escrow event.
+     * @principle Enforces immutability for audit trails and restricts access based on the parent resource.
+     */
+    match /escrow_events/{eventId} {
+      allow get: if exists(/databases/$(database)/documents/escrows/$(resource.data.escrowId)) && isEscrowParty(get(/databases/$(database)/documents/escrows/$(resource.data.escrowId)).data);
+      allow list: if false; // Audit logs should not be listable.
+      allow create: if exists(/databases/$(database)/documents/escrows/$(request.resource.data.escrowId)) && isEscrowParty(get(/databases/$(database)/documents/escrows/$(request.resource.data.escrowId)).data) && isOwner(request.resource.data.actorId);
+      allow update: if false; // Immutable audit log.
+      allow delete: if false; // Immutable audit log.
+    }
+
+    /**
+     * @description Reviews are public, but can only be created, updated, or deleted by the original reviewer.
+     * @path /reviews/{reviewId}
+     * @allow (create) an authenticated user creating a review and setting themselves as the reviewer.
+     * @deny (update) a user trying to modify a review left by someone else.
+     * @principle Implements a "Public Read with Owner-Only Writes" pattern for user-generated content.
+     */
+    match /reviews/{reviewId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.reviewerId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.reviewerId) && isImmutable('reviewerId') && isImmutable('revieweeId') && isImmutable('listingId');
+      allow delete: if isExistingOwner(resource.data.reviewerId);
+    }
+
+    /**
+     * @description Admin actions are a private log only accessible to users with the 'admin' role.
+     * @path /admin_actions/{actionId}
+     * @allow (create) a user with the 'admin' role creating a new action log.
+     * @deny (get) a non-admin user trying to read the admin action log.
+     * @principle Implements Role-Based Access Control (RBAC) for sensitive administrative data.
+     */
+    match /admin_actions/{actionId} {
+      allow get, list: if isAdmin();
+      allow create: if isAdmin() && request.resource.data.adminId == request.auth.uid;
+      allow update: if false; // Admin actions should be immutable.
+      allow delete: if false; // Admin actions should be immutable.
+    }
+
+  }
+}
