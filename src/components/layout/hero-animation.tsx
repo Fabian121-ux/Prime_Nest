@@ -1,49 +1,53 @@
+
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export default function HeroAnimation() {
   const [toggle, setToggle] = useState(true);
-  const [gradient, setGradient] = useState('linear-gradient(135deg, #2563EB, #9333EA)');
+  const controls = useAnimation();
+  const gradients = [
+    'linear-gradient(135deg, #2563EB, #9333EA)',
+    'linear-gradient(135deg, #EC4899, #F59E0B)',
+    'linear-gradient(135deg, #10B981, #3B82F6)',
+    'linear-gradient(135deg, #F43F5E, #6366F1)',
+  ];
+  const [currentGradient, setCurrentGradient] = useState(gradients[0]);
 
+  // Smooth gradient animation
   useEffect(() => {
-    if (!toggle) {
-      setGradient('hsl(var(--background))'); // neutral background when off
-      return;
+    if (toggle) {
+        controls.start({
+            opacity: [0.8, 1, 0.9],
+            transition: {
+                opacity: { duration: 2, repeat: Infinity, repeatType: 'mirror' }
+            }
+        });
+
+        const interval = setInterval(() => {
+            const next = gradients[Math.floor(Math.random() * gradients.length)];
+            setCurrentGradient(next);
+            controls.start({
+                background: next,
+                transition: { duration: 3, ease: 'easeInOut' }
+            });
+        }, 5000);
+
+        return () => clearInterval(interval);
+    } else {
+        controls.start({ opacity: 0 });
     }
-
-    setGradient('linear-gradient(135deg, #2563EB, #9333EA)');
-
-    const interval = setInterval(() => {
-      const colors = [
-        'linear-gradient(135deg, #2563EB, #9333EA)',
-        'linear-gradient(135deg, #EC4899, #F59E0B)',
-        'linear-gradient(135deg, #10B981, #3B82F6)',
-        'linear-gradient(135deg, #F43F5E, #6366F1)',
-      ];
-      setGradient(colors[Math.floor(Math.random() * colors.length)]);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [toggle]);
+  }, [toggle, controls, gradients]);
 
   return (
     <>
       {/* Background Animation */}
       <motion.div
         className="absolute inset-0 -z-10 w-full h-full"
-        style={{ background: gradient }}
-        animate={toggle ? {
-          opacity: [0.8, 1, 0.8],
-          rotate: [0, 2, 0],
-          scale: [1, 1.02, 1]
-        } : { opacity: 0 }}
-        transition={{
-          opacity: { duration: 1, repeat: Infinity, repeatType: 'mirror' },
-          rotate: { duration: 12, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' },
-          scale: { duration: 12, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' }
-        }}
+        style={{ background: currentGradient }}
+        initial={{ opacity: 0 }}
+        animate={controls}
       />
 
       {/* Toggle Button */}
