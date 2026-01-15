@@ -29,8 +29,8 @@ const HeroAnimation = () => {
   const [stars, setStars] = useState<any[]>([]);
 
   useEffect(() => {
+    // This code now runs only on the client, after the component has mounted.
     setIsMounted(true);
-    // Generate stars on mount
     const newStars = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -39,9 +39,11 @@ const HeroAnimation = () => {
       duration: Math.random() * 5 + 5,
     }));
     setStars(newStars);
-  }, []);
+  }, []); // The empty dependency array is crucial.
 
   if (!isMounted) {
+    // Render a static background on the server and during initial client render
+    // to prevent hydration errors.
     return <div className="absolute inset-0 bg-background -z-10" />;
   }
 
