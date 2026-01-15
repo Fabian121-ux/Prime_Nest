@@ -15,7 +15,9 @@ function DashboardUI({ children }: { children: ReactNode }) {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [showSupportPopup, setShowSupportPopup] = useState(false);
-    const [hasResponded, setHasResponded] = useState<boolean | null>(null);
+    const [hasResponded, setHasResponded] = useState(false);
+    const [isCheckingResponse, setIsCheckingResponse] = useState(true);
+
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !user) return null;
@@ -27,34 +29,46 @@ function DashboardUI({ children }: { children: ReactNode }) {
     
     useEffect(() => {
         const checkResponse = async () => {
-            if (user && firestore && hasResponded === null) {
-                // Gating logic
+            if (user && firestore) {
+                 setIsCheckingResponse(true);
+                // Gating logic: only show for specified demo users
                 const isDemoUser = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || demoTeamEmails.includes(user.email || '');
+
                 if (!isDemoUser) {
                     setHasResponded(true); // Don't show popup for non-demo users
+                    setShowSupportPopup(false);
+                    setIsCheckingResponse(false);
                     return;
                 }
 
+                // Check if user has already responded
                 const responsesRef = collection(firestore, 'support_demo_responses');
                 const q = query(responsesRef, where("uid", "==", user.uid));
                 const querySnapshot = await getDocs(q);
-                const userHasResponded = !querySnapshot.empty;
-                setHasResponded(userHasResponded);
-                if (!userHasResponded) {
+                
+                if (querySnapshot.empty) {
+                    setHasResponded(false);
                     setShowSupportPopup(true);
+                } else {
+                    setHasResponded(true);
+                    setShowSupportPopup(false);
                 }
+                setIsCheckingResponse(false);
+            } else if (!isUserLoading) {
+                // If there's no user and we are not loading, don't show popup
+                setIsCheckingResponse(false);
             }
         };
         checkResponse();
-    }, [user, firestore, hasResponded]);
+    }, [user, firestore, isUserLoading]);
 
 
     const handleClosePopup = () => {
         setShowSupportPopup(false);
-        setHasResponded(true); // Assume they responded so we don't show it again this session
+        setHasResponded(true);
     };
 
-    const isLoading = isUserLoading || isUserDataLoading || hasResponded === null;
+    const isLoading = isUserLoading || isUserDataLoading || isCheckingResponse;
 
     return (
         <>
