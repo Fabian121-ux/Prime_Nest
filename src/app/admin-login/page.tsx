@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase/provider';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Home } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -23,9 +25,20 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoading(true);
 
+    if (!auth) {
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Error',
+        description: 'Firebase service is not available. Please try again later.',
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdTokenResult();
+      // Firebase automatically refreshes the token upon sign-in.
+      const token = await userCredential.user.getIdTokenResult(true);
 
       if (token.claims.role === 'admin') {
         toast({
@@ -38,17 +51,26 @@ export default function AdminLoginPage() {
         await auth.signOut(); // Sign out the non-admin user
       }
     } catch (err: any) {
-      setError(err.message || 'An unknown error occurred during login.');
+       const errorMessage =
+          err.code === 'auth/invalid-credential'
+            ? 'Invalid credentials. Please try again.'
+            : err.message || 'An unknown error occurred during login.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+      <Link href="/" className="mb-6 flex items-center gap-3">
+        <div className="p-2 bg-primary rounded-md">
+            <Home className="text-primary-foreground h-6 w-6" />
+        </div>
+      </Link>
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold font-headline">Admin Login</CardTitle>
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold font-headline">Admin Panel</CardTitle>
           <CardDescription>Enter your administrator credentials to continue.</CardDescription>
         </CardHeader>
         <CardContent>

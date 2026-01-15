@@ -2,13 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Building, Hammer, MessageSquare, ShieldCheck, User as UserIcon, Loader2, ArrowRight, Briefcase, FileText, Wrench, Home, BarChart } from "lucide-react";
+import { ArrowRight, BarChart, Briefcase, Building, FileText, Hammer, Home, Loader2, ShieldCheck, User as UserIcon, Wallet, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { doc, DocumentData } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 
 const TenantDashboard = () => (
     <Card className="bg-card border-none col-span-1 md:col-span-3 lg:col-span-1 shadow-md">
@@ -95,7 +94,7 @@ const AdminDashboard = () => (
     </Card>
 )
 
-const DashboardCards = ({ role }: { role: string }) => {
+const DashboardCards = ({ role }: { role: string | null }) => {
     if (!role) {
         return null;
     }

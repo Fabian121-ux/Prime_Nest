@@ -7,7 +7,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarHeader
+  SidebarHeader,
+  useSidebar
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
@@ -50,6 +51,7 @@ const menuItems = [
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
+  const { state } = useSidebar();
 
   const isActive = (href: string) => pathname.startsWith(href) && (href !== '/dashboard' || pathname === '/dashboard');
 
@@ -58,9 +60,9 @@ export default function DashboardSidebar() {
       <SidebarHeader className="p-4">
         <Link href="/dashboard" className="flex items-center gap-3 font-bold text-xl">
             <div className="p-2 bg-primary/10 text-primary rounded-md">
-            <Home className="text-sidebar-primary h-5 w-5" />
+            <Home className="text-sidebar-accent-foreground h-5 w-5" />
             </div>
-            <span className="font-headline text-sidebar-foreground group-data-[collapsed=icon]:hidden">Prime Nest</span>
+            <span className="font-headline text-sidebar-foreground group-data-[collapsed=true]:hidden">Prime Nest</span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-2">

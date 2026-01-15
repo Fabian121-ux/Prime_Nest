@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Home, LogOut, User, Shield, Search, Bell, Wallet, Menu } from 'lucide-react';
+import { Home, LogOut, User, Shield, Search, Bell, Wallet } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
@@ -36,7 +36,7 @@ export default function DashboardHeader() {
   
   const { data: userData } = useDoc(userDocRef);
   
-  const userRole = (userData as any)?.rolePrimary || 'tenant';
+  const userRole = (userData as any)?.rolePrimary;
   const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
 
   const handleLogout = async () => {
@@ -54,7 +54,7 @@ export default function DashboardHeader() {
               <div className="p-2 bg-sidebar-background rounded-md">
                 <Home className="text-sidebar-foreground h-5 w-5" />
               </div>
-              <span className="font-headline text-foreground">Prime Nest</span>
+              <span className="font-headline text-foreground group-data-[collapsed=true]:hidden">Prime Nest</span>
             </Link>
         </div>
         
@@ -96,9 +96,9 @@ export default function DashboardHeader() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user.displayName || user.email}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
+                    {userRole && <p className="text-xs leading-none text-muted-foreground">
                       {getRoleName(userRole)}
-                    </p>
+                    </p>}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
