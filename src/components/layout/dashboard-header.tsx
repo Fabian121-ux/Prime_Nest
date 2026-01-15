@@ -78,7 +78,7 @@ export default function DashboardHeader() {
                 <Wallet className="h-5 w-5" />
                 <span className="sr-only">Escrow Status</span>
             </Button>
-            <span className="text-sm font-semibold hidden lg:inline">Escrow: $1,250</span>
+            <span className="text-sm font-semibold hidden lg:inline">Escrow: ₦1,250,000</span>
           </div>
           {isUserLoading ? (
             <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />

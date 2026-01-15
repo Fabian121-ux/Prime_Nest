@@ -19,7 +19,7 @@ const mockListings = [
 
 const mockEscrow = [
   { id: 'e1', listing: 'Cozy 2-Bedroom Apartment', amount: 1200000, status: 'held', tenant: 'tenant@example.com' },
-  { id: 'e2', listing: 'Expert Plumbing Services', amount: 5000, status: 'released', tenant: 'client@example.com' },
+  { id: 'e2', listing: 'Expert Plumbing Services', amount: 50000, status: 'released', tenant: 'client@example.com' },
   { id: 'e3', listing: 'Modern Studio with a View', amount: 850000, status: 'initiated', tenant: 'another-tenant@example.com' },
 ];
 

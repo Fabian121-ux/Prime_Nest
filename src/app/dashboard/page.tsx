@@ -60,7 +60,7 @@ const ArtisanDashboard = () => (
         <CardContent className="space-y-4 pt-6">
             <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex items-center gap-3"><Briefcase className="h-4 w-4"/> Available Jobs</li>
-                    <li className="flex items-center gap-3"><span className="font-bold text-muted-foreground text-lg mr-1">$</span> Earnings: $540</li>
+                    <li className="flex items-center gap-3"><Wallet className="h-4 w-4"/> Earnings: ₦540,000</li>
                     <li className="flex items-center gap-3"><Hammer className="h-4 w-4"/> My Services</li>
             </ul>
             <div className="pt-2">
