@@ -34,6 +34,10 @@ service cloud.firestore {
       return isSignedIn() && (request.auth.uid == escrowDoc.payerId || request.auth.uid == escrowDoc.payeeId);
     }
 
+    function isDealParticipant(dealDoc) {
+      return isSignedIn() && (request.auth.uid == dealDoc.buyerId || request.auth.uid == dealDoc.sellerId);
+    }
+
     // --------------------------------
     // Collection Rules
     // --------------------------------
@@ -72,6 +76,12 @@ service cloud.firestore {
       allow delete: if isExistingOwner(resource.data.ownerId);
     }
 
+    match /deals/{dealId} {
+      allow get: if isDealParticipant(resource.data);
+      allow list: if false; // Users should not be able to list all deals.
+      allow create, update, delete: if false; // Must be handled by Cloud Functions.
+    }
+
     match /conversations/{conversationId} {
       allow get: if isSignedIn() && request.auth.uid in resource.data.participants;
       allow list: if false;
@@ -91,7 +101,7 @@ service cloud.firestore {
     match /escrows/{escrowId} {
       allow get: if isEscrowParty(resource.data);
       allow list: if false;
-      allow create: if isOwner(request.resource.data.payerId);
+      allow create: if false; // Must be handled by Cloud Functions.
       allow update: if false; // Must be handled by Cloud Functions.
       allow delete: if false; // Must be handled by Cloud Functions.
     }

@@ -94,6 +94,24 @@
         },
         "required": ["messageId", "conversationId", "senderId", "content", "type", "createdAt"]
     },
+    "Deal": {
+        "title": "Deal",
+        "description": "Represents a formal agreement between a buyer and a seller for a specific listing.",
+        "type": "object",
+        "properties": {
+            "dealId": { "type": "string", "description": "Unique identifier for the Deal entity." },
+            "listingId": { "type": "string", "description": "Reference to the Listing this deal is for." },
+            "buyerId": { "type": "string", "description": "The user ID of the party purchasing the service/rental." },
+            "sellerId": { "type": "string", "description": "The user ID of the party providing the service/rental." },
+            "conversationId": { "type": "string", "description": "Reference to the Conversation where the deal was negotiated." },
+            "escrowId": { "type": "string", "description": "Reference to the associated Escrow transaction." },
+            "amount": { "type": "number", "description": "The total amount for the deal." },
+            "status": { "type": "string", "description": "The current status of the deal (e.g., proposed, active, completed, disputed, cancelled)." },
+            "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp for when the deal was created." },
+            "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp for the last update to the deal." }
+        },
+        "required": ["dealId", "listingId", "buyerId", "sellerId", "escrowId", "amount", "status", "createdAt", "updatedAt"]
+    },
     "Escrow": {
         "title": "Escrow",
         "description": "Represents an escrow transaction.",
@@ -179,6 +197,10 @@
     "/listings/{listingId}": {
       "schema": { "$ref": "#/entities/Listing" },
       "description": "Stores listing information. Uses listingId as the document ID."
+    },
+    "/deals/{dealId}": {
+        "schema": { "$ref": "#/entities/Deal" },
+        "description": "Stores deal information. Uses dealId as the document ID."
     },
     "/conversations/{conversationId}": {
       "schema": { "$ref": "#/entities/Conversation" },
