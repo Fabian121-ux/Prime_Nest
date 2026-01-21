@@ -8,23 +8,24 @@ export default function ListingsPage() {
         <div>
             <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
                 <Building2 className="w-8 h-8" />
-                Listings & Jobs
+                My Listings
             </h1>
-            <p className="text-muted-foreground">This feature is under construction.</p>
+            <p className="text-muted-foreground">Manage your properties, jobs, and service offerings.</p>
         </div>
         <Card className="max-w-2xl mx-auto mt-12">
           <CardHeader>
             <CardTitle>Coming Soon!</CardTitle>
             <CardDescription>
-              We're hard at work building a comprehensive space for you to browse properties, find jobs, and manage your own listings.
+              We're hard at work building a comprehensive space for you to create and manage your own listings.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p>Soon, you'll be able to:</p>
             <ul className="list-disc list-inside mt-4 space-y-2 text-muted-foreground">
-                <li>Explore rental properties and professional services.</li>
-                <li>Post your own job openings or service offerings.</li>
-                <li>Manage applications, view analytics, and much more.</li>
+                <li>Create new listings for rentals or services.</li>
+                <li>Edit your existing listings and update their status.</li>
+                <li>View analytics on how your listings are performing.</li>
+                <li>Manage applications and inquiries from other users.</li>
             </ul>
           </CardContent>
         </Card>

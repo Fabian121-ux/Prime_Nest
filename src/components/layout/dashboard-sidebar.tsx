@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -18,6 +19,7 @@ import {
   User,
   LifeBuoy,
   Home,
+  Compass,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -28,8 +30,13 @@ const menuItems = [
     icon: LayoutGrid,
   },
   {
+    href: '/explore',
+    label: 'Explore',
+    icon: Compass,
+  },
+  {
     href: '/listings',
-    label: 'Listings',
+    label: 'My Listings',
     icon: Building2,
   },
   {
