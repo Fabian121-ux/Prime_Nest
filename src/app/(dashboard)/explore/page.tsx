@@ -8,15 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Building2, Search, ShieldCheck } from 'lucide-react'
@@ -81,8 +72,7 @@ export default function ExplorePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {filteredListings.map((listing, i) => (
-            <Dialog key={listing.id}>
-              <DialogTrigger asChild>
+             <Link href={`/listing/${listing.id}`} key={listing.id} className="block">
                 <MotionCard
                   className="group overflow-hidden cursor-pointer flex flex-col h-full"
                   initial={{ opacity: 0, y: 40 }}
@@ -116,38 +106,7 @@ export default function ExplorePage() {
                     </p>
                   </CardContent>
                 </MotionCard>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[525px]">
-                <DialogHeader>
-                  <div className="relative h-64 w-full mb-4 rounded-lg overflow-hidden">
-                    <Image
-                      src={listing.imageUrl}
-                      alt={listing.description!}
-                      fill
-                      className="object-cover"
-                      data-ai-hint={listing.imageHint}
-                    />
-                     {listing.verified && (
-                        <Badge variant="premium" className="absolute top-3 right-3">
-                            <ShieldCheck className="w-3.5 h-3.5 mr-1"/>
-                            Verified
-                        </Badge>
-                    )}
-                  </div>
-                  <DialogTitle className="text-2xl">{listing.title}</DialogTitle>
-                  <DialogDescription>{listing.location}</DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-2">
-                  <p className="text-lg font-bold text-primary">{listing.price}</p>
-                  <p className="text-muted-foreground">{listing.description}</p>
-                </div>
-                <DialogFooter>
-                  <Button asChild size="lg" className="w-full">
-                    <Link href={`/listing/${listing.id}`}>View Full Details & Contact Owner</Link>
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+              </Link>
           ))}
         </div>
         {filteredListings.length === 0 && (

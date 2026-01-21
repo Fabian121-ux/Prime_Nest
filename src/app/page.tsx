@@ -203,7 +203,7 @@ export default function Home() {
                     </div>
                     <DialogFooter>
                       <Button asChild size="lg" className="w-full">
-                        <Link href={`/listing/${listing.id}`}>View Full Details & Contact Owner</Link>
+                        <Link href="/signup">View Full Details & Contact Owner</Link>
                       </Button>
                     </DialogFooter>
                   </DialogContent>
