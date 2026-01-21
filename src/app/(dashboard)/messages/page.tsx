@@ -1,7 +1,8 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, ShieldCheck, Lock, AlertCircle } from "lucide-react";
+import { MessageSquare, ShieldCheck, Lock, AlertCircle, Handshake, CheckCircle2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
@@ -21,15 +22,22 @@ const messages = [
         type: 'user',
         sender: 'You',
         avatar: adminAvatar?.imageUrl,
-        text: "Hi David, yes I am. We can create a deal and lock the payment in escrow to secure the booking.",
+        text: "Hi David, yes I am. We can create a deal to secure the booking.",
         time: "10:32 AM",
         isYou: true,
     },
     {
         type: 'system',
+        icon: Handshake,
+        color: 'text-muted-foreground',
+        text: 'DEAL INITIATED: You proposed a deal for ₦25,000.',
+        time: "10:33 AM"
+    },
+    {
+        type: 'system',
         icon: Lock,
         color: 'text-trust',
-        text: 'DEAL CREATED: Payment of ₦25,000 has been locked in escrow.',
+        text: 'FUNDS LOCKED: David Okoro has secured ₦25,000 in escrow.',
         time: "10:35 AM"
     },
     {
@@ -48,10 +56,10 @@ const messages = [
     },
     {
         type: 'system',
-        icon: AlertCircle,
-        color: 'text-destructive',
-        text: 'DISPUTE RAISED: A dispute has been opened for this transaction. An admin will review it shortly.',
-        time: "11:15 AM"
+        icon: CheckCircle2,
+        color: 'text-success',
+        text: 'DEAL COMPLETED: ₦25,000 has been released to your wallet.',
+        time: "3 days later"
     }
 ]
 
