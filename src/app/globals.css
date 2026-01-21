@@ -5,7 +5,7 @@
 @layer base {
   :root { /* Dark Theme */
     --background: 215 30% 8%;
-    --foreground: 216 15% 95%;
+    --foreground: 216 15% 85%;
     --card: 215 30% 12%;
     --card-foreground: 216 15% 95%;
     --popover: 215 30% 12%;
@@ -32,6 +32,13 @@
     --chart-5: 215 30% 25%; /* Accent */
 
     --premium-foreground: 216 15% 95%; /* Bright text for dark mode */
+
+    --sidebar-background: 215 71% 13%; /* Navy Blue */
+    --sidebar-foreground: 216 15% 95%;
+    --sidebar-accent: 215 50% 25%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 215 71% 10%;
+    --sidebar-ring: 45 65% 52%; /* Gold for focus */
   }
 
   .light { /* Light Theme */
@@ -56,18 +63,18 @@
     --ring: 45 65% 52%; /* Gold (#D4AF37) */
     
     --premium-foreground: 215 71% 10%; /* Dark Navy Text for contrast on Gold */
+
+    --sidebar-background: 216 25% 96%;
+    --sidebar-foreground: 215 71% 10%;
+    --sidebar-accent: 216 25% 90%;
+    --sidebar-accent-foreground: 215 71% 10%;
+    --sidebar-border: 216 25% 88%;
+    --sidebar-ring: 215 71% 13%;
   }
 
   :root,
   .light,
   .dark {
-    --sidebar-background: 215 71% 13%; /* Navy Blue */
-    --sidebar-foreground: 216 15% 95%;
-    --sidebar-accent: 215 50% 25%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 215 71% 10%;
-    --sidebar-ring: 45 65% 52%; /* Gold for focus */
-
     /* Custom semantic colors */
     --trust: 177 72% 36%; /* Teal (#1BA098) */
     --premium: 45 65% 52%; /* Gold (#D4AF37) */

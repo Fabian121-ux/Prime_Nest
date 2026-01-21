@@ -79,12 +79,12 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
         <Link
           href="/dashboard"
           onClick={handleLinkClick}
-          className="flex items-center justify-center gap-3 font-bold text-xl group-data-[state=expanded]:justify-start"
+          className="flex items-center justify-center gap-3 font-bold text-xl group-data-[state=expanded]:justify-start text-sidebar-foreground"
         >
-          <div className="p-2 bg-primary/20 text-primary rounded-lg">
-            <Home className="text-primary h-5 w-5" />
+          <div className="p-2 bg-primary rounded-lg">
+            <Home className="text-primary-foreground h-5 w-5" />
           </div>
-          <span className="font-headline text-sidebar-accent-foreground transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
+          <span className="font-headline transition-opacity duration-200 ease-in-out group-data-[state=collapsed]:opacity-0">
             Prime Nest
           </span>
         </Link>
