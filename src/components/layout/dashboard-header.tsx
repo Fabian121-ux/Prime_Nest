@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -26,12 +25,7 @@ const getRoleName = (role: string) => {
     }
 }
 
-interface DashboardHeaderProps {
-  onSidebarTrigger: () => Promise<boolean>;
-}
-
-
-export default function DashboardHeader({ onSidebarTrigger }: DashboardHeaderProps) {
+export default function DashboardHeader() {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
@@ -56,21 +50,11 @@ export default function DashboardHeader({ onSidebarTrigger }: DashboardHeaderPro
     router.push('/');
   };
 
-  const handleSidebarTriggerClick = async () => {
-    // onSidebarTrigger checks if the popup should be shown.
-    // If it returns true, it means the popup was triggered, so we don't toggle the sidebar.
-    // If it returns false, we toggle the sidebar as usual.
-    const popupWasTriggered = await onSidebarTrigger();
-    if (!popupWasTriggered) {
-      toggleSidebar();
-    }
-  };
-
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-card/50 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-            <SidebarTrigger onClick={handleSidebarTriggerClick} />
+            <SidebarTrigger onClick={toggleSidebar} />
         </div>
         
         <div className="flex flex-1 items-center justify-end gap-2 text-muted-foreground">

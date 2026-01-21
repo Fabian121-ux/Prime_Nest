@@ -18,7 +18,6 @@ import {
   User,
   LifeBuoy,
   Home,
-  HeartHandshake
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -50,13 +49,7 @@ const menuItems = [
   },
 ];
 
-const adminMenuItems = [
-    {
-        href: '/support-responses',
-        label: 'Support Responses',
-        icon: HeartHandshake,
-    }
-]
+const adminMenuItems: any[] = [];
 
 export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 'tenant' | 'landlord' | 'artisan' }) {
   const pathname = usePathname();

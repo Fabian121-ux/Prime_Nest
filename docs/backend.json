@@ -154,20 +154,6 @@
             "createdAt": { "type": "string", "description": "Timestamp indicating when the admin action was created.", "format": "date-time" }
         },
         "required": ["actionId", "adminId", "targetType", "targetId", "action", "createdAt"]
-    },
-    "SupportResponse": {
-      "title": "SupportResponse",
-      "description": "Records a user's response to the demo support popup.",
-      "type": "object",
-      "properties": {
-        "docId": { "type": "string", "description": "The document ID, which is the same as the user's UID." },
-        "uid": { "type": "string", "description": "The ID of the user who responded." },
-        "email": { "type": "string", "description": "The email of the user who responded.", "format": "email" },
-        "response": { "type": "string", "description": "The user's response.", "enum": ["yes", "no"] },
-        "createdAt": { "type": "string", "description": "Timestamp of the response.", "format": "date-time" },
-        "demoVersion": { "type": "string", "description": "Identifier for the demo environment." }
-      },
-      "required": ["docId", "uid", "email", "response", "createdAt", "demoVersion"]
     }
   },
   "auth": {
@@ -217,12 +203,6 @@
     "/admin_actions/{actionId}": {
       "schema": { "$ref": "#/entities/AdminAction" },
       "description": "Stores actions performed by administrators. Uses actionId as the document ID."
-    },
-    "/support_demo_responses/{userId}": {
-      "schema": { "$ref": "#/entities/SupportResponse" },
-      "description": "Stores responses from the demo support popup. The document ID is the user's UID."
     }
   }
 }
-
-    

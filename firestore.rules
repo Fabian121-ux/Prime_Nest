@@ -117,12 +117,5 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if false;
     }
-
-    match /support_demo_responses/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
-      allow create: if isOwner(userId) && request.resource.data.uid == userId;
-      allow update, delete: if false;
-    }
   }
 }
