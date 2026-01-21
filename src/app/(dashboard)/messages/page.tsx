@@ -1,127 +1,110 @@
 
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, ShieldCheck, Lock, AlertCircle, Handshake, CheckCircle2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { cn } from "@/lib/utils";
-
-const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-const adminAvatar = PlaceHolderImages.find(p => p.id === 'admin-avatar');
-
-const messages = [
-    {
-        type: 'user',
-        sender: 'David Okoro',
-        avatar: userAvatar?.imageUrl,
-        text: "Hello, I'm interested in the plumbing service. Are you available this Friday?",
-        time: "10:30 AM"
-    },
-    {
-        type: 'user',
-        sender: 'You',
-        avatar: adminAvatar?.imageUrl,
-        text: "Hi David, yes I am. We can create a deal to secure the booking.",
-        time: "10:32 AM",
-        isYou: true,
-    },
-    {
-        type: 'system',
-        icon: Handshake,
-        color: 'text-muted-foreground',
-        text: 'DEAL INITIATED: You proposed a deal for ₦25,000.',
-        time: "10:33 AM"
-    },
-    {
-        type: 'system',
-        icon: Lock,
-        color: 'text-trust',
-        text: 'FUNDS LOCKED: David Okoro has secured ₦25,000 in escrow.',
-        time: "10:35 AM"
-    },
-    {
-        type: 'system',
-        icon: ShieldCheck,
-        color: 'text-premium',
-        text: 'David Okoro has been a verified Prime Nest user for 2 years.',
-        time: "10:36 AM"
-    },
-    {
-        type: 'user',
-        sender: 'David Okoro',
-        avatar: userAvatar?.imageUrl,
-        text: "Perfect, payment is locked in. See you on Friday!",
-        time: "10:38 AM"
-    },
-    {
-        type: 'system',
-        icon: CheckCircle2,
-        color: 'text-success',
-        text: 'DEAL COMPLETED: ₦25,000 has been released to your wallet.',
-        time: "3 days later"
-    }
-]
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/firebase";
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { Handshake, Loader2, ServerCrash, FileCheck2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function MessagesPage() {
+  const auth = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [dealId, setDealId] = useState<string | null>(null);
+
+  const handleCreateDeal = async () => {
+    if (!auth) {
+      setError("Authentication service is not available.");
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    setDealId(null);
+
+    try {
+      const functions = getFunctions(auth.app);
+      const createDealFunction = httpsCallable(functions, 'createDeal');
+
+      // In a real scenario, this data would come from the listing and user input.
+      const dealData = {
+        listingId: "listing2", // Corresponds to "Expert Plumbing" from placeholder data
+        amount: 25000,
+        conversationId: "mock-conversation-123" // A mock ID for demonstration
+      };
+
+      const result = await createDealFunction(dealData);
+      
+      const newDealId = (result.data as { dealId: string }).dealId;
+      setDealId(newDealId);
+
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "An unknown error occurred while creating the deal.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
-        <div>
-            <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
-                <MessageSquare className="w-8 h-8" />
-                Messages
-            </h1>
-            <p className="text-muted-foreground">A demonstration of chat with integrated deal flow and trust cues.</p>
-        </div>
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>Chat with David Okoro</CardTitle>
-            <CardDescription>
-              Regarding: Expert Plumbing Services
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {messages.map((msg, index) => {
-                if (msg.type === 'system') {
-                    return (
-                        <div key={index} className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <msg.icon className={cn("w-4 h-4", msg.color)} />
-                            <span className={cn("font-medium", msg.color)}>{msg.text}</span>
-                            <span className="ml-auto flex-shrink-0">{msg.time}</span>
-                        </div>
-                    )
-                }
-                return (
-                     <div key={index} className={cn("flex items-start gap-4", msg.isYou && "justify-end")}>
-                        {!msg.isYou && (
-                            <Avatar className="w-8 h-8 border">
-                                <AvatarImage src={msg.avatar} />
-                                <AvatarFallback>{msg.sender?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        )}
-                        <div className={cn(
-                            "max-w-[75%] space-y-1",
-                            msg.isYou && "text-right"
-                        )}>
-                            <div className={cn(
-                                "p-3 rounded-lg",
-                                msg.isYou ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
-                            )}>
-                                <p className="text-sm">{msg.text}</p>
-                            </div>
-                            <p className="text-xs text-muted-foreground px-1">{msg.sender} • {msg.time}</p>
-                        </div>
-                         {msg.isYou && (
-                            <Avatar className="w-8 h-8 border">
-                                <AvatarImage src={msg.avatar} />
-                                <AvatarFallback>Y</AvatarFallback>
-                            </Avatar>
-                        )}
-                    </div>
-                )
-            })}
-          </CardContent>
-        </Card>
+      <div>
+        <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
+          <Handshake className="w-8 h-8" />
+          Create a Deal
+        </h1>
+        <p className="text-muted-foreground">Securely initiate a transaction with another user.</p>
+      </div>
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Initiate a Deal for "Expert Plumbing"</CardTitle>
+          <CardDescription>
+            Click the button below to call the backend `createDeal` function. This will securely create both a Deal and an Escrow record.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="p-4 bg-muted/50 rounded-lg text-center">
+            <p className="font-mono text-lg font-bold">Amount: ₦25,000</p>
+            <p className="text-sm text-muted-foreground">Listing: Expert Plumbing Services</p>
+          </div>
+          
+          <Button onClick={handleCreateDeal} disabled={isLoading} className="w-full">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating Deal...
+              </>
+            ) : (
+              "Create Deal & Escrow"
+            )}
+          </Button>
+
+          {dealId && (
+             <Alert variant="success">
+                <FileCheck2 className="h-4 w-4" />
+                <AlertTitle>Success!</AlertTitle>
+                <AlertDescription>
+                  Deal created successfully.
+                  <p className="font-mono text-xs mt-2 break-all">Deal ID: {dealId}</p>
+                </AlertDescription>
+            </Alert>
+          )}
+          
+          {error && (
+            <Alert variant="destructive">
+                <ServerCrash className="h-4 w-4" />
+                <AlertTitle>Error Creating Deal</AlertTitle>
+                <AlertDescription>
+                    {error}
+                </AlertDescription>
+            </Alert>
+          )}
+
+        </CardContent>
+      </Card>
     </div>
   );
 }
