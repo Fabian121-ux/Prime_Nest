@@ -42,20 +42,20 @@
   }
 
   .light { /* Light Theme */
-    --background: 0 0% 100%; /* White */
-    --foreground: 215 71% 10%; /* Dark Navy Text */
+    --background: 210 29% 97%; /* Gray (#F5F7FA) */
+    --foreground: 215 71% 13%; /* Navy Blue (#0B1F3A) */
     --card: 0 0% 100%; /* White */
-    --card-foreground: 215 71% 10%;
+    --card-foreground: 215 71% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 71% 10%;
+    --popover-foreground: 215 71% 13%;
     --primary: 215 71% 13%; /* Navy Blue (#0B1F3A) */
     --primary-foreground: 0 0% 100%; /* White */
     --secondary: 216 25% 94%;
-    --secondary-foreground: 215 71% 10%;
+    --secondary-foreground: 215 71% 13%;
     --muted: 216 25% 94%;
     --muted-foreground: 215 25% 45%;
-    --accent: 216 25% 94%;
-    --accent-foreground: 215 71% 10%;
+    --accent: 216 25% 90%;
+    --accent-foreground: 215 71% 13%;
     --destructive: 355 79% 59%; /* Red (#E63946) */
     --destructive-foreground: 0 0% 98%;
     --border: 216 25% 88%;
