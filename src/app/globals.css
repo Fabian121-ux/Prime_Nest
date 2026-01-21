@@ -3,66 +3,71 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 230 85% 65%; /* Soft Blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 260 75% 85%; /* Lavender */
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 230 85% 65%;
+  :root { /* Dark Theme */
+    --background: 215 30% 8%;
+    --foreground: 216 15% 85%;
+    --card: 215 30% 12%;
+    --card-foreground: 216 15% 85%;
+    --popover: 215 30% 12%;
+    --popover-foreground: 216 15% 85%;
+    --primary: 215 71% 60%; /* Lighter Navy for contrast */
+    --primary-foreground: 215 71% 10%;
+    --secondary: 215 30% 20%;
+    --secondary-foreground: 216 15% 85%;
+    --muted: 215 30% 20%;
+    --muted-foreground: 216 15% 55%;
+    --accent: 215 30% 25%;
+    --accent-foreground: 216 15% 95%;
+    --destructive: 355 70% 55%; /* Slightly brighter red */
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 30% 20%;
+    --input: 215 30% 20%;
+    --ring: 45 65% 55%; /* Gold */
     --radius: 0.75rem;
 
-    --chart-1: 230 85% 65%;
-    --chart-2: 260 75% 85%;
-    --chart-3: 210 40% 98%;
-    --chart-4: 180 75% 60%;
-    --chart-5: 0 85% 70%;
+    --chart-1: 215 71% 50%;
+    --chart-2: 177 72% 40%;
+    --chart-3: 45 65% 55%;
+    --chart-4: 215 71% 70%;
+    --chart-5: 355 79% 65%;
   }
 
-  .light {
-    --background: 220 30% 96%; /* Light Blue */
-    --foreground: 222.2 47.4% 11.2%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+  .light { /* Light Theme */
+    --background: 216 25% 97%; /* Gray (#F5F7FA) */
+    --foreground: 215 71% 10%; /* Dark Navy Text */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 215 71% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-    --primary: 230 85% 65%; /* Soft Blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 43.1%;
-    --accent: 260 75% 85%; /* Lavender */
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 215 71% 10%;
+    --primary: 215 71% 13%; /* Navy Blue (#0B1F3A) */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 216 25% 92%;
+    --secondary-foreground: 215 71% 10%;
+    --muted: 216 25% 92%;
+    --muted-foreground: 215 25% 45%;
+    --accent: 216 25% 92%; /* Neutral light gray for hovers */
+    --accent-foreground: 215 71% 10%;
+    --destructive: 355 79% 59%; /* Red (#E63946) */
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 230 85% 65%;
+    --border: 216 12% 88%;
+    --input: 216 12% 88%;
+    --ring: 45 65% 52%; /* Gold (#D4AF37) */
+    
+    /* Custom semantic colors */
+    --trust: 177 72% 36%; /* Teal (#1BA098) */
+    --premium: 45 65% 52%; /* Gold (#D4AF37) */
+    --premium-foreground: 215 71% 10%; /* Dark Navy Text for contrast on Gold */
   }
 
   :root,
   .light,
   .dark {
-    --sidebar-background: 230 40% 15%;
-    --sidebar-foreground: 220 20% 80%;
-    --sidebar-accent: 230 50% 30%;
+    --sidebar-background: 215 71% 13%; /* Navy Blue */
+    --sidebar-foreground: 216 15% 85%;
+    --sidebar-accent: 215 50% 25%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 230 40% 20%;
-    --sidebar-ring: 230 85% 70%;
+    --sidebar-border: 215 71% 10%;
+    --sidebar-ring: 45 65% 52%; /* Gold for focus */
   }
 }
 

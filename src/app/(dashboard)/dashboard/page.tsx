@@ -42,7 +42,7 @@ export default function DashboardPage() {
         <CardContent>
           <div className="text-2xl font-bold">1,974</div>
           <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <ArrowUp className="h-3 w-3 text-green-500" />
+            <ArrowUp className="h-3 w-3 text-trust" />
             +287 this month
           </p>
         </CardContent>

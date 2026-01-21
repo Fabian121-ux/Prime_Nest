@@ -136,7 +136,7 @@ export default function AdminPage() {
                               {user.role}
                             </TableCell>
                             <TableCell>
-                              <Badge variant={user.status === 'Approved' ? 'secondary' : 'outline'}>
+                              <Badge variant={user.status === 'Approved' ? 'premium' : 'outline'}>
                                 {user.status}
                               </Badge>
                             </TableCell>
@@ -194,7 +194,7 @@ export default function AdminPage() {
 
                           <Badge
                             className="w-fit"
-                            variant={user.status === 'Approved' ? 'secondary' : 'outline'}
+                            variant={user.status === 'Approved' ? 'premium' : 'outline'}
                           >
                             {user.status}
                           </Badge>
