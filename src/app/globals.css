@@ -30,6 +30,8 @@
     --chart-3: 45 65% 52%; /* Gold */
     --chart-4: 216 25% 45%; /* Muted Foreground */
     --chart-5: 215 30% 25%; /* Accent */
+
+    --premium-foreground: 216 15% 95%; /* Bright text for dark mode */
   }
 
   .light { /* Light Theme */
@@ -53,9 +55,6 @@
     --input: 216 12% 88%;
     --ring: 45 65% 52%; /* Gold (#D4AF37) */
     
-    /* Custom semantic colors */
-    --trust: 177 72% 36%; /* Teal (#1BA098) */
-    --premium: 45 65% 52%; /* Gold (#D4AF37) */
     --premium-foreground: 215 71% 10%; /* Dark Navy Text for contrast on Gold */
   }
 
@@ -68,6 +67,10 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 215 71% 10%;
     --sidebar-ring: 45 65% 52%; /* Gold for focus */
+
+    /* Custom semantic colors */
+    --trust: 177 72% 36%; /* Teal (#1BA098) */
+    --premium: 45 65% 52%; /* Gold (#D4AF37) */
   }
 }
 
