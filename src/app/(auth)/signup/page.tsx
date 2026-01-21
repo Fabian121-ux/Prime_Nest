@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore } from "@/firebase";
@@ -27,10 +27,10 @@ const formSchema = z.object({
 });
 
 export default function SignUpPage() {
-  const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
+  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,14 +42,12 @@ export default function SignUpPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setError(null);
     if (!auth || !firestore) {
-       toast({
-            variant: "destructive",
-            title: "Service Error",
-            description: "Firebase services are not available. Please try again later.",
-        });
-        return;
+      setError("Services are temporarily unavailable. Please try again later.");
+      return;
     }
+    
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
@@ -69,17 +67,13 @@ export default function SignUpPage() {
 
       await setDoc(userDocRef, userData);
       
-      toast({
-        title: "Account Created Successfully",
-        description: "Redirecting you to the dashboard...",
-      });
       router.push('/dashboard');
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Sign Up Failed",
-        description: error.message || "An unknown error occurred.",
-      });
+      if (error.code === 'auth/email-already-in-use') {
+        setError("An account with this email already exists. Please log in instead.");
+      } else {
+        setError("Failed to create an account. Please try again later.");
+      }
     }
   }
 
@@ -178,6 +172,11 @@ export default function SignUpPage() {
                     </FormItem>
                   )}
                 />
+                 {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription className="text-center">{error}</AlertDescription>
+                  </Alert>
+                )}
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </Button>

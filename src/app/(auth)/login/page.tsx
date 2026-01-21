@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Home, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore } from "@/firebase";
@@ -22,10 +23,10 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
+  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,46 +38,31 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setError(null); // Clear previous errors
     if (!auth || !firestore) {
-        toast({
-            variant: "destructive",
-            title: "Authentication Error",
-            description: "Firebase services are not available. Please try again later.",
-        });
-        return;
+      setError("Services are temporarily unavailable. Please try again later.");
+      return;
     }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
-      // Check user role
       const userDocRef = doc(firestore, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists() && userDoc.data().rolePrimary === 'admin') {
-         toast({
-            title: "Admin Login Successful",
-            description: "Redirecting to admin panel...",
-         });
          router.push('/admin');
       } else {
-        toast({
-          title: "Login Successful",
-          description: "Redirecting to your dashboard...",
-        });
         router.push('/dashboard');
       }
 
     } catch (error: any) {
-        const errorMessage =
-          error.code === 'auth/invalid-credential'
-            ? 'Invalid email or password. Please try again.'
-            : error.message || 'An unknown error occurred.';
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: errorMessage,
-      });
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        setError("Invalid email or password. Please check your credentials and try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again later.");
+      }
     }
   }
 
@@ -133,6 +119,11 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription className="text-center">{error}</AlertDescription>
+                  </Alert>
+                )}
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? 'Logging In...' : 'Log In'}
                 </Button>
