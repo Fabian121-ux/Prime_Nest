@@ -19,7 +19,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rolePrimary == 'admin';
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rolePrimary == 'admin';
     }
 
     function isImmutable(fieldName) {
@@ -27,7 +29,9 @@ service cloud.firestore {
     }
     
     function isConversationParticipant(conversationId) {
-      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/conversations/$(conversationId)) &&
+             request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
     }
     
     function isEscrowParty(escrowDoc) {
@@ -91,8 +95,9 @@ service cloud.firestore {
 
       // Messages are a subcollection of conversations
       match /messages/{messageId} {
-        allow get, list: if isConversationParticipant(conversationId);
-        allow create: if isConversationParticipant(conversationId) 
+        // Allow access to mock conversation for demo purposes
+        allow get, list: if (conversationId == 'mock-conversation-123' && isSignedIn()) || isConversationParticipant(conversationId);
+        allow create: if ((conversationId == 'mock-conversation-123' && isSignedIn()) || isConversationParticipant(conversationId))
                       && request.resource.data.senderId == request.auth.uid
                       && request.resource.data.type in ['text', 'file']; // Clients can only create text or file messages
         allow update, delete: if false; // Messages are immutable
