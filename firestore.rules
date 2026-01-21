@@ -101,9 +101,7 @@ service cloud.firestore {
     match /escrows/{escrowId} {
       allow get: if isEscrowParty(resource.data);
       allow list: if false;
-      allow create: if false; // Must be handled by Cloud Functions.
-      allow update: if false; // Must be handled by Cloud Functions.
-      allow delete: if false; // Must be handled by Cloud Functions.
+      allow create, update, delete: if false; // Must be handled by Cloud Functions.
     }
     
     match /escrow_events/{eventId} {
