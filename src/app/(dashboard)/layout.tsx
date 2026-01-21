@@ -6,7 +6,6 @@ import { SidebarProvider, Sidebar, SidebarInset } from "@/components/ui/sidebar"
 import DashboardSidebar from "@/components/layout/dashboard-sidebar";
 import React, { type ReactNode, useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import HeroAnimation from "@/components/layout/hero-animation";
 
 
 function DashboardUI({ children }: { children: ReactNode }) {
@@ -43,7 +42,6 @@ function DashboardUI({ children }: { children: ReactNode }) {
                 )}
             </Sidebar>
             <SidebarInset>
-                <HeroAnimation />
                 <div className="relative z-10 flex flex-col h-full">
                     {isClient && <DashboardHeader />}
                     <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-transparent overflow-y-auto">

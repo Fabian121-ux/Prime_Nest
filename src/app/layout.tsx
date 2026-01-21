@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import HeroAnimation from "@/components/layout/hero-animation";
 
 
 export const metadata: Metadata = {
@@ -30,8 +31,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <HeroAnimation />
           <FirebaseClientProvider>
-            {children}
+            <div className="relative z-10">
+              {children}
+            </div>
           </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>
