@@ -8,6 +8,8 @@ export type ImagePlaceholder = {
   title?: string;
   location?: string;
   price?: string;
+  type?: 'rental' | 'service';
+  verified?: boolean;
 };
 
 export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;

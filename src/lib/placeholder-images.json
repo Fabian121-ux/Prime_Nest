@@ -13,7 +13,9 @@
       "location": "Lagos, Nigeria",
       "price": "₦1,500,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1565363887715-8884629e09ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhcGFydG1lbnQlMjBidWlsZGluZ3xlbnwwfHx8fDE3Njg5MTQ2Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "apartment building"
+      "imageHint": "apartment building",
+      "type": "rental",
+      "verified": false
     },
     {
       "id": "listing2",
@@ -22,7 +24,9 @@
       "location": "Accra, Ghana",
       "price": "₦25,000/hr",
       "imageUrl": "https://images.unsplash.com/photo-1683115097173-f24516d000c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0b29scyUyMHBsdW1iaW5nfGVufDB8fHx8MTc2ODk5Mzc4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "tools plumbing"
+      "imageHint": "tools plumbing",
+      "type": "service",
+      "verified": true
     },
     {
       "id": "listing3",
@@ -31,7 +35,9 @@
       "location": "Nairobi, Kenya",
       "price": "₦950,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1502228362178-086346ac6862?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2l0eSUyMHNreWxpbmV8ZW58MHx8fHwxNzY4OTc1MTc0fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "city skyline"
+      "imageHint": "city skyline",
+      "type": "rental",
+      "verified": false
     },
     {
       "id": "listing4",
@@ -40,7 +46,9 @@
       "location": "Johannesburg, SA",
       "price": "₦30,000/hr",
       "imageUrl": "https://images.unsplash.com/photo-1645817849921-936ec8174e61?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxlbGVjdHJpY2FsJTIwd2lyZXN8ZW58MHx8fHwxNzY4OTEwOTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "electrical wires"
+      "imageHint": "electrical wires",
+      "type": "service",
+      "verified": false
     },
     {
       "id": "listing5",
@@ -49,7 +57,9 @@
       "location": "Cape Town, SA",
       "price": "₦4,500,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1606788075819-9574a6edfab3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYW1pbHklMjBob3VzZXxlbnwwfHx8fDE3Njg5NzU4OTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "family house"
+      "imageHint": "family house",
+      "type": "rental",
+      "verified": true
     },
     {
       "id": "listing6",
@@ -58,7 +68,9 @@
       "location": "Lagos, Nigeria",
       "price": "By Project",
       "imageUrl": "https://images.unsplash.com/photo-1679240219409-51901fb6d2db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b29kd29ya2luZyUyMHRvb2xzfGVufDB8fHx8MTc2ODk5Mzc4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woodworking tools"
+      "imageHint": "woodworking tools",
+      "type": "service",
+      "verified": false
     },
     {
       "id": "listing7",
@@ -67,7 +79,9 @@
       "location": "Accra, Ghana",
       "price": "₦2,200,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1528913775512-624d24b27b96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiZWFjaCUyMGhvdXNlfGVufDB8fHx8MTc2ODkyODY4MHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "beach house"
+      "imageHint": "beach house",
+      "type": "rental",
+      "verified": false
     },
     {
       "id": "listing8",
@@ -76,7 +90,9 @@
       "location": "Nairobi, Kenya",
       "price": "₦20,000/hr",
       "imageUrl": "https://images.unsplash.com/photo-1511822148790-e7b58ba14c72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYWludGluZyUyMHdhbGx8ZW58MHx8fHwxNzY4OTI1NTc1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "painting wall"
+      "imageHint": "painting wall",
+      "type": "service",
+      "verified": true
     },
     {
       "id": "listing9",
@@ -85,7 +101,9 @@
       "location": "Johannesburg, SA",
       "price": "₦1,800,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1619989753008-0191bbaf23a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsb2Z0JTIwYXBhcnRtZW50fGVufDB8fHx8MTc2ODk4NTg1NXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "loft apartment"
+      "imageHint": "loft apartment",
+      "type": "rental",
+      "verified": true
     },
     {
       "id": "listing10",
@@ -94,7 +112,9 @@
       "location": "Cape Town, SA",
       "price": "By Project",
       "imageUrl": "https://images.unsplash.com/photo-1580600301354-0ce8faef576c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxiZWF1dGlmdWwlMjBnYXJkZW58ZW58MHx8fHwxNzY4OTkzNzgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "beautiful garden"
+      "imageHint": "beautiful garden",
+      "type": "service",
+      "verified": false
     },
     {
       "id": "listing11",
@@ -103,7 +123,9 @@
       "location": "Lagos, Nigeria",
       "price": "₦3,000,000/yr",
       "imageUrl": "https://images.unsplash.com/photo-1628624747186-a941c476b7ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdWJ1cmJhbiUyMGhvdXNlfGVufDB8fHx8MTc2ODk1ODMxOXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "suburban house"
+      "imageHint": "suburban house",
+      "type": "rental",
+      "verified": false
     },
     {
       "id": "listing12",
@@ -112,7 +134,9 @@
       "location": "Accra, Ghana",
       "price": "₦35,000/hr",
       "imageUrl": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMGNvZGV8ZW58MHx8fHwxNzY4ODkzMzQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "computer code"
+      "imageHint": "computer code",
+      "type": "service",
+      "verified": false
     },
     {
       "id": "user-avatar",
