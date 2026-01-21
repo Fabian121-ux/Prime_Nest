@@ -25,11 +25,11 @@
     --ring: 45 65% 55%; /* Gold */
     --radius: 0.75rem;
 
-    --chart-1: 215 71% 50%;
-    --chart-2: 177 72% 40%;
-    --chart-3: 45 65% 55%;
-    --chart-4: 215 71% 70%;
-    --chart-5: 355 79% 65%;
+    --chart-1: 215 71% 13%; /* Navy Blue */
+    --chart-2: 177 72% 36%; /* Teal Green */
+    --chart-3: 45 65% 52%; /* Gold */
+    --chart-4: 216 25% 45%; /* Muted Foreground */
+    --chart-5: 215 30% 25%; /* Accent */
   }
 
   .light { /* Light Theme */

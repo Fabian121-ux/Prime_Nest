@@ -26,7 +26,7 @@ const barChartData = [
 const pieChartData = [
   { name: 'Tenants', value: 400, color: 'hsl(var(--chart-1))' },
   { name: 'Landlords', value: 150, color: 'hsl(var(--chart-2))' },
-  { name: 'Artisans', value: 250, color: 'hsl(var(--chart-4))' },
+  { name: 'Artisans', value: 250, color: 'hsl(var(--chart-3))' },
 ];
 
 
@@ -42,7 +42,7 @@ export default function DashboardPage() {
         <CardContent>
           <div className="text-2xl font-bold">1,974</div>
           <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <ArrowUp className="h-3 w-3 text-trust" />
+            <ArrowUp className="h-3 w-3" />
             +287 this month
           </p>
         </CardContent>
