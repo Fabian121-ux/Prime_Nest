@@ -1,24 +1,76 @@
 
+'use client';
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import Image from "next/image";
+import { ArrowLeft, MessageSquare } from "lucide-react";
+import { notFound, useRouter } from "next/navigation";
 
 export default function ListingDetailPage({ params }: { params: { listingId: string } }) {
+  const router = useRouter();
+  const listing = PlaceHolderImages.find((p) => p.id === params.listingId);
+
+  if (!listing) {
+    notFound();
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 container py-12">
-        <Card>
-          <CardHeader>
-            <CardTitle>Listing Details</CardTitle>
-            <CardDescription>
-              This is a placeholder page for listing ID: {params.listingId}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>More listing details will be shown here soon.</p>
-          </CardContent>
-        </Card>
+      <main className="flex-1 container py-8 md:py-12">
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => router.back()} className="text-muted-foreground">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to listings
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12">
+            {/* Image Column */}
+            <div className="lg:col-span-3">
+                <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg">
+                    <Image
+                        src={listing.imageUrl}
+                        alt={listing.title!}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 50vw"
+                        data-ai-hint={listing.imageHint}
+                    />
+                </div>
+            </div>
+
+            {/* Details Column */}
+            <div className="lg:col-span-2">
+                <Card className="h-full">
+                    <CardHeader>
+                        <CardTitle className="text-3xl font-headline">{listing.title}</CardTitle>
+                        <CardDescription className="text-base">{listing.location}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div>
+                            <p className="text-3xl font-bold text-primary mb-2">{listing.price}</p>
+                            <p className="text-muted-foreground">{listing.description}</p>
+                        </div>
+                        <div className="space-y-3">
+                            <Button size="lg" className="w-full">
+                                <MessageSquare className="mr-2 h-5 w-5"/>
+                                Contact Owner
+                            </Button>
+                            <Button size="lg" variant="secondary" className="w-full">
+                                Place into Escrow
+                            </Button>
+                        </div>
+                        <div className="text-xs text-center text-muted-foreground pt-4">
+                            By contacting the owner, you agree to our Terms of Service.
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
       </main>
       <Footer />
     </div>

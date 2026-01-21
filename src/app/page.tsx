@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -58,7 +59,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative text-center py-20 md:py-32 overflow-hidden bg-primary text-primary-foreground">
+        <section className="relative text-center py-20 md:py-32 overflow-hidden">
           <HeroAnimation />
           {/* Foreground content */}
           <div className="relative z-10 container mx-auto px-4">
@@ -66,7 +67,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight mb-4"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight mb-4 text-primary-foreground"
             >
               Find Your{' '}
               <span className="inline-block text-primary bg-primary-foreground/80 px-2 py-1 rounded-lg">
@@ -91,7 +92,7 @@ export default function Home() {
               className="flex flex-col sm:flex-row justify-center items-center gap-4"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" asChild variant="secondary">
+                <Button size="lg" asChild>
                   <Link href="/signup">
                     Get Started <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -100,7 +101,7 @@ export default function Home() {
 
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="#explore">Explore Listings</Link>
+                  <Link href="/explore">Explore Listings</Link>
                 </Button>
               </motion.div>
             </motion.div>
@@ -153,7 +154,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-              {listings.map((listing, i) => (
+              {listings.slice(0, 4).map((listing, i) => (
                 <Dialog key={listing.id}>
                   <DialogTrigger asChild>
                     <MotionCard
@@ -166,7 +167,7 @@ export default function Home() {
                       <div className="relative h-56 w-full">
                         <Image
                           src={listing.imageUrl}
-                          alt={listing.description}
+                          alt={listing.description!}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -189,7 +190,7 @@ export default function Home() {
                       <div className="relative h-64 w-full mb-4 rounded-lg overflow-hidden">
                         <Image
                           src={listing.imageUrl}
-                          alt={listing.description}
+                          alt={listing.description!}
                           fill
                           className="object-cover"
                           data-ai-hint={listing.imageHint}
@@ -210,6 +211,14 @@ export default function Home() {
                   </DialogContent>
                 </Dialog>
               ))}
+            </div>
+            <div className="text-center mt-12">
+                <Button asChild size="lg">
+                    <Link href="/explore">
+                        See More Listings
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                </Button>
             </div>
           </div>
         </section>

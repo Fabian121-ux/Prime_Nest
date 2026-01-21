@@ -26,7 +26,7 @@ export default function Header() {
         </Link>
         <nav className="hidden md:flex gap-2 items-center">
           <Button variant="ghost" asChild>
-            <Link href="/#explore">Explore</Link>
+            <Link href="/explore">Explore</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link href="/login">Login</Link>
@@ -53,7 +53,7 @@ export default function Header() {
                       <span className="font-headline">Prime Nest</span>
                     </Link>
                     <Button variant="ghost" className="justify-start text-base" asChild>
-                      <Link href="/#explore" onClick={() => setIsSheetOpen(false)}>Explore</Link>
+                      <Link href="/explore" onClick={() => setIsSheetOpen(false)}>Explore</Link>
                     </Button>
                     <Button variant="ghost" className="justify-start text-base" asChild>
                       <Link href="/login" onClick={() => setIsSheetOpen(false)}>Login</Link>
