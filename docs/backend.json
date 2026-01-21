@@ -206,9 +206,9 @@
       "schema": { "$ref": "#/entities/Conversation" },
       "description": "Stores conversation thread information. Uses conversationId as the document ID."
     },
-    "/messages/{messageId}": {
+    "/conversations/{conversationId}/messages/{messageId}": {
       "schema": { "$ref": "#/entities/Message" },
-      "description": "Stores chat message information. Uses messageId as the document ID."
+      "description": "Stores chat messages within a conversation. Uses messageId as the document ID."
     },
     "/escrows/{escrowId}": {
       "schema": { "$ref": "#/entities/Escrow" },

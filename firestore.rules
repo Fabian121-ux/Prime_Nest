@@ -83,19 +83,20 @@ service cloud.firestore {
     }
 
     match /conversations/{conversationId} {
-      allow get: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow get: if isConversationParticipant(conversationId);
       allow list: if false;
       allow create: if isSignedIn() && request.auth.uid in request.resource.data.participants;
-      allow update: if isSignedIn() && request.auth.uid in resource.data.participants && resource != null;
+      allow update: if isConversationParticipant(conversationId) && isImmutable('participants') && isImmutable('listingId') && isImmutable('createdAt');
       allow delete: if false;
-    }
 
-    match /messages/{messageId} {
-      allow get: if isConversationParticipant(resource.data.conversationId);
-      allow list: if false;
-      allow create: if isConversationParticipant(request.resource.data.conversationId) && request.resource.data.senderId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.senderId) && isImmutable('senderId') && isImmutable('conversationId');
-      allow delete: if isExistingOwner(resource.data.senderId);
+      // Messages are a subcollection of conversations
+      match /messages/{messageId} {
+        allow get, list: if isConversationParticipant(conversationId);
+        allow create: if isConversationParticipant(conversationId) 
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.resource.data.type in ['text', 'file']; // Clients can only create text or file messages
+        allow update, delete: if false; // Messages are immutable
+      }
     }
     
     match /escrows/{escrowId} {
