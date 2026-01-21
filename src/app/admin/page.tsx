@@ -28,7 +28,7 @@ import {
 import DashboardHeader from "@/components/layout/dashboard-header"
 import DashboardSidebar from "@/components/layout/dashboard-sidebar"
 import { Sidebar, SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import clsx from "clsx"
 
 /* ------------------ MOCK DATA ------------------ */
@@ -77,7 +77,7 @@ export default function AdminPage() {
       <SidebarInset>
         <DashboardHeader />
 
-        <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+        <main className="p-4 md:p-8 space-y-8">
 
           <header>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
@@ -119,9 +119,8 @@ export default function AdminPage() {
 
                     <TableBody>
                       {mockUsers.map(user => (
-                        <>
+                        <React.Fragment key={user.id}>
                           <TableRow
-                            key={user.id}
                             className="cursor-pointer"
                             onClick={() =>
                               setExpandedRow(
@@ -170,7 +169,7 @@ export default function AdminPage() {
                               </TableCell>
                             </TableRow>
                           )}
-                        </>
+                        </React.Fragment>
                       ))}
                     </TableBody>
                   </Table>
