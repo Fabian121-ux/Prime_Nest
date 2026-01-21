@@ -76,6 +76,7 @@
             "conversationId": { "type": "string", "description": "Unique identifier for the Conversation entity." },
             "listingId": { "type": "string", "description": "Reference to Listing. (Relationship: Listing 1:N Conversation)" },
             "participants": { "type": "array", "description": "Array of user IDs participating in the conversation.", "items": { "type": "string" } },
+            "dealId": { "type": "string", "description": "Optional reference to a Deal. (Relationship: Deal 1:1 Conversation)" },
             "createdAt": { "type": "string", "description": "Timestamp indicating when the conversation was created.", "format": "date-time" }
         },
         "required": ["conversationId", "listingId", "participants", "createdAt"]
@@ -89,7 +90,7 @@
             "conversationId": { "type": "string", "description": "Reference to Conversation. (Relationship: Conversation 1:N Message)" },
             "senderId": { "type": "string", "description": "Reference to User. (Relationship: User 1:N Message, Sender)" },
             "content": { "type": "string", "description": "Content of the message." },
-            "type": { "type": "string", "description": "Type of message (text, system, or escrow)." },
+            "type": { "type": "string", "description": "Type of message.", "enum": ["text", "file", "system", "escrow"] },
             "createdAt": { "type": "string", "description": "Timestamp indicating when the message was created.", "format": "date-time" }
         },
         "required": ["messageId", "conversationId", "senderId", "content", "type", "createdAt"]
@@ -228,3 +229,5 @@
     }
   }
 }
+
+    
