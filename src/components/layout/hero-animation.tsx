@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { useEffect, useState, useRef } from 'react'
+import { useTheme } from 'next-themes'
 
 interface Particle {
   id: number
@@ -30,15 +31,21 @@ const HeroAnimation = () => {
   const [particles, setParticles] = useState<Particle[]>([])
   const [isClient, setIsClient] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
 
   // Ensure this only runs on the client
   useEffect(() => {
     setIsClient(true)
     const gold = 'hsl(45 65% 52%)'
     const teal = 'hsl(177 72% 36%)'
-    const navy = 'hsl(215 71% 13%)' // For subtle background stars
-    setParticles(generateParticles(150, [gold, teal, navy, '#ffffff']))
-  }, [])
+    const navy = 'hsl(215 71% 13%)'
+    
+    // Use different particle colors for light and dark themes
+    const lightModeColors = [gold, teal, navy, '#333333']; // Dark particle instead of white
+    const darkModeColors = [gold, teal, navy, '#ffffff'];
+
+    setParticles(generateParticles(150, theme === 'light' ? lightModeColors : darkModeColors))
+  }, [theme])
   
   const mouseX = useMotionValue(0.5)
   const mouseY = useMotionValue(0.5)
@@ -72,7 +79,7 @@ const HeroAnimation = () => {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-primary"
+      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-background"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -80,7 +87,7 @@ const HeroAnimation = () => {
        <motion.div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at center, hsl(var(--primary) / 0.2), transparent 60%)',
+          background: 'radial-gradient(circle at center, hsl(var(--accent) / 0.15), transparent 60%)',
           x: x1,
           y: y1
         }}

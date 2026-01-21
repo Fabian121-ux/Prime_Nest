@@ -35,7 +35,7 @@
   }
 
   .light { /* Light Theme */
-    --background: 216 25% 97%; /* Gray (#F5F7FA) */
+    --background: 0 0% 100%; /* White */
     --foreground: 215 71% 10%; /* Dark Navy Text */
     --card: 0 0% 100%; /* White */
     --card-foreground: 215 71% 10%;
@@ -43,16 +43,16 @@
     --popover-foreground: 215 71% 10%;
     --primary: 215 71% 13%; /* Navy Blue (#0B1F3A) */
     --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 216 25% 92%;
+    --secondary: 216 25% 94%;
     --secondary-foreground: 215 71% 10%;
-    --muted: 216 25% 92%;
+    --muted: 216 25% 94%;
     --muted-foreground: 215 25% 45%;
-    --accent: 216 25% 92%; /* Neutral light gray for hovers */
+    --accent: 216 25% 94%;
     --accent-foreground: 215 71% 10%;
     --destructive: 355 79% 59%; /* Red (#E63946) */
     --destructive-foreground: 0 0% 98%;
-    --border: 216 12% 88%;
-    --input: 216 12% 88%;
+    --border: 216 25% 88%;
+    --input: 216 25% 88%;
     --ring: 45 65% 52%; /* Gold (#D4AF37) */
     
     --premium-foreground: 215 71% 10%; /* Dark Navy Text for contrast on Gold */
