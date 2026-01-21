@@ -72,7 +72,7 @@ const HeroAnimation = () => {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-primary"
+      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-primary"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

@@ -25,7 +25,6 @@ import { motion } from 'framer-motion'
 import Footer from '@/components/layout/footer'
 import Header from '@/components/layout/header'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
-import HeroAnimation from '@/components/layout/hero-animation'
 
 const MotionCard = motion(Card)
 
@@ -60,7 +59,6 @@ export default function Home() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative text-center py-20 md:py-32 overflow-hidden">
-          <HeroAnimation />
           {/* Foreground content */}
           <div className="relative z-10 container mx-auto px-4">
             <motion.h1
