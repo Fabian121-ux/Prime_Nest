@@ -62,7 +62,11 @@ export const createDeal = functions.https.onCall(async (data, context) => {
     const now = admin.firestore.FieldValue.serverTimestamp();
 
     // 4. Create the escrow document first
-    const escrowRef = await db.collection("escrows").add({
+    const escrowRef = db.collection("escrows").doc();
+    const escrowId = escrowRef.id;
+    
+    await escrowRef.set({
+        escrowId: escrowId,
         payerId: buyerId,
         payeeId: sellerId,
         listingId: listingId,
@@ -71,10 +75,13 @@ export const createDeal = functions.https.onCall(async (data, context) => {
         status: 'initiated',
         createdAt: now,
     });
-    const escrowId = escrowRef.id;
 
     // 5. Create the deal document, linking it to the new escrow
-    const dealRef = await db.collection("deals").add({
+    const dealRef = db.collection("deals").doc();
+    const dealId = dealRef.id;
+
+    await dealRef.set({
+        dealId: dealId,
         listingId: listingId,
         buyerId: buyerId,
         sellerId: sellerId,
@@ -85,7 +92,6 @@ export const createDeal = functions.https.onCall(async (data, context) => {
         createdAt: now,
         updatedAt: now,
     });
-    const dealId = dealRef.id;
     
     // 6. Return the new dealId to the client
     return { dealId: dealId };
