@@ -50,7 +50,7 @@ export default function AdminPage() {
         </Sidebar>
         <SidebarInset>
             {isClient && <DashboardHeader />}
-            <main className="container mx-auto py-8 space-y-8 overflow-y-auto">
+            <main className="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8 overflow-y-auto">
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Admin Panel</h1>
                     <p className="text-muted-foreground">Manage users, listings, and payments.</p>
@@ -76,7 +76,7 @@ export default function AdminPage() {
                                 {mockUsers.map(user => (
                                     <TableRow key={user.id}>
                                         <TableCell className="font-medium">{user.email}</TableCell>
-                                        <TableCell className="capitalize flex items-center gap-2 whitespace-nowrap"><RoleIcon role={user.role} /> {user.role}</TableCell>
+                                        <TableCell className="capitalize flex items-center gap-2"><RoleIcon role={user.role} /> {user.role}</TableCell>
                                         <TableCell><Badge variant={user.status === 'Approved' ? 'secondary' : 'outline'}>{user.status}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             {user.status === 'Pending' && <Button size="sm">Approve</Button>}
