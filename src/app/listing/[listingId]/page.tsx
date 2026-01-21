@@ -6,17 +6,31 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from "next/image";
-import { ArrowLeft, MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageSquare, Loader2 } from "lucide-react";
 import { notFound, useRouter, useParams } from "next/navigation";
+import { useUser } from "@/firebase";
+import Link from "next/link";
 
 export default function ListingDetailPage() {
   const router = useRouter();
   const params = useParams<{ listingId: string }>();
+  const { user, isUserLoading } = useUser();
   const listing = PlaceHolderImages.find((p) => p.id === params.listingId);
 
   if (!listing) {
     notFound();
   }
+  
+  const handleContact = () => {
+    if (!user) {
+      router.push('/login');
+    } else {
+      // Placeholder for future chat functionality
+      // For now, we can just confirm the user is logged in.
+      console.log("User is logged in. Ready to initiate contact.");
+      // In the future, this would open a chat modal or navigate to a messages page.
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -56,8 +70,12 @@ export default function ListingDetailPage() {
                             <p className="text-muted-foreground">{listing.description}</p>
                         </div>
                         <div className="space-y-3">
-                            <Button size="lg" className="w-full">
-                                <MessageSquare className="mr-2 h-5 w-5"/>
+                            <Button size="lg" className="w-full" onClick={handleContact} disabled={isUserLoading}>
+                                {isUserLoading ? (
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin"/>
+                                ) : (
+                                    <MessageSquare className="mr-2 h-5 w-5"/>
+                                )}
                                 Contact Owner
                             </Button>
                             <Button size="lg" variant="secondary" className="w-full">
@@ -65,7 +83,10 @@ export default function ListingDetailPage() {
                             </Button>
                         </div>
                         <div className="text-xs text-center text-muted-foreground pt-4">
-                            By contacting the owner, you agree to our Terms of Service.
+                            By contacting the owner, you agree to our{' '}
+                            <Link href="/terms" className="underline hover:text-primary">
+                                Terms of Service
+                            </Link>.
                         </div>
                     </CardContent>
                 </Card>
