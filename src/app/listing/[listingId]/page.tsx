@@ -37,7 +37,7 @@ export default function ListingDetailPage() {
       <Header />
       <main className="flex-1 container py-8 md:py-12">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => router.back()} className="text-muted-foreground">
+          <Button variant="ghost" onClick={() => router.push('/explore')} className="text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to listings
           </Button>
