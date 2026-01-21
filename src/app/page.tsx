@@ -46,22 +46,22 @@ export default function Home() {
   const listing4 = PlaceHolderImages.find((p) => p.id === 'listing4')
 
   return (
-    <div className="flex flex-col min-h-screen overflow-x-hidden relative">
+    <div className="flex flex-col min-h-screen overflow-x-hidden relative bg-transparent">
       <Header />
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative isolate text-center py-20 md:py-32 overflow-hidden">
+        <section className="relative isolate text-center py-20 md:py-32 overflow-hidden bg-transparent">
           {/* Foreground content */}
           <div className="relative z-10 container mx-auto px-4">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-foreground mb-4"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight text-primary-foreground mb-4"
             >
               Find Your{' '}
-              <span className="inline-block text-primary-foreground bg-primary/80 px-2 py-1 rounded-lg">
+              <span className="inline-block text-primary bg-primary-foreground/80 px-2 py-1 rounded-lg">
                 Prime Nest
               </span>
             </motion.h1>
@@ -83,7 +83,7 @@ export default function Home() {
               className="flex flex-col sm:flex-row justify-center items-center gap-4"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" asChild>
+                <Button size="lg" asChild variant="secondary">
                   <Link href="/signup">
                     Get Started <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
