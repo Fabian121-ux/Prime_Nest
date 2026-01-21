@@ -1,12 +1,16 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/firebase";
+import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { Handshake, Loader2, Info, ShieldCheck, Gavel, FileText, CheckCircle2, MessageSquare, Lock } from "lucide-react";
+import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Handshake, Loader2, Info, ShieldCheck, Gavel, FileText, CheckCircle2, MessageSquare, Lock, Send } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -16,8 +20,13 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
 
 type DealState = 'pre-deal' | 'deal-created' | 'escrow-active';
+
+// #region Local Components
 
 const SystemMessage = ({ icon, title, children }: { icon: React.ReactNode, title: string, children: React.ReactNode }) => (
     <div className="flex justify-center">
@@ -31,7 +40,6 @@ const SystemMessage = ({ icon, title, children }: { icon: React.ReactNode, title
 
 const Milestone = ({ title, status, isFirst, isLast }: { title:string; status: 'complete' | 'current' | 'pending'; isFirst?: boolean; isLast?: boolean }) => (
     <div className="relative flex-1 flex flex-col items-center">
-         {/* Connecting Line */}
         <div className={cn("absolute top-2 left-0 w-full h-0.5", {
             'bg-trust': status === 'complete',
             'bg-border': status === 'current' || status === 'pending',
@@ -39,8 +47,6 @@ const Milestone = ({ title, status, isFirst, isLast }: { title:string; status: '
             'w-1/2 left-0': isLast,
         })} />
          <div className={cn("absolute top-2 left-0 w-1/2 h-0.5", { 'bg-trust': status === 'current' })} />
-
-        {/* Milestone Circle */}
         <div className={cn("relative z-10 w-4 h-4 rounded-full flex items-center justify-center border-2", {
             "bg-trust border-trust": status === 'complete',
             "border-trust": status === 'current',
@@ -63,7 +69,6 @@ const DealStatusBadge = ({ state }: { state: DealState }) => {
         'escrow-active': { text: 'Funds in Escrow', icon: <Lock className="w-3 h-3" />, className: 'bg-trust text-white' }
     };
     const currentStatus = statusMap[state];
-
     return (
         <Badge className={cn('gap-1.5', currentStatus.className)}>
             {currentStatus.icon}
@@ -72,18 +77,129 @@ const DealStatusBadge = ({ state }: { state: DealState }) => {
     );
 };
 
+const messageFormSchema = z.object({
+  content: z.string().min(1).max(1000),
+});
+
+function MessageInput({ conversationId, disabled }: { conversationId: string; disabled: boolean }) {
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const form = useForm<z.infer<typeof messageFormSchema>>({
+    resolver: zodResolver(messageFormSchema),
+    defaultValues: { content: "" },
+  });
+
+  async function onSubmit(values: z.infer<typeof messageFormSchema>) {
+    if (!user || !firestore || !conversationId) return;
+
+    try {
+        const messagesRef = collection(firestore, 'conversations', conversationId, 'messages');
+        // Non-blocking write
+        addDoc(messagesRef, {
+            senderId: user.uid,
+            content: values.content,
+            type: 'text',
+            createdAt: serverTimestamp(),
+        });
+        form.reset();
+    } catch(e) {
+        console.error("Error sending message:", e);
+        // Optionally show a toast notification for failure
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <Textarea
+                  placeholder="Type your message..."
+                  className="min-h-0 resize-none"
+                  rows={1}
+                  disabled={disabled}
+                  onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          form.handleSubmit(onSubmit)();
+                      }
+                  }}
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button type="submit" size="icon" disabled={disabled || !form.formState.isValid || form.formState.isSubmitting}>
+          <Send className="h-4 w-4" />
+          <span className="sr-only">Send Message</span>
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+function MessageBubble({ message, currentUserId, otherUserAvatar }: { message: any; currentUserId?: string; otherUserAvatar?: string }) {
+    const isSender = message.senderId === currentUserId;
+    const senderAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar')?.imageUrl;
+
+    if (message.type === 'system') {
+        // System messages are rendered separately in the main component
+        return null;
+    }
+
+    return (
+        <div className={cn("flex w-full max-w-md items-end gap-3", isSender ? "ml-auto justify-end" : "mr-auto justify-start")}>
+            {!isSender && (
+                <Avatar className="h-8 w-8">
+                    {otherUserAvatar && <AvatarImage src={otherUserAvatar} />}
+                    <AvatarFallback>D</AvatarFallback>
+                </Avatar>
+            )}
+            <div className={cn(
+                "rounded-lg px-3 py-2 shadow-sm",
+                isSender
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card"
+            )}>
+                <p className="text-sm">{message.content}</p>
+            </div>
+        </div>
+    );
+}
+
+// #endregion
+
 export default function MessagesPage() {
-  const auth = useAuth();
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dealId, setDealId] = useState<string | null>(null);
   const [dealState, setDealState] = useState<DealState>('pre-deal');
   
+  const MOCK_CONVERSATION_ID = "mock-conversation-123";
+
+  // #region Data fetching and Mock Logic
   const avatarUser = PlaceHolderImages.find(p => p.id === 'user-avatar');
   const avatarArtisan = PlaceHolderImages.find(p => p.id === 'admin-avatar');
   const listingImage = PlaceHolderImages.find(p => p.id === 'listing2');
 
+  const messagesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(
+        collection(firestore, 'conversations', MOCK_CONVERSATION_ID, 'messages'),
+        orderBy('createdAt', 'asc')
+    );
+  }, [firestore]);
+
+  const { data: messages, isLoading: messagesLoading } = useCollection(messagesQuery);
+
   const handleCreateDeal = async () => {
+    const auth = user ? { app: { options: {appId: ''} } } : null
     if (!auth) {
       setError("Authentication service is not available.");
       return;
@@ -92,26 +208,10 @@ export default function MessagesPage() {
     setIsLoading(true);
     setError(null);
 
-    // Simulate clicking the state buttons for demo purposes
-     setTimeout(() => {
+    setTimeout(() => {
         setDealState('deal-created');
         setIsLoading(false);
     }, 1000)
-
-    // try {
-    //   const functions = getFunctions(auth.app);
-    //   const createDealFunction = httpsCallable(functions, 'createDeal');
-    //   const dealData = { listingId: "listing2", amount: 25000, conversationId: "mock-conversation-123" };
-    //   const result = await createDealFunction(dealData);
-    //   const newDealId = (result.data as { dealId: string }).dealId;
-    //   setDealId(newDealId);
-    //   setDealState('deal-created');
-    // } catch (err: any) {
-    //   console.error(err);
-    //   setError(err.message || "An unknown error occurred.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
   
   const handleFundEscrow = () => {
@@ -122,19 +222,16 @@ export default function MessagesPage() {
       }, 1500)
   }
 
-  // Add this to simulate moving from deal-created to escrow-active
-  // We trigger it from a button in the system message for now.
   useState(() => {
       if (dealState === 'deal-created') {
-          // This would be triggered by a backend event in a real app
           const timer = setTimeout(() => handleFundEscrow(), 3000);
           return () => clearTimeout(timer);
       }
   });
-
+  // #endregion
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.32))]">
+    <div className="h-[calc(100vh-theme(spacing.24))] md:h-[calc(100vh-theme(spacing.32))]">
       <Card className="h-full flex flex-col max-w-4xl mx-auto shadow-2xl">
         {/* CHAT HEADER */}
         <CardHeader className="sticky top-0 z-20 bg-primary text-primary-foreground border-b border-primary/50">
@@ -152,9 +249,7 @@ export default function MessagesPage() {
                                     <TooltipTrigger>
                                         <ShieldCheck className="w-4 h-4 text-premium fill-premium/20" />
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>Verified Artisan</p>
-                                    </TooltipContent>
+                                    <TooltipContent><p>Verified Artisan</p></TooltipContent>
                                 </Tooltip>
                              </TooltipProvider>
                         </CardTitle>
@@ -164,58 +259,56 @@ export default function MessagesPage() {
 
                 {listingImage && (
                     <div className="hidden md:flex items-center gap-3 bg-black/20 p-2 rounded-md">
-                        <img src={listingImage.imageUrl} alt={listingImage.title} className="w-10 h-10 object-cover rounded-sm"/>
+                        <Avatar>
+                            <AvatarImage src={listingImage.imageUrl} alt={listingImage.title} className="rounded-sm"/>
+                        </Avatar>
                         <div>
                             <p className="text-sm font-semibold">{listingImage.title}</p>
                             <p className="text-xs text-primary-foreground/80">{listingImage.price}</p>
                         </div>
                     </div>
                 )}
-               
                <DealStatusBadge state={dealState} />
            </div>
         </CardHeader>
         
         {/* MESSAGE AREA */}
-        <CardContent className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-muted/30">
-             <div className="flex items-end gap-3 justify-end">
-                <div className="rounded-lg bg-card p-3 max-w-xs shadow-sm">
-                    <p>Hello! I'm interested in your plumbing services. I have a leak under my kitchen sink.</p>
-                </div>
-                <Avatar className="h-8 w-8">
-                    {avatarUser && <AvatarImage src={avatarUser.imageUrl} alt="You"/>}
-                    <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-            </div>
-             <div className="flex items-end gap-3">
-                 <Avatar className="h-8 w-8">
-                    {avatarArtisan && <AvatarImage src={avatarArtisan.imageUrl} alt="David Okoro"/>}
-                    <AvatarFallback>D</AvatarFallback>
-                </Avatar>
-                <div className="rounded-lg bg-card p-3 max-w-xs shadow-sm">
-                    <p>Hi there! I can certainly help with that. My standard call-out fee is ₦25,000 which covers the first hour.</p>
-                </div>
-            </div>
+        <ScrollArea className="flex-1 bg-muted/30">
+            <div className="p-4 md:p-6 space-y-4">
+                {messagesLoading && (
+                    <div className="flex justify-center items-center py-10">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                )}
 
-            {/* System Messages based on State */}
-            {dealState === 'deal-created' && (
-                <SystemMessage icon={<Handshake className="w-5 h-5"/>} title="Deal Initiated">
-                    <p>A deal for 'Expert Plumbing' for <span className="font-bold text-foreground">₦25,000</span> has been created.</p>
-                    <p className="mt-2 flex items-center justify-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin"/> Awaiting escrow funding from buyer...
-                    </p>
-                </SystemMessage>
-            )}
-             {dealState === 'escrow-active' && (
-                <SystemMessage icon={<Lock className="w-5 h-5 text-trust"/>} title="Funds Secured in Escrow">
-                    <p><span className="font-bold text-foreground">₦25,000</span> has been locked in the Prime Nest escrow system.</p>
-                    <p className="mt-2">The artisan can now begin the work. Funds will be released upon your confirmation.</p>
-                </SystemMessage>
-            )}
-        </CardContent>
+                {messages?.map(message => (
+                    <MessageBubble key={message.id} message={message} currentUserId={user?.uid} otherUserAvatar={avatarArtisan?.imageUrl} />
+                ))}
 
-        {/* INPUT AREA */}
-        <CardFooter className="p-2 border-t bg-card">
+                {dealState === 'pre-deal' && !messages && (
+                     <SystemMessage icon={<MessageSquare className="w-5 h-5"/>} title="Start the Conversation">
+                        Ask questions about the service or negotiate the price before creating a deal. All messages are logged.
+                    </SystemMessage>
+                )}
+                {dealState === 'deal-created' && (
+                    <SystemMessage icon={<Handshake className="w-5 h-5"/>} title="Deal Initiated">
+                        <p>A deal for 'Expert Plumbing' for <span className="font-bold text-foreground">₦25,000</span> has been created.</p>
+                        <p className="mt-2 flex items-center justify-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin"/> Awaiting escrow funding from buyer...
+                        </p>
+                    </SystemMessage>
+                )}
+                 {dealState === 'escrow-active' && (
+                    <SystemMessage icon={<Lock className="w-5 h-5 text-trust"/>} title="Funds Secured in Escrow">
+                        <p><span className="font-bold text-foreground">₦25,000</span> has been locked in the Prime Nest escrow system.</p>
+                        <p className="mt-2">The artisan can now begin the work. Funds will be released upon your confirmation.</p>
+                    </SystemMessage>
+                )}
+            </div>
+        </ScrollArea>
+
+        {/* INPUT & ACTION AREA */}
+        <CardFooter className="p-0 border-t bg-card flex-col">
             {dealState === 'pre-deal' && (
                 <div className="w-full p-2 space-y-3">
                      <Alert variant="default" className="border-blue-500/30 bg-blue-500/5">
@@ -231,7 +324,7 @@ export default function MessagesPage() {
                     {error && <Alert variant="destructive"><Info className="h-4 w-4" /><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                 </div>
             )}
-             {dealState === 'deal-created' && (
+            {dealState === 'deal-created' && (
                 <div className="w-full text-center p-4 text-sm text-muted-foreground">
                     <p className="mb-2">Waiting for buyer to fund escrow...</p>
                     <Progress value={25} className="w-full h-2" />
@@ -247,16 +340,20 @@ export default function MessagesPage() {
                     </div>
                     <Separator />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <Button variant="outline"><FileText /> View Details</Button>
-                        <Button variant="destructive"><Gavel /> Raise Dispute</Button>
-                        <Button className="bg-trust hover:bg-trust/90 text-white md:col-span-3 lg:col-span-1"><ShieldCheck /> Release Funds</Button>
+                        <Button variant="outline"><FileText className="mr-2"/> View Details</Button>
+                        <Button variant="destructive"><Gavel className="mr-2"/> Raise Dispute</Button>
+                        <Button className="bg-trust hover:bg-trust/90 text-white md:col-span-3 lg:col-span-1"><ShieldCheck className="mr-2"/> Release Funds</Button>
                     </div>
                 </div>
             )}
+            <div className="w-full p-2 border-t">
+                 <MessageInput
+                    conversationId={MOCK_CONVERSATION_ID}
+                    disabled={isLoading || dealState === 'deal-created'}
+                />
+            </div>
         </CardFooter>
       </Card>
     </div>
   );
 }
-
-    
