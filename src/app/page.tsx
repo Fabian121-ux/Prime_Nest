@@ -99,7 +99,7 @@ export default function Home() {
 
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/explore">Explore Listings</Link>
+                  <Link href="/signup">Explore Listings</Link>
                 </Button>
               </motion.div>
             </motion.div>
@@ -212,7 +212,7 @@ export default function Home() {
             </div>
             <div className="text-center mt-12">
                 <Button asChild size="lg">
-                    <Link href="/explore">
+                    <Link href="/signup">
                         See More Listings
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
