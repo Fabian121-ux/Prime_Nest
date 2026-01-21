@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -8,10 +7,11 @@ import Footer from "@/components/layout/footer";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from "next/image";
 import { ArrowLeft, MessageSquare } from "lucide-react";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, useParams } from "next/navigation";
 
-export default function ListingDetailPage({ params }: { params: { listingId: string } }) {
+export default function ListingDetailPage() {
   const router = useRouter();
+  const params = useParams<{ listingId: string }>();
   const listing = PlaceHolderImages.find((p) => p.id === params.listingId);
 
   if (!listing) {
@@ -28,29 +28,29 @@ export default function ListingDetailPage({ params }: { params: { listingId: str
             Back to listings
           </Button>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {/* Image Column */}
-            <div className="lg:col-span-3">
+            <div className="md:col-span-2">
                 <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg">
                     <Image
                         src={listing.imageUrl}
                         alt={listing.title!}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 50vw"
+                        sizes="(max-width: 768px) 100vw, 67vw"
                         data-ai-hint={listing.imageHint}
                     />
                 </div>
             </div>
 
             {/* Details Column */}
-            <div className="lg:col-span-2">
-                <Card className="h-full">
+            <div className="md:col-span-1">
+                <Card className="h-full flex flex-col">
                     <CardHeader>
                         <CardTitle className="text-3xl font-headline">{listing.title}</CardTitle>
                         <CardDescription className="text-base">{listing.location}</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-6 flex-1 flex flex-col justify-between">
                         <div>
                             <p className="text-3xl font-bold text-primary mb-2">{listing.price}</p>
                             <p className="text-muted-foreground">{listing.description}</p>
