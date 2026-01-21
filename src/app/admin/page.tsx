@@ -28,7 +28,7 @@ import {
 import DashboardHeader from "@/components/layout/dashboard-header"
 import DashboardSidebar from "@/components/layout/dashboard-sidebar"
 import { Sidebar, SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import clsx from "clsx"
 
 /* ------------------ MOCK DATA ------------------ */
@@ -48,24 +48,6 @@ const RoleIcon = ({ role }: { role: string }) => {
   return null
 }
 
-/* ------------------ SWIPE HOOK ------------------ */
-
-function useSwipe(onSwipeRight: () => void) {
-  const startX = useRef<number | null>(null)
-
-  return {
-    onTouchStart: (e: React.TouchEvent) => {
-      startX.current = e.touches[0].clientX
-    },
-    onTouchEnd: (e: React.TouchEvent) => {
-      if (!startX.current) return
-      const diff = e.changedTouches[0].clientX - startX.current
-      if (diff > 80) onSwipeRight()
-      startX.current = null
-    },
-  }
-}
-
 /* ------------------ PAGE ------------------ */
 
 export default function AdminPage() {
@@ -81,6 +63,8 @@ export default function AdminPage() {
   const handleApprove = async (id: string) => {
     setRowLoading(id)
     await new Promise(r => setTimeout(r, 1000))
+    // In a real app, you would update the user's status in the database here.
+    // For this mock, we'll just remove the loading state.
     setRowLoading(null)
   }
 
@@ -145,7 +129,7 @@ export default function AdminPage() {
                               )
                             }
                           >
-                            <TableCell className="font-medium">
+                            <TableCell className="font-medium break-all">
                               {user.email}
                             </TableCell>
                             <TableCell className="flex items-center gap-2 capitalize">
@@ -193,19 +177,13 @@ export default function AdminPage() {
                 </div>
               )}
 
-              {/* MOBILE CARDS + SWIPE */}
+              {/* MOBILE CARDS */}
               {!loading && (
                 <div className="space-y-4 md:hidden">
-                  {mockUsers.map(user => {
-                    const swipe = useSwipe(() => {
-                      if (user.status === 'Pending') handleApprove(user.id)
-                    })
-
-                    return (
+                  {mockUsers.map(user => (
                       <Card
                         key={user.id}
                         className="p-4"
-                        {...swipe}
                       >
                         <div className="space-y-2">
                           <p className="font-medium break-words">{user.email}</p>
@@ -225,21 +203,20 @@ export default function AdminPage() {
                           {user.status === 'Pending' && (
                             <Button
                               size="sm"
-                              className="w-full"
+                              className="w-full mt-2"
                               disabled={rowLoading === user.id}
                               onClick={() => handleApprove(user.id)}
                             >
-                              {rowLoading === user.id ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                "Approve (Swipe →)"
+                              {rowLoading === user.id && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                               )}
+                              Approve
                             </Button>
                           )}
                         </div>
                       </Card>
                     )
-                  })}
+                  )}
                 </div>
               )}
             </CardContent>
