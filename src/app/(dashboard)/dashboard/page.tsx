@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, BarChart, DonutChart, Legend, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, Pie, PieChart, Cell } from "recharts";
-import { ArrowUp, Users, Building2, Hammer, MoreHorizontal, Calendar as CalendarIcon } from "lucide-react";
+import { ArrowUp, Users, Building2, Hammer, MoreHorizontal, Calendar as CalendarIcon, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
@@ -69,12 +69,12 @@ export default function DashboardPage() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Escrow Transactions</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Active Escrow</CardTitle>
+          <Wallet className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">89</div>
-          <p className="text-xs text-muted-foreground">₦12.5M in escrow</p>
+          <div className="text-2xl font-bold">1</div>
+          <p className="text-xs text-muted-foreground">₦25,000 in escrow</p>
         </CardContent>
       </Card>
 

@@ -5,7 +5,7 @@
 @layer base {
   :root { /* Dark Theme */
     --background: 215 30% 8%;
-    --foreground: 216 15% 85%;
+    --foreground: 216 15% 95%; /* Increased lightness from 85% */
     --card: 215 30% 12%;
     --card-foreground: 216 15% 95%;
     --popover: 215 30% 12%;
@@ -15,14 +15,14 @@
     --secondary: 215 30% 20%;
     --secondary-foreground: 216 15% 95%;
     --muted: 215 30% 20%;
-    --muted-foreground: 216 15% 85%;
+    --muted-foreground: 216 15% 75%; /* Increased lightness from 65% */
     --accent: 215 30% 25%;
     --accent-foreground: 216 15% 95%;
-    --destructive: 355 70% 55%; /* Slightly brighter red */
+    --destructive: 355 79% 59%; /* Red (#E63946) */
     --destructive-foreground: 0 0% 98%;
     --border: 215 30% 20%;
     --input: 215 30% 20%;
-    --ring: 45 65% 55%; /* Gold */
+    --ring: 45 65% 52%; /* Gold */
     --radius: 0.75rem;
 
     --chart-1: 215 71% 13%; /* Navy Blue */
@@ -31,44 +31,40 @@
     --chart-4: 216 25% 45%; /* Muted Foreground */
     --chart-5: 215 30% 25%; /* Accent */
 
-    --premium-foreground: 216 15% 95%; /* Bright text for dark mode */
-
-    --sidebar-background: 215 71% 13%; /* Navy Blue */
+    --sidebar-background: 215 71% 13%;
     --sidebar-foreground: 216 15% 95%;
     --sidebar-accent: 215 50% 25%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 215 71% 10%;
-    --sidebar-ring: 45 65% 52%; /* Gold for focus */
+    --sidebar-ring: 45 65% 52%;
   }
 
   .light { /* Light Theme */
-    --background: 210 29% 97%; /* Gray (#F5F7FA) */
-    --foreground: 215 71% 13%; /* Navy Blue (#0B1F3A) */
-    --card: 0 0% 100%; /* White */
+    --background: 0 0% 100%;
+    --foreground: 215 71% 13%;
+    --card: 0 0% 100%;
     --card-foreground: 215 71% 13%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 71% 13%;
-    --primary: 215 71% 13%; /* Navy Blue (#0B1F3A) */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 216 25% 94%;
+    --primary: 215 71% 13%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 29% 97%;
     --secondary-foreground: 215 71% 13%;
-    --muted: 216 25% 94%;
+    --muted: 210 29% 97%;
     --muted-foreground: 215 25% 45%;
-    --accent: 216 25% 90%;
+    --accent: 210 29% 90%;
     --accent-foreground: 215 71% 13%;
-    --destructive: 355 79% 59%; /* Red (#E63946) */
+    --destructive: 355 79% 59%;
     --destructive-foreground: 0 0% 98%;
-    --border: 216 25% 88%;
-    --input: 216 25% 88%;
-    --ring: 45 65% 52%; /* Gold (#D4AF37) */
-    
-    --premium-foreground: 215 71% 10%; /* Dark Navy Text for contrast on Gold */
+    --border: 210 29% 88%;
+    --input: 210 29% 88%;
+    --ring: 45 65% 52%;
 
-    --sidebar-background: 216 25% 96%;
+    --sidebar-background: 210 29% 97%;
     --sidebar-foreground: 215 71% 10%;
-    --sidebar-accent: 216 25% 90%;
+    --sidebar-accent: 210 29% 90%;
     --sidebar-accent-foreground: 215 71% 10%;
-    --sidebar-border: 216 25% 88%;
+    --sidebar-border: 210 29% 88%;
     --sidebar-ring: 215 71% 13%;
   }
 
@@ -78,6 +74,9 @@
     /* Custom semantic colors */
     --trust: 177 72% 36%; /* Teal (#1BA098) */
     --premium: 45 65% 52%; /* Gold (#D4AF37) */
+    --premium-foreground: 215 71% 10%;
+    --success: 142 76% 36%;
+    --success-foreground: 142 76% 96%;
   }
 }
 
