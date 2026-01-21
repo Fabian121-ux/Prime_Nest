@@ -6,7 +6,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from "next/image";
-import { ArrowLeft, MessageSquare, Loader2 } from "lucide-react";
+import { ArrowLeft, MessageSquare, Loader2, Wallet } from "lucide-react";
 import { notFound, useRouter, useParams } from "next/navigation";
 import { useUser } from "@/firebase";
 import Link from "next/link";
@@ -26,9 +26,18 @@ export default function ListingDetailPage() {
       router.push('/login');
     } else {
       // Placeholder for future chat functionality
-      // For now, we can just confirm the user is logged in.
       console.log("User is logged in. Ready to initiate contact.");
       // In the future, this would open a chat modal or navigate to a messages page.
+    }
+  };
+
+  const handleEscrow = () => {
+    if (!user) {
+      router.push('/login');
+    } else {
+      // Placeholder for future escrow functionality
+      console.log("User is logged in. Ready to initiate escrow process.");
+      // In the future, this would open a deal creation modal.
     }
   };
 
@@ -78,7 +87,12 @@ export default function ListingDetailPage() {
                                 )}
                                 Contact Owner
                             </Button>
-                            <Button size="lg" variant="secondary" className="w-full">
+                            <Button size="lg" variant="secondary" className="w-full" onClick={handleEscrow} disabled={isUserLoading}>
+                                {isUserLoading ? (
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                ) : (
+                                    <Wallet className="mr-2 h-5 w-5" />
+                                )}
                                 Place into Escrow
                             </Button>
                         </div>
