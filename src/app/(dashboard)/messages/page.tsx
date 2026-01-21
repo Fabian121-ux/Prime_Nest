@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/firebase";
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { Handshake, Loader2, ServerCrash, FileCheck2, MessageSquare, Info, ShieldCheck, Gavel, FileText } from "lucide-react";
+import { Handshake, Loader2, ServerCrash, FileCheck2, MessageSquare, Info, ShieldCheck, Gavel, FileText, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -216,5 +216,3 @@ export default function MessagesPage() {
     </div>
   );
 }
-
-    
