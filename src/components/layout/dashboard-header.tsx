@@ -3,16 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LogOut, User, Shield, Search, Bell } from 'lucide-react';
+import { LogOut, User, Shield, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { SidebarTrigger, useSidebar } from '../ui/sidebar';
-import { Input } from '../ui/input';
 import { doc } from 'firebase/firestore';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { ThemeToggle } from './theme-toggle';
 
 const getRoleName = (role: string) => {
@@ -30,7 +27,6 @@ export default function DashboardHeader() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const isMobile = useIsMobile();
   const { toggleSidebar } = useSidebar();
 
 
@@ -57,31 +53,7 @@ export default function DashboardHeader() {
             <SidebarTrigger onClick={toggleSidebar} />
         </div>
         
-        <div className="flex flex-1 items-center justify-end gap-2 text-muted-foreground">
-          <div className="w-full max-w-sm ml-auto">
-            {isMobile ? (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Search className="h-5 w-5" />
-                    <span className="sr-only">Search</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-screen max-w-[calc(100vw-2rem)] p-2">
-                  <div className="relative flex items-center">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search..." className="pl-9" />
-                  </div>
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <div className="relative flex items-center">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search..." className="pl-9 bg-muted/50 border-none" />
-              </div>
-            )}
-          </div>
-          
+        <div className="flex items-center justify-end gap-2 text-muted-foreground">
           <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="relative">
