@@ -100,8 +100,8 @@ service cloud.firestore {
       // Messages are a subcollection of conversations
       match /messages/{messageId} {
         // Allow access to mock conversation for demo purposes
-        allow get, list: if (conversationId == 'mock-conversation-123' && isSignedIn()) || isConversationParticipant(conversationId);
-        allow create: if ((conversationId == 'mock-conversation-123' && isSignedIn()) || isConversationParticipant(conversationId))
+        allow get, list: if (conversationId in ['mock-conversation-123', 'convo-2', 'convo-3'] && isSignedIn()) || isConversationParticipant(conversationId);
+        allow create: if ((conversationId in ['mock-conversation-123', 'convo-2', 'convo-3'] && isSignedIn()) || isConversationParticipant(conversationId))
                       && request.resource.data.senderId == request.auth.uid
                       && request.resource.data.type in ['text', 'file']; // Clients can only create text or file messages
         allow update, delete: if false; // Messages are immutable
