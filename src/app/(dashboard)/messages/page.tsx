@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useRef, forwardRef, SetStateAction } from 'react';
@@ -39,9 +40,9 @@ const mockConversations = [
   },
   {
     id: 'convo-2',
-    participant: { name: 'Aminu Bello', avatarId: 'user-avatar', role: 'Landlord', isVerified: false },
-    listing: { id: 'listing1', title: 'Modern Apartment Rent', price: '₦1,500,000' },
-    lastMessage: 'Yes, it is still available. When would you like to view?',
+    participant: { name: 'Aminu Bello with a longer name', avatarId: 'user-avatar', role: 'Landlord', isVerified: false },
+    listing: { id: 'listing1', title: 'Modern Apartment Rent with a very long title that should wrap', price: '₦1,500,000' },
+    lastMessage: 'Yes, it is still available. When would you like to view? This is a longer message to test wrapping.',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // Yesterday
     unreadCount: 2,
   },
@@ -67,7 +68,7 @@ export default function MessagesPage() {
       setSelectedConversationId(mockConversations[0].id);
     }
     if (!isMobile) {
-      setIsListCollapsed(false);
+      // setIsListCollapsed(false); // This was causing issues, removing it.
     }
   }, [isMobile, selectedConversationId]);
 
@@ -88,8 +89,11 @@ export default function MessagesPage() {
 
   return (
     <div className="h-[calc(100vh-theme(spacing.24))] md:h-[calc(100vh-theme(spacing.32))]">
-      <Card className="h-full w-full grid grid-cols-1 md:grid-cols-[auto_1fr] overflow-hidden">
-        <div className={cn('h-full', layout === 'detail' && 'hidden', 'md:block')}>
+      <Card className={cn(
+        "h-full w-full grid grid-cols-1 overflow-hidden transition-all duration-300 ease-in-out",
+        layout === 'split' && (isListCollapsed ? "md:grid-cols-[80px_1fr]" : "md:grid-cols-[minmax(300px,384px)_1fr]")
+      )}>
+        <div className={cn('h-full flex-col', layout === 'detail' ? 'hidden' : 'flex', 'md:flex')}>
           <ConversationList
             conversations={mockConversations}
             selectedConversationId={selectedConversationId}
@@ -125,8 +129,7 @@ function ConversationList({ conversations, selectedConversationId, isCollapsed, 
   const isMobile = useIsMobile();
   return (
     <aside className={cn(
-      "flex flex-col h-full border-r transition-all duration-300 ease-in-out bg-card", 
-      isCollapsed ? "md:w-20" : "w-full md:w-80 lg:w-96"
+      "flex flex-col h-full border-r bg-card"
     )}>
       <header className="p-4 flex items-center justify-between border-b h-20 shrink-0">
         {!isCollapsed && <h2 className="text-xl font-bold font-headline">Messages</h2>}
@@ -181,16 +184,16 @@ const ConversationListItem = forwardRef<HTMLDivElement, any>(
           <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
         </Avatar>
         {!isCollapsed && (
-          <div className="flex-1 overflow-hidden">
-            <div className="flex justify-between items-center">
-              <p className="font-semibold text-sm truncate">{conversation.participant.name}</p>
-              <p className="text-xs text-muted-foreground shrink-0">{formatDistanceToNow(conversation.timestamp, { addSuffix: true })}</p>
+          <div className="flex-1 overflow-hidden min-w-0">
+            <div className="flex justify-between items-start">
+              <p className="font-semibold text-sm break-words pr-2">{conversation.participant.name}</p>
+              <p className="text-xs text-muted-foreground shrink-0 whitespace-nowrap">{formatDistanceToNow(conversation.timestamp, { addSuffix: true })}</p>
             </div>
             <p className="text-xs text-muted-foreground truncate">{conversation.listing.title}</p>
-            <div className="flex justify-between items-center mt-1">
-              <p className="text-xs text-muted-foreground truncate flex-1">{conversation.lastMessage}</p>
+            <div className="flex justify-between items-end mt-1">
+              <p className="text-xs text-muted-foreground break-words pr-2 flex-1">{conversation.lastMessage}</p>
               {conversation.unreadCount > 0 && (
-                <Badge variant="default" className="h-5 w-5 p-0 justify-center text-xs shrink-0 ml-2">{conversation.unreadCount}</Badge>
+                <Badge variant="default" className="h-5 w-5 p-0 justify-center text-xs shrink-0">{conversation.unreadCount}</Badge>
               )}
             </div>
           </div>
@@ -198,7 +201,7 @@ const ConversationListItem = forwardRef<HTMLDivElement, any>(
          {!isCollapsed && (
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="w-8 h-8 shrink-0">
+                    <Button variant="ghost" size="icon" className="w-8 h-8 shrink-0 -mr-2">
                         <MoreHorizontal className="w-4 h-4" />
                     </Button>
                 </DropdownMenuTrigger>
@@ -259,7 +262,7 @@ function ChatHeader({ conversation, dealState, onBack }: any) {
 
     return (
         <header className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b flex items-center p-3 h-20 shrink-0">
-            <div className="flex items-center gap-3 flex-1 overflow-hidden">
+            <div className="flex items-center gap-3 flex-1 overflow-hidden min-w-0">
                 {onBack && <Button variant="ghost" size="icon" className="md:hidden -ml-2" onClick={onBack}><ArrowLeft className="h-5 w-5"/></Button>}
                 <Avatar className="h-10 w-10">
                     {avatarArtisan && <AvatarImage src={avatarArtisan.imageUrl} />}
