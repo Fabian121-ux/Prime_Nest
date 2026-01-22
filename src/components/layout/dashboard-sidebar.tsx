@@ -23,6 +23,7 @@ import {
   Shield,
 } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 const menuItems = [
   {
@@ -75,7 +76,7 @@ const adminMenuItems = [
 
 export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 'tenant' | 'landlord' | 'artisan' }) {
   const pathname = usePathname();
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, isMobile } = useSidebar();
 
   const isActive = (href: string) => {
     // Special case for the main dashboard link
@@ -86,7 +87,7 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
   }
 
   const handleLinkClick = () => {
-    if (window.innerWidth < 768) { // Only close on mobile
+    if (isMobile) { // Only close on mobile
       setOpenMobile(false);
     }
   }
@@ -102,7 +103,10 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
         <Link
           href={userRole === 'admin' ? '/admin' : '/dashboard'}
           onClick={handleLinkClick}
-          className="flex items-center justify-center gap-3 font-bold text-xl group-data-[state=expanded]:justify-start text-sidebar-foreground"
+          className={cn(
+            "flex items-center gap-3 font-bold text-xl text-sidebar-foreground",
+            isMobile ? "justify-start" : "justify-center group-data-[state=expanded]:justify-start"
+          )}
         >
           <div className="p-2 bg-primary rounded-lg">
             <Home className="text-primary-foreground h-5 w-5" />
