@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -6,13 +7,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { LogOut, User, Shield, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useUser, useAuth, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { SidebarTrigger, useSidebar } from '../ui/sidebar';
-import { doc } from 'firebase/firestore';
 import { ThemeToggle } from './theme-toggle';
 
-const getRoleName = (role: string) => {
+const getRoleName = (role?: string) => {
+    if (!role) return 'User';
     switch (role) {
         case 'tenant': return 'Tenant';
         case 'artisan': return 'Artisan';
@@ -22,22 +23,12 @@ const getRoleName = (role: string) => {
     }
 }
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ userRole }: { userRole?: string }) {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
   const { toggleSidebar } = useSidebar();
-
-
-  const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
   
-  const { data: userData } = useDoc(userDocRef);
-  
-  const userRole = (userData as any)?.rolePrimary;
   const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
 
   const handleLogout = async () => {
@@ -48,7 +39,7 @@ export default function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-card/50 backdrop-blur-sm">
-      <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="container flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
             <SidebarTrigger onClick={toggleSidebar} />
         </div>
@@ -78,9 +69,9 @@ export default function DashboardHeader() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user.displayName || user.email}</p>
-                    {userRole && <p className="text-xs leading-none text-muted-foreground">
+                    <p className="text-xs leading-none text-muted-foreground">
                       {getRoleName(userRole)}
-                    </p>}
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

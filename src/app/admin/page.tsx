@@ -1,3 +1,4 @@
+
 'use client'
 
 import {
@@ -24,10 +25,8 @@ import {
   Hammer,
   ChevronDown,
   Loader2,
+  Shield,
 } from "lucide-react"
-import DashboardHeader from "@/components/layout/dashboard-header"
-import DashboardSidebar from "@/components/layout/dashboard-sidebar"
-import { Sidebar, SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import React, { useEffect, useState } from "react"
 import clsx from "clsx"
 
@@ -69,160 +68,154 @@ export default function AdminPage() {
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <DashboardSidebar userRole="admin" />
-      </Sidebar>
-
-      <SidebarInset>
-        <DashboardHeader />
-
-        <main className="p-4 md:p-8 space-y-8">
-
-          <header>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
+    <div className="space-y-8">
+        <header>
+            <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
+                <Shield className="w-8 h-8" />
+                Admin Panel
+            </h1>
             <p className="text-muted-foreground">
-              Manage users, listings, and payments
+              Manage users, listings, and platform integrity
             </p>
-          </header>
+        </header>
 
-          {/* ---------------- USERS ---------------- */}
+        {/* ---------------- USERS ---------------- */}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Approve new users</CardDescription>
-            </CardHeader>
+        <Card>
+        <CardHeader>
+            <CardTitle>User Management</CardTitle>
+            <CardDescription>Approve new users and manage existing accounts.</CardDescription>
+        </CardHeader>
 
-            <CardContent>
-              {/* SKELETON */}
-              {loading && (
-                <div className="space-y-3">
-                  {[...Array(3)].map((_, i) => (
-                    <Skeleton key={i} className="h-14 w-full" />
-                  ))}
-                </div>
-              )}
+        <CardContent>
+            {/* SKELETON */}
+            {loading && (
+            <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-14 w-full" />
+                ))}
+            </div>
+            )}
 
-              {/* DESKTOP TABLE */}
-              {!loading && (
-                <div className="hidden md:block">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead />
-                      </TableRow>
-                    </TableHeader>
+            {/* DESKTOP TABLE */}
+            {!loading && (
+            <div className="hidden md:block">
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead />
+                    </TableRow>
+                </TableHeader>
 
-                    <TableBody>
-                      {mockUsers.map(user => (
-                        <React.Fragment key={user.id}>
-                          <TableRow
-                            className="cursor-pointer"
-                            onClick={() =>
-                              setExpandedRow(
-                                expandedRow === user.id ? null : user.id
-                              )
-                            }
-                          >
-                            <TableCell className="font-medium break-all">
-                              {user.email}
-                            </TableCell>
-                            <TableCell className="flex items-center gap-2 capitalize">
-                              <RoleIcon role={user.role} />
-                              {user.role}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={user.status === 'Approved' ? 'premium' : 'outline'}>
-                                {user.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <ChevronDown
-                                className={clsx(
-                                  "h-4 w-4 transition",
-                                  expandedRow === user.id && "rotate-180"
-                                )}
-                              />
-                            </TableCell>
-                          </TableRow>
-
-                          {/* COLLAPSIBLE */}
-                          {expandedRow === user.id && (
-                            <TableRow>
-                              <TableCell colSpan={4}>
-                                {user.status === 'Pending' && (
-                                  <Button
-                                    size="sm"
-                                    disabled={rowLoading === user.id}
-                                    onClick={() => handleApprove(user.id)}
-                                  >
-                                    {rowLoading === user.id && (
-                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    )}
-                                    Approve User
-                                  </Button>
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-
-              {/* MOBILE CARDS */}
-              {!loading && (
-                <div className="space-y-4 md:hidden">
-                  {mockUsers.map(user => (
-                      <Card
-                        key={user.id}
-                        className="p-4"
-                      >
-                        <div className="space-y-2">
-                          <p className="font-medium break-words">{user.email}</p>
-
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <TableBody>
+                    {mockUsers.map(user => (
+                    <React.Fragment key={user.id}>
+                        <TableRow
+                        className="cursor-pointer"
+                        onClick={() =>
+                            setExpandedRow(
+                            expandedRow === user.id ? null : user.id
+                            )
+                        }
+                        >
+                        <TableCell className="font-medium break-all">
+                            {user.email}
+                        </TableCell>
+                        <TableCell className="flex items-center gap-2 capitalize">
                             <RoleIcon role={user.role} />
-                            <span className="capitalize">{user.role}</span>
-                          </div>
-
-                          <Badge
-                            className="w-fit"
-                            variant={user.status === 'Approved' ? 'premium' : 'outline'}
-                          >
+                            {user.role}
+                        </TableCell>
+                        <TableCell>
+                            <Badge variant={user.status === 'Approved' ? 'premium' : 'outline'}>
                             {user.status}
-                          </Badge>
+                            </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                            <ChevronDown
+                            className={clsx(
+                                "h-4 w-4 transition",
+                                expandedRow === user.id && "rotate-180"
+                            )}
+                            />
+                        </TableCell>
+                        </TableRow>
 
-                          {user.status === 'Pending' && (
-                            <Button
-                              size="sm"
-                              className="w-full mt-2"
-                              disabled={rowLoading === user.id}
-                              onClick={() => handleApprove(user.id)}
-                            >
-                              {rowLoading === user.id && (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              )}
-                              Approve
-                            </Button>
-                          )}
+                        {/* COLLAPSIBLE */}
+                        {expandedRow === user.id && (
+                        <TableRow>
+                            <TableCell colSpan={4}>
+                            {user.status === 'Pending' && (
+                                <Button
+                                size="sm"
+                                disabled={rowLoading === user.id}
+                                onClick={() => handleApprove(user.id)}
+                                >
+                                {rowLoading === user.id && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
+                                Approve User
+                                </Button>
+                            )}
+                            {user.status !== 'Pending' && (
+                                <p className="text-sm text-muted-foreground">No actions available for this user.</p>
+                            )}
+                            </TableCell>
+                        </TableRow>
+                        )}
+                    </React.Fragment>
+                    ))}
+                </TableBody>
+                </Table>
+            </div>
+            )}
+
+            {/* MOBILE CARDS */}
+            {!loading && (
+            <div className="space-y-4 md:hidden">
+                {mockUsers.map(user => (
+                    <Card
+                    key={user.id}
+                    className="p-4"
+                    >
+                    <div className="space-y-2">
+                        <p className="font-medium break-words">{user.email}</p>
+
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <RoleIcon role={user.role} />
+                        <span className="capitalize">{user.role}</span>
                         </div>
-                      </Card>
-                    )
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+                        <Badge
+                        className="w-fit"
+                        variant={user.status === 'Approved' ? 'premium' : 'outline'}
+                        >
+                        {user.status}
+                        </Badge>
+
+                        {user.status === 'Pending' && (
+                        <Button
+                            size="sm"
+                            className="w-full mt-2"
+                            disabled={rowLoading === user.id}
+                            onClick={() => handleApprove(user.id)}
+                        >
+                            {rowLoading === user.id && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+                            Approve
+                        </Button>
+                        )}
+                    </div>
+                    </Card>
+                )
+                )}
+            </div>
+            )}
+        </CardContent>
+        </Card>
+    </div>
   )
 }

@@ -48,7 +48,11 @@ service cloud.firestore {
     match /users/{userId} {
       allow get, list: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isImmutable('userId') && isImmutable('createdAt');
+      allow update: if isExistingOwner(userId) && 
+                       isImmutable('userId') && 
+                       isImmutable('createdAt') && 
+                       isImmutable('rolePrimary') && 
+                       isImmutable('roles');
       allow delete: if false; 
     }
 
@@ -126,10 +130,8 @@ service cloud.firestore {
     }
     
     match /admin_actions/{actionId} {
-      allow get, list: if isAdmin();
-      allow create: if isAdmin() && request.resource.data.adminId == request.auth.uid;
-      allow update: if false;
-      allow delete: if false;
+      allow get, list, create: if isAdmin();
+      allow update, delete: if false;
     }
   }
 }

@@ -20,6 +20,7 @@ import {
   LifeBuoy,
   Home,
   Compass,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -28,35 +29,49 @@ const menuItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutGrid,
+    roles: ['tenant', 'landlord', 'artisan'],
   },
   {
     href: '/explore',
     label: 'Explore',
     icon: Compass,
+    roles: ['tenant', 'landlord', 'artisan'],
   },
   {
     href: '/listings',
     label: 'My Listings',
     icon: Building2,
+    roles: ['landlord', 'artisan'],
   },
   {
     href: '/messages',
     label: 'Messages',
     icon: MessageSquare,
+    roles: ['tenant', 'landlord', 'artisan'],
   },
   {
     href: '/wallet',
     label: 'Wallet',
     icon: Wallet,
+    roles: ['tenant', 'landlord', 'artisan'],
   },
-  {
+    {
     href: '/profile',
     label: 'Profile',
     icon: User,
+    roles: ['tenant', 'landlord', 'artisan'],
   },
 ];
 
-const adminMenuItems: any[] = [];
+const adminMenuItems = [
+    {
+        href: '/admin',
+        label: 'Admin Dashboard',
+        icon: Shield,
+        roles: ['admin'],
+    },
+    // Add other admin-specific links here
+];
 
 export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 'tenant' | 'landlord' | 'artisan' }) {
   const pathname = usePathname();
@@ -64,8 +79,8 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
 
   const isActive = (href: string) => {
     // Special case for the main dashboard link
-    if (href === '/dashboard') {
-        return pathname === '/dashboard';
+    if (href === '/dashboard' || href === '/admin') {
+        return pathname === href;
     }
     return pathname.startsWith(href);
   }
@@ -76,15 +91,16 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
     }
   }
 
-  if (!userRole) {
-      return <div>Loading user data...</div>
-  }
+  const availableMenuItems = userRole === 'admin' 
+    ? adminMenuItems 
+    : menuItems.filter(item => item.roles.includes(userRole!));
+
 
   return (
     <>
       <SidebarHeader className="p-4">
         <Link
-          href="/dashboard"
+          href={userRole === 'admin' ? '/admin' : '/dashboard'}
           onClick={handleLinkClick}
           className="flex items-center justify-center gap-3 font-bold text-xl group-data-[state=expanded]:justify-start text-sidebar-foreground"
         >
@@ -98,22 +114,8 @@ export default function DashboardSidebar({ userRole }: { userRole?: 'admin' | 't
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
-          {menuItems.map((item) => (
+          {availableMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={isActive(item.href)}
-                tooltip={{ children: item.label, side: "right", align: "center" }}
-              >
-                <Link href={item.href} onClick={handleLinkClick}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-          {userRole === 'admin' && adminMenuItems.map((item) => (
-             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 isActive={isActive(item.href)}

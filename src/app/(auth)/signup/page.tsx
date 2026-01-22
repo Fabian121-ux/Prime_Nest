@@ -19,6 +19,7 @@ import { setDoc, serverTimestamp, doc } from "firebase/firestore";
 import { useState } from "react";
 
 const formSchema = z.object({
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   role: z.enum(["tenant", "artisan", "landlord"], {
@@ -36,6 +37,7 @@ export default function SignUpPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
     },
@@ -56,6 +58,7 @@ export default function SignUpPage() {
       const userData = {
         userId: user.uid,
         email: user.email,
+        fullName: values.fullName,
         rolePrimary: values.role,
         roles: [values.role],
         trustTier: 0,
@@ -94,6 +97,19 @@ export default function SignUpPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="email"
