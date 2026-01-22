@@ -1,66 +1,105 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUser } from '@/firebase';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User, Settings, ShieldCheck, Bell } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { User as UserIcon, Mail, ShieldCheck, Edit } from "lucide-react";
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ProfilePage() {
-  return (
-    <div className="space-y-8 p-4 md:p-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-      
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold font-headline flex items-center gap-3 text-gray-900">
-          <User className="w-8 h-8 text-blue-500" />
-          Profile
-        </h1>
-        <p className="text-muted-foreground max-w-md">
-          Your profile dashboard is being built. Soon you'll manage all your personal info, settings, and trust level in one place.
-        </p>
-      </div>
+    const { user } = useUser();
+    const avatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
-      {/* MAIN CARD */}
-      <Card className="max-w-3xl mx-auto mt-4 bg-white/80 backdrop-blur-md shadow-lg rounded-xl border border-gray-200">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-bold">Coming Soon!</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Your personal profile and settings page is under construction. Here's what will be available:
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          
-          {/* FEATURE LIST */}
-          <ul className="space-y-3 text-muted-foreground list-inside list-disc">
-            <li className="flex items-center gap-2 hover:text-gray-900 transition-colors">
-              <User className="w-5 h-5 text-blue-400" /> Update your personal information and contact details
-            </li>
-            <li className="flex items-center gap-2 hover:text-gray-900 transition-colors">
-              <ShieldCheck className="w-5 h-5 text-green-400" /> Manage your verification status and trust tier
-            </li>
-            <li className="flex items-center gap-2 hover:text-gray-900 transition-colors">
-              <Bell className="w-5 h-5 text-yellow-400" /> Set your notification preferences
-            </li>
-          </ul>
+    return (
+        <div className="space-y-8">
+            {/* Header */}
+            <div>
+                <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
+                    <UserIcon className="w-8 h-8" />
+                    My Profile
+                </h1>
+                <p className="text-muted-foreground">Manage your account details, settings, and verification status.</p>
+            </div>
 
-          {/* ACTION BUTTONS */}
-          <div className="flex flex-col md:flex-row gap-3 mt-4">
-            <Button className="flex-1 bg-blue-500 text-white hover:bg-blue-600 shadow-md transition-all">
-              Edit Profile
-            </Button>
-            <Button className="flex-1 bg-gray-100 hover:bg-gray-200 shadow-md transition-all">
-              View Verification
-            </Button>
-            <Button className="flex-1 bg-green-500 text-white hover:bg-green-600 shadow-md transition-all">
-              Notification Settings
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* FOOTER MESSAGE */}
-      <div className="text-center text-muted-foreground mt-8">
-        <p>Stay tuned! This page will soon allow you full control over your account and preferences.</p>
-      </div>
-    </div>
-  );
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column: Main Profile Card & Settings */}
+                <div className="lg:col-span-2 space-y-8">
+                    <Card>
+                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <Avatar className="h-20 w-20">
+                                {avatar && <AvatarImage src={avatar.imageUrl} alt={user?.displayName || user?.email || 'User'} />}
+                                <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                                <CardTitle className="text-2xl">{user?.displayName || "New User"}</CardTitle>
+                                <CardDescription className="flex items-center gap-2 mt-1">
+                                    <Mail className="h-4 w-4" />
+                                    {user?.email}
+                                </CardDescription>
+                            </div>
+                            <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Profile
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2 mt-4">
+                                <div className="flex justify-between items-center mb-1">
+                                  <Label htmlFor="profile-completion">Profile Completion</Label>
+                                  <span className="text-sm font-medium text-muted-foreground">40%</span>
+                                </div>
+                                <Progress value={40} id="profile-completion" className="h-2" />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Settings Card */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Notification Settings</CardTitle>
+                            <CardDescription>Manage how you receive notifications from Prime Nest.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="email-notifications" className="text-base font-medium">Email Notifications</Label>
+                                    <p className="text-sm text-muted-foreground">Receive important account updates and messages via email.</p>
+                                </div>
+                                <Switch id="email-notifications" defaultChecked />
+                            </div>
+                             <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="push-notifications" className="text-base font-medium">Push Notifications</Label>
+                                    <p className="text-sm text-muted-foreground">Get real-time alerts on your devices. (Coming soon)</p>
+                                </div>
+                                <Switch id="push-notifications" disabled />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Right Column: Verification Card */}
+                <div className="lg:col-span-1">
+                    <Card className="sticky top-24">
+                        <CardHeader className="items-center">
+                            <CardTitle className="flex items-center gap-2">
+                                <ShieldCheck className="w-6 h-6 text-premium" />
+                                Trust & Verification
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-center space-y-4">
+                             <p className="text-6xl font-bold text-premium">Tier 1</p>
+                             <p className="text-muted-foreground">Your current trust tier. Higher tiers unlock more benefits.</p>
+                             <Button className="w-full">Get Verified</Button>
+                             <p className="text-xs text-muted-foreground mt-2">Verification improves your trust tier and builds confidence with others on the platform.</p>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
 }
