@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef, forwardRef } from 'react';
+import { useState, useMemo, useEffect, useRef, forwardRef, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -93,7 +93,7 @@ export default function MessagesPage() {
             selectedConversationId={selectedConversationId}
             isCollapsed={isListCollapsed}
             onToggleCollapse={() => setIsListCollapsed(prev => !prev)}
-            onSelectConversation={(id) => setSelectedConversationId(id)}
+            onSelectConversation={(id: SetStateAction<string | null>) => setSelectedConversationId(id)}
           />
         </div>
 
