@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,14 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-import { Handshake, Loader2, ShieldCheck, Lock, Send, MoreHorizontal, ArrowLeft, MessageSquare, FileText, Gavel, CheckCircle2 } from "lucide-react";
+import { Handshake, Loader2, ShieldCheck, Lock, Send, MoreHorizontal, ArrowLeft, MessageSquare, Archive, BookCheck } from "lucide-react";
 
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -65,8 +63,14 @@ export default function MessagesPage() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    // On desktop, default to selecting the first conversation if none is selected
     if (!isMobile && !selectedConversationId) {
       setSelectedConversationId(MOCK_CONVERSATION_ID);
+    }
+    // On mobile, if a conversation is selected, the list should be hidden.
+    // If we resize to desktop, the list should not be collapsed.
+    if (!isMobile) {
+      setIsListCollapsed(false);
     }
   }, [isMobile, selectedConversationId]);
 
@@ -75,14 +79,15 @@ export default function MessagesPage() {
     return mockConversations.find(c => c.id === selectedConversationId);
   }, [selectedConversationId]);
 
+  // On mobile, show list OR detail. On desktop, show both (unless list is collapsed).
   const showDetail = isMobile ? !!selectedConversationId : true;
-  const showList = isMobile ? !selectedConversationId : true;
+  const showList = isMobile ? !selectedConversationId : !isListCollapsed;
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.24))] md:h-[calc(100vh-theme(spacing.32))] bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="border rounded-xl h-full grid grid-cols-1 md:grid-cols-[auto,1fr] shadow-xl overflow-hidden bg-white/80 backdrop-blur-md">
+    <div className="h-[calc(100vh-theme(spacing.24))] md:h-[calc(100vh-theme(spacing.32))] bg-background">
+      <div className="border rounded-lg h-full grid grid-cols-1 md:grid-cols-[auto,1fr] overflow-hidden bg-card">
         {/* Conversation List */}
-        <div className={cn({ 'hidden': !showList, 'md:block': true })}>
+        <div className={cn({ 'hidden md:block': isMobile && !!selectedConversationId })}>
           <ConversationList
             conversations={mockConversations}
             selectedConversationId={selectedConversationId}
@@ -93,7 +98,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Chat Window */}
-        <div className={cn('h-full flex flex-col', { 'hidden': !showDetail, 'md:flex': true })}>
+        <div className={cn('h-full flex flex-col', { 'hidden md:flex': isMobile && !selectedConversationId })}>
           {selectedConversation ? (
             <ChatWindow 
               conversation={selectedConversation} 
@@ -101,7 +106,7 @@ export default function MessagesPage() {
               onBack={isMobile ? () => setSelectedConversationId(null) : undefined} 
             />
           ) : (
-            <div className="hidden md:flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+            <div className="hidden md:flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
               <MessageSquare className="w-12 h-12 mb-4" />
               <h2 className="text-xl font-semibold">Select a conversation</h2>
               <p>Choose a conversation from the left to start chatting.</p>
@@ -117,19 +122,24 @@ export default function MessagesPage() {
 
 // #region CONVERSATION LIST
 function ConversationList({ conversations, selectedConversationId, isCollapsed, onToggleCollapse, onSelectConversation }: any) {
+  const isMobile = useIsMobile();
   return (
-    <aside className={cn("flex flex-col h-full border-r transition-all duration-300 ease-in-out bg-white", isCollapsed ? "md:w-20" : "w-full md:w-80")}>
-      <div className="p-4 flex items-center justify-between border-b h-20">
+    <aside className={cn(
+      "flex flex-col h-full border-r transition-all duration-300 ease-in-out bg-card", 
+      isCollapsed ? "md:w-20" : "w-full md:w-80"
+    )}>
+      <div className="p-4 flex items-center justify-between border-b h-20 shrink-0">
         {!isCollapsed && <h2 className="text-xl font-bold font-headline">Messages</h2>}
-        <Button variant="ghost" size="icon" onClick={onToggleCollapse} className="hidden md:flex">
-          {isCollapsed ? <ArrowLeft /> : <ArrowLeft className="rotate-180" />}
-        </Button>
+        {!isMobile && (
+          <Button variant="ghost" size="icon" onClick={onToggleCollapse}>
+            <ArrowLeft className={cn("transition-transform", isCollapsed && "rotate-180")} />
+          </Button>
+        )}
       </div>
 
-      {/* Search */}
-      <div className="p-2 border-b">
-        <div className="relative">
-          <Input placeholder="Search..." className={cn("pl-9", isCollapsed && "hidden")} />
+      <div className={cn("p-2 border-b", isCollapsed && "p-0")}>
+        <div className={cn("relative", isCollapsed && "hidden")}>
+          <Input placeholder="Search..." className="pl-9 h-9" />
         </div>
       </div>
 
@@ -150,30 +160,63 @@ function ConversationList({ conversations, selectedConversationId, isCollapsed, 
   );
 }
 
-function ConversationListItem({ conversation, isCollapsed, isSelected, onSelect }: any) {
-  const avatar = PlaceHolderImages.find(p => p.id === conversation.participant.avatarId);
-  return (
-    <div 
-      className={cn("w-full text-left p-2 rounded-xl cursor-pointer hover:shadow-lg transition-all duration-200", isSelected ? "bg-primary/20" : "bg-white")}
-      onClick={onSelect}
-    >
-      <div className="flex items-start gap-3">
-        <Avatar className="h-10 w-10">
-          {avatar && <AvatarImage src={avatar.imageUrl} alt={conversation.participant.name} />}
-          <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 overflow-hidden">
-          <p className="font-semibold text-sm truncate">{conversation.participant.name}</p>
-          <p className="text-xs text-muted-foreground truncate">{conversation.listing.title}</p>
-          <p className="text-xs text-muted-foreground mt-1 truncate">{conversation.lastMessage}</p>
-        </div>
-        {conversation.unreadCount > 0 && (
-          <Badge className="h-5 w-5 p-0 justify-center">{conversation.unreadCount}</Badge>
+const ConversationListItem = forwardRef<HTMLDivElement, any>(
+  ({ conversation, isCollapsed, isSelected, onSelect, ...props }, ref) => {
+    const avatar = PlaceHolderImages.find(p => p.id === conversation.participant.avatarId);
+    
+    const itemContent = (
+      <div
+        ref={ref}
+        className={cn(
+          "w-full text-left p-2 rounded-lg cursor-pointer transition-colors",
+          isSelected ? "bg-accent" : "hover:bg-accent/50",
+          isCollapsed && "flex justify-center"
         )}
+        onClick={onSelect}
+        {...props}
+      >
+        <div className="flex items-start gap-3">
+          <Avatar className="h-10 w-10">
+            {avatar && <AvatarImage src={avatar.imageUrl} alt={conversation.participant.name} />}
+            <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          {!isCollapsed && (
+            <div className="flex-1 overflow-hidden">
+              <div className="flex justify-between items-center">
+                <p className="font-semibold text-sm truncate">{conversation.participant.name}</p>
+                <p className="text-xs text-muted-foreground shrink-0">{conversation.timestamp}</p>
+              </div>
+              <p className="text-xs text-muted-foreground truncate">{conversation.listing.title}</p>
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-xs text-muted-foreground truncate flex-1">{conversation.lastMessage}</p>
+                {conversation.unreadCount > 0 && (
+                  <Badge variant="default" className="h-5 w-5 p-0 justify-center shrink-0 ml-2">{conversation.unreadCount}</Badge>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  
+    if (isCollapsed) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>{itemContent}</TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{conversation.participant.name}</p>
+              <p className="text-xs text-muted-foreground">{conversation.listing.title}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+  
+    return itemContent;
+  }
+);
+ConversationListItem.displayName = 'ConversationListItem';
 // #endregion
 
 
@@ -216,7 +259,18 @@ function ChatWindow({ conversation, onBack }: any) {
       setIsLoading(false);
     }, 1500);
   };
+  
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+        const scrollableView = scrollAreaRef.current.querySelector('div');
+        if (scrollableView) {
+            scrollableView.scrollTop = scrollableView.scrollHeight;
+        }
+    }
+  }, [messages, dealState]);
 
+  // Mock deal funding flow
   useEffect(() => {
     if (dealState === 'deal-created') {
       const timer = setTimeout(() => handleFundEscrow(), 3000);
@@ -225,9 +279,9 @@ function ChatWindow({ conversation, onBack }: any) {
   }, [dealState]);
 
   return (
-    <Card className="h-full flex flex-col shadow-md border rounded-xl overflow-hidden">
+    <div className="h-full flex flex-col border-l">
       {/* Header */}
-      <CardHeader className="sticky top-0 z-20 bg-white border-b flex justify-between items-center p-4">
+      <header className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b flex justify-between items-center p-4 h-20 shrink-0">
         <div className="flex items-center gap-3">
           {onBack && <Button variant="ghost" size="icon" className="md:hidden" onClick={onBack}><ArrowLeft /></Button>}
           <Avatar className="h-10 w-10">
@@ -235,24 +289,24 @@ function ChatWindow({ conversation, onBack }: any) {
             <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-sm font-bold flex items-center gap-1">
+            <h3 className="text-sm font-bold flex items-center gap-1.5">
               {conversation.participant.name}
               {conversation.participant.isVerified && (
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger><ShieldCheck className="w-4 h-4 text-blue-500" /></TooltipTrigger>
+                    <TooltipTrigger><ShieldCheck className="w-4 h-4 text-premium" /></TooltipTrigger>
                     <TooltipContent><p>Verified {conversation.participant.role}</p></TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground">{conversation.participant.role}</CardDescription>
+            </h3>
+            <p className="text-xs text-muted-foreground">{conversation.participant.role}</p>
           </div>
         </div>
 
         {listingImage && (
-          <div className="hidden md:flex items-center gap-3 bg-gray-100 p-2 rounded-md">
-            <Avatar>
+          <div className="hidden md:flex items-center gap-3 bg-muted p-2 rounded-md">
+            <Avatar className="rounded-sm">
               <AvatarImage src={listingImage.imageUrl} />
             </Avatar>
             <div>
@@ -262,35 +316,52 @@ function ChatWindow({ conversation, onBack }: any) {
           </div>
         )}
         <DealStatusBadge state={dealState} />
-      </CardHeader>
+      </header>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 bg-gray-50" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 bg-muted/20" ref={scrollAreaRef}>
         <div className="p-4 space-y-4">
           {messagesLoading && <Loader2 className="animate-spin mx-auto w-6 h-6 text-muted-foreground" />}
           {messages?.map((message: any) => (
             <MessageBubble key={message.id} message={message} currentUserId={user?.uid} otherUserAvatar={avatarArtisan?.imageUrl} />
           ))}
+          {/* This is a mock system message */}
+          {dealState === 'escrow-active' && (
+             <div className="text-center text-xs text-muted-foreground py-2 my-4 border-y">
+                Funds are now held securely in Escrow.
+            </div>
+          )}
         </div>
       </ScrollArea>
 
       {/* Input */}
-      <CardFooter className="p-4 border-t bg-white">
+      <footer className="p-4 border-t bg-card shrink-0">
         <MessageInput conversationId={conversation.id} disabled={dealState === 'deal-created' || isLoading} />
+        {dealState !== 'pre-deal' && (
+          <div className="text-center text-xs text-muted-foreground pt-2">
+            {dealState === 'deal-created' && "Deal created. Awaiting funding..."}
+            {dealState === 'escrow-active' && "You can now discuss project details."}
+          </div>
+        )}
         <div className="mt-2 flex gap-2">
-          {dealState === 'pre-deal' && <Button onClick={handleCreateDeal} className="flex-1">Create Deal <Handshake className="ml-2 w-4 h-4" /></Button>}
+          {dealState === 'pre-deal' && <Button onClick={handleCreateDeal} className="flex-1" disabled={isLoading}>{isLoading && <Loader2 className="animate-spin mr-2"/>}Create Deal <Handshake className="ml-2 w-4 h-4" /></Button>}
         </div>
-      </CardFooter>
-    </Card>
+      </footer>
+    </div>
   );
 }
 
 function MessageBubble({ message, currentUserId, otherUserAvatar }: any) {
   const isSender = message.senderId === currentUserId;
+  const avatar = PlaceHolderImages.find(p => p.id === 'user-avatar'); // Assuming current user has this avatar
+  
   return (
-    <div className={cn("flex max-w-md items-end gap-2", isSender ? "ml-auto justify-end" : "mr-auto justify-start")}>
-      {!isSender && <Avatar className="h-8 w-8"><AvatarImage src={otherUserAvatar} /><AvatarFallback>D</AvatarFallback></Avatar>}
-      <div className={cn("rounded-xl px-3 py-2 shadow-sm", isSender ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-900")}>
+    <div className={cn("flex max-w-lg items-end gap-2", isSender ? "ml-auto flex-row-reverse" : "mr-auto")}>
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={isSender ? avatar?.imageUrl : otherUserAvatar} />
+        <AvatarFallback>{isSender ? 'Y' : 'D'}</AvatarFallback>
+      </Avatar>
+      <div className={cn("rounded-xl px-3 py-2 shadow-sm", isSender ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground")}>
         <p className="text-sm">{message.content}</p>
       </div>
     </div>
@@ -299,6 +370,7 @@ function MessageBubble({ message, currentUserId, otherUserAvatar }: any) {
 
 // #region INPUT FORM
 const messageFormSchema = z.object({ content: z.string().min(1).max(1000) });
+
 function MessageInput({ conversationId, disabled }: any) {
   const { user } = useUser();
   const firestore = useFirestore();
@@ -306,14 +378,28 @@ function MessageInput({ conversationId, disabled }: any) {
 
   async function onSubmit(values: any) {
     if (!user || !firestore) return;
-    const messagesRef = collection(firestore, 'conversations', conversationId, 'messages');
-    await addDoc(messagesRef, { senderId: user.uid, content: values.content, type: 'text', createdAt: serverTimestamp() });
-    form.reset();
+    try {
+      const messagesRef = collection(firestore, 'conversations', conversationId, 'messages');
+      await addDoc(messagesRef, { senderId: user.uid, content: values.content, type: 'text', createdAt: serverTimestamp() });
+      form.reset();
+    } catch(e) {
+      console.error("Error sending message:", e);
+      // Here you could use a toast to notify the user
+    }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      if (form.formState.isValid) {
+        form.handleSubmit(onSubmit)();
+      }
+    }
+  };
+  
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-end">
-      <Textarea {...form.register("content")} rows={1} placeholder="Type a message..." disabled={disabled} className="flex-1 resize-none" />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-start">
+      <Textarea {...form.register("content")} rows={1} placeholder="Type a message..." disabled={disabled} className="flex-1 resize-none" onKeyDown={handleKeyDown} />
       <Button type="submit" disabled={!form.formState.isValid || disabled}><Send className="w-4 h-4" /></Button>
     </form>
   );
@@ -322,11 +408,12 @@ function MessageInput({ conversationId, disabled }: any) {
 
 
 const DealStatusBadge = ({ state }: { state: DealState }) => {
-  const statusMap: any = {
-    'pre-deal': { text: 'No Deal Yet', className: 'bg-gray-200 text-gray-700' },
-    'deal-created': { text: 'Deal Created', className: 'bg-yellow-300 text-yellow-900' },
-    'escrow-active': { text: 'Funds in Escrow', className: 'bg-green-500 text-white', icon: <Lock className="w-3 h-3" /> }
-  };
-  const current = statusMap[state];
-  return <Badge className={cn("gap-1.5", current.className)}>{current.icon}{current.text}</Badge>;
+    switch (state) {
+        case 'escrow-active':
+            return <Badge variant="success" className="gap-1.5"><Lock className="w-3 h-3" />Funds in Escrow</Badge>;
+        case 'deal-created':
+            return <Badge variant="premium" className="gap-1.5">Deal Created</Badge>;
+        default:
+            return <Badge variant="secondary">No Deal Yet</Badge>;
+    }
 };
