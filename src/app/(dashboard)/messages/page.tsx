@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { useUser, useFirestore, useMemoFirebase, useCollection } from "@/firebase";
 import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Handshake, Loader2, Info, ShieldCheck, Gavel, FileText, CheckCircle2, MessageSquare, Lock, Send, PanelLeft, PanelRight, Search, Archive, MoreHorizontal } from "lucide-react";
+import { Handshake, Loader2, Info, ShieldCheck, Gavel, FileText, CheckCircle2, MessageSquare, Lock, Send, PanelLeft, PanelRight, Search, Archive, MoreHorizontal, ArrowLeft } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -23,6 +23,7 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // #region Mock Data
 const MOCK_CONVERSATION_ID = "mock-conversation-123";
@@ -82,38 +83,53 @@ const mockConversations = [
 
 // #region Main Page Component
 export default function MessagesPage() {
-    const [selectedConversationId, setSelectedConversationId] = useState<string>(MOCK_CONVERSATION_ID);
+    const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
     const [isListCollapsed, setIsListCollapsed] = useState(false);
+    const isMobile = useIsMobile();
+
+    // On desktop, select the first conversation by default if none is selected.
+    useEffect(() => {
+        if (!isMobile && !selectedConversationId) {
+            setSelectedConversationId(MOCK_CONVERSATION_ID);
+        }
+    }, [isMobile, selectedConversationId]);
 
     const selectedConversation = useMemo(() => {
+        if (!selectedConversationId) return null;
         return mockConversations.find(c => c.id === selectedConversationId);
     }, [selectedConversationId]);
 
+    // Determine visibility based on mobile status and selection
+    const showDetail = isMobile ? !!selectedConversationId : true;
+    const showList = isMobile ? !selectedConversationId : true;
+
     return (
         <div className="h-[calc(100vh-theme(spacing.24))] md:h-[calc(100vh-theme(spacing.32))]">
-            <div className="border rounded-lg h-full grid grid-cols-1 md:grid-cols-[auto,1fr] bg-card shadow-2xl">
-                <ConversationList
-                    conversations={mockConversations}
-                    selectedConversationId={selectedConversationId}
-                    isCollapsed={isListCollapsed}
-                    onToggleCollapse={() => setIsListCollapsed(prev => !prev)}
-                    onSelectConversation={(id) => setSelectedConversationId(id)}
-                />
-                <div className="h-full flex-col hidden md:flex">
+            <div className="border rounded-lg h-full grid grid-cols-1 md:grid-cols-[auto,1fr] bg-card shadow-2xl overflow-hidden">
+                <div className={cn({ 'hidden': !showList, 'md:block': true })}>
+                     <ConversationList
+                        conversations={mockConversations}
+                        selectedConversationId={selectedConversationId}
+                        isCollapsed={isListCollapsed}
+                        onToggleCollapse={() => setIsListCollapsed(prev => !prev)}
+                        onSelectConversation={(id) => setSelectedConversationId(id)}
+                    />
+                </div>
+                
+                <div className={cn('h-full flex-col', { 'hidden': !showDetail, 'md:flex': true })}>
                      {selectedConversation ? (
-                        <ChatWindow conversation={selectedConversation} key={selectedConversation.id} />
+                        <ChatWindow 
+                            conversation={selectedConversation} 
+                            key={selectedConversation.id} 
+                            onBack={isMobile ? () => setSelectedConversationId(null) : undefined}
+                        />
                     ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                        <div className="hidden md:flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                             <MessageSquare className="w-12 h-12 mb-4" />
                             <h2 className="text-xl font-semibold">Select a conversation</h2>
                             <p>Choose a conversation from the left to start chatting.</p>
                         </div>
                     )}
-                </div>
-
-                {/* On mobile, we only show the chat window */}
-                 <div className="h-full flex flex-col md:hidden">
-                    <ChatWindow conversation={mockConversations.find(c => c.id === MOCK_CONVERSATION_ID)!} />
                 </div>
             </div>
         </div>
@@ -124,17 +140,17 @@ export default function MessagesPage() {
 // #region Conversation List Components
 function ConversationList({ conversations, selectedConversationId, isCollapsed, onToggleCollapse, onSelectConversation }: {
     conversations: typeof mockConversations;
-    selectedConversationId: string;
+    selectedConversationId: string | null;
     isCollapsed: boolean;
     onToggleCollapse: () => void;
     onSelectConversation: (id: string) => void;
 }) {
     return (
-        <aside className={cn("hidden md:flex flex-col border-r transition-all duration-300 ease-in-out", isCollapsed ? "w-20" : "w-80")}>
+        <aside className={cn("flex flex-col h-full border-r transition-all duration-300 ease-in-out", isCollapsed ? "md:w-20" : "w-full md:w-80")}>
             {/* Header */}
             <div className="p-4 flex items-center justify-between border-b h-20">
                 {!isCollapsed && <h2 className="text-xl font-bold font-headline">Messages</h2>}
-                <Button variant="ghost" size="icon" onClick={onToggleCollapse}>
+                <Button variant="ghost" size="icon" onClick={onToggleCollapse} className="hidden md:flex">
                     {isCollapsed ? <PanelRight /> : <PanelLeft />}
                     <span className="sr-only">Toggle conversation list</span>
                 </Button>
@@ -143,7 +159,7 @@ function ConversationList({ conversations, selectedConversationId, isCollapsed, 
             {/* Search */}
             <div className="p-2 border-b">
                  <div className="relative">
-                    <Search className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground", isCollapsed && "left-1/2 -translate-x-1/2")}/>
+                    <Search className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground", isCollapsed && "md:left-1/2 md:-translate-x-1/2")}/>
                     {!isCollapsed && <Input placeholder="Search..." className="pl-9"/>}
                 </div>
             </div>
@@ -204,19 +220,19 @@ function ConversationListItem({ conversation, isCollapsed, isSelected, onSelect 
             onClick={onSelect}
         >
             <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 flex-1 overflow-hidden">
                     <Avatar className="h-10 w-10">
                         {avatar && <AvatarImage src={avatar.imageUrl} alt={conversation.participant.name} />}
                         <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 overflow-hidden">
                         <p className="font-semibold text-sm truncate">{conversation.participant.name}</p>
                         <p className="text-xs text-muted-foreground truncate">{conversation.listing.title}</p>
-                        <p className="text-xs text-muted-foreground mt-1 truncate max-w-40">{conversation.lastMessage}</p>
+                        <p className="text-xs text-muted-foreground mt-1 truncate">{conversation.lastMessage}</p>
                     </div>
                 </div>
 
-                 <div className="flex flex-col items-end h-full">
+                 <div className="flex flex-col items-end h-full flex-shrink-0 ml-2">
                     <p className="text-xs text-muted-foreground mb-1">{conversation.timestamp}</p>
                     {conversation.unreadCount > 0 ? (
                         <Badge className="h-5 w-5 p-0 justify-center">{conversation.unreadCount}</Badge>
@@ -247,7 +263,7 @@ function ConversationListItem({ conversation, isCollapsed, isSelected, onSelect 
 
 type DealState = 'pre-deal' | 'deal-created' | 'escrow-active';
 
-function ChatWindow({ conversation }: { conversation: typeof mockConversations[0] }) {
+function ChatWindow({ conversation, onBack }: { conversation: typeof mockConversations[0], onBack?: () => void }) {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isLoading, setIsLoading] = useState(false);
@@ -298,6 +314,12 @@ function ChatWindow({ conversation }: { conversation: typeof mockConversations[0
       <CardHeader className="sticky top-0 z-20 bg-primary text-primary-foreground border-b border-primary/50 h-20">
          <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
+                   {onBack && (
+                        <Button onClick={onBack} variant="ghost" size="icon" className="md:hidden -ml-2 text-primary-foreground">
+                            <ArrowLeft />
+                            <span className="sr-only">Back to conversations</span>
+                        </Button>
+                   )}
                    <Avatar className="border-2 border-primary-foreground/50">
                       {avatarArtisan && <AvatarImage src={avatarArtisan.imageUrl} alt={conversation.participant.name}/>}
                       <AvatarFallback>{conversation.participant.name.charAt(0)}</AvatarFallback>
